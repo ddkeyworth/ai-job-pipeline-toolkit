@@ -115,6 +115,8 @@
   .badge.offer { background: #3a3323; color: var(--warn); }
   .badge.rejected { background: #3a2727; color: var(--bad); }
   .badge.withdrawn { background: #2b2b2b; color: var(--neutral); }
+  .badge.error { background: #4a2e1f; color: #e0954f; }
+  .card.error-card { border-color: #6b4423; }
   .score { text-align: right; }
   .score .v { font-size: 18px; font-weight: 700; }
   .score .t { font-size: 11px; color: var(--text-dim); }
@@ -880,9 +882,10 @@ function fmtDate(d) {
 }
 
 function renderStats() {
-  const total = APPLICATIONS.length;
+  const data = Array.isArray(APPLICATIONS) ? APPLICATIONS.filter(Boolean) : [];
+  const total = data.length;
   const byStatus = {};
-  APPLICATIONS.forEach(a => byStatus[a.status] = (byStatus[a.status] || 0) + 1);
+  data.forEach(a => byStatus[a.status] = (byStatus[a.status] || 0) + 1);
   const stats = [
     { l: "Total tracked", n: total },
     { l: "Interviewing", n: byStatus.interviewing || 0 },
@@ -905,77 +908,113 @@ function renderFilters() {
   document.querySelectorAll(".pill").forEach(p => p.onclick = () => { currentFilter = p.dataset.filter; render(); });
 }
 
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
 function scoreBar(label, value, max, estimated) {
-  const pct = Math.round((value / max) * 100);
+  const v = Number.isFinite(value) ? value : 0;
+  const m = Number.isFinite(max) && max > 0 ? max : 1;
+  const pct = Math.max(0, Math.min(100, Math.round((v / m) * 100)));
   return `<div class="bar-row">
-    <div>${label}${estimated ? ' <span class="estimated">(est.)</span>' : ""}</div>
+    <div>${esc(label)}${estimated ? ' <span class="estimated">(est.)</span>' : ""}</div>
     <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-    <div>${value}/${max}</div>
+    <div>${v}/${m}</div>
   </div>`;
 }
 
+// Malformed application data (a bad hand-edit, a missing field) should never
+// take down the whole dashboard — one broken card should show its own error
+// state and every other card should still render normally.
 function renderCard(app) {
-  const est = app.score.estimated_fields || [];
-  const bars = [
-    scoreBar("JD fit", app.score.breakdown.jd_fit, 45, est.includes("jd_fit")),
-    scoreBar("Seniority", app.score.breakdown.seniority, 15, est.includes("seniority")),
-    scoreBar("Competition", app.score.breakdown.competition, 20, est.includes("competition")),
-    scoreBar("Comp", app.score.breakdown.comp, 10, est.includes("comp")),
-    scoreBar("Blockers", app.score.breakdown.blockers, 10, est.includes("blockers")),
-  ].join("");
+  try {
+    const id = app.id || `unknown-${Math.random().toString(36).slice(2)}`;
+    const score = app.score || {};
+    const breakdown = score.breakdown || {};
+    const est = Array.isArray(score.estimated_fields) ? score.estimated_fields : [];
+    const status = app.status || "applied";
 
-  const briefingBtn = app.briefing ? `<button class="briefing-toggle" onclick="toggleBriefing(event, '${app.id}')">View briefing pack</button>` : "";
-  const briefing = app.briefing ? `
-    <div class="briefing" id="briefing-${app.id}">
-      <div class="section-title">Company facts</div>
-      <div class="prose"><p>${app.briefing.company_facts}</p></div>
-      <div class="section-title">Comp</div>
-      <div class="prose"><p>${app.briefing.comp}</p></div>
-      <div class="section-title">Why it progressed</div>
-      <div class="prose"><p>${app.briefing.why}</p></div>
-      <div class="section-title">Watch-outs</div>
-      <div class="prose"><p>${app.briefing.watch}</p></div>
-      <div class="section-title">Interview stage log</div>
-      <ul class="stage-log">${app.briefing.stages.map(s => `<li>${s}</li>`).join("")}</ul>
-    </div>` : "";
+    const bars = [
+      scoreBar("JD fit", breakdown.jd_fit, 45, est.includes("jd_fit")),
+      scoreBar("Seniority", breakdown.seniority, 15, est.includes("seniority")),
+      scoreBar("Competition", breakdown.competition, 20, est.includes("competition")),
+      scoreBar("Comp", breakdown.comp, 10, est.includes("comp")),
+      scoreBar("Blockers", breakdown.blockers, 10, est.includes("blockers")),
+    ].join("");
 
-  return `
-  <div class="card" id="card-${app.id}">
-    <div class="card-head" onclick="toggleCard('${app.id}')">
-      <div>
-        <div class="role">${app.role}</div>
-        <div class="company">${app.company} &middot; applied ${fmtDate(app.date_applied)}</div>
+    const briefing = app.briefing && typeof app.briefing === "object" ? app.briefing : null;
+    const stages = briefing && Array.isArray(briefing.stages) ? briefing.stages : [];
+    const briefingBtn = briefing ? `<button class="briefing-toggle" onclick="toggleBriefing(event, '${esc(id)}')">View briefing pack</button>` : "";
+    const briefingHtml = briefing ? `
+      <div class="briefing" id="briefing-${esc(id)}">
+        <div class="section-title">Company facts</div>
+        <div class="prose"><p>${esc(briefing.company_facts || "Not available.")}</p></div>
+        <div class="section-title">Comp</div>
+        <div class="prose"><p>${esc(briefing.comp || "Not available.")}</p></div>
+        <div class="section-title">Why it progressed</div>
+        <div class="prose"><p>${esc(briefing.why || "Not available.")}</p></div>
+        <div class="section-title">Watch-outs</div>
+        <div class="prose"><p>${esc(briefing.watch || "Not available.")}</p></div>
+        <div class="section-title">Interview stage log</div>
+        <ul class="stage-log">${stages.map(s => `<li>${esc(s)}</li>`).join("") || "<li>No stages logged.</li>"}</ul>
+      </div>` : "";
+
+    return `
+    <div class="card" id="card-${esc(id)}">
+      <div class="card-head" onclick="toggleCard('${esc(id)}')">
+        <div>
+          <div class="role">${esc(app.role || "Untitled role")}</div>
+          <div class="company">${esc(app.company || "Unknown company")} &middot; applied ${esc(fmtDate(app.date_applied)) || "unknown date"}</div>
+        </div>
+        <div class="badge ${esc(status)}">${esc(status)}</div>
+        <div class="score"><div class="v">${Number.isFinite(score.value) ? score.value : "—"}</div><div class="t">${esc(score.tier || "")}</div></div>
+        <div class="chevron">&#9656;</div>
       </div>
-      <div class="badge ${app.status}">${app.status}</div>
-      <div class="score"><div class="v">${app.score.value}</div><div class="t">${app.score.tier}</div></div>
-      <div class="chevron">&#9656;</div>
-    </div>
-    <div class="card-body">
-      <div class="section-title">Score breakdown</div>
-      <div class="bars">${bars}</div>
-      <div class="section-title">JD summary</div>
-      <div class="prose"><p>${app.jd_summary}</p></div>
-      ${app.caveats ? `<div class="section-title">Caveats</div><div class="prose"><p>${app.caveats}</p></div>` : ""}
-      ${briefingBtn}
-      ${briefing}
-    </div>
-  </div>`;
+      <div class="card-body">
+        <div class="section-title">Score breakdown</div>
+        <div class="bars">${bars}</div>
+        <div class="section-title">JD summary</div>
+        <div class="prose"><p>${esc(app.jd_summary || "No summary available.")}</p></div>
+        ${app.caveats ? `<div class="section-title">Caveats</div><div class="prose"><p>${esc(app.caveats)}</p></div>` : ""}
+        ${briefingBtn}
+        ${briefingHtml}
+      </div>
+    </div>`;
+  } catch (err) {
+    console.error("Failed to render application card", app, err);
+    return `
+    <div class="card error-card">
+      <div class="card-head">
+        <div>
+          <div class="role">Couldn't render this application</div>
+          <div class="company">${esc(app && app.id)} &middot; check this file's format against schema/SCHEMA.md</div>
+        </div>
+        <div class="badge error">error</div>
+        <div class="score"></div>
+        <div class="chevron"></div>
+      </div>
+    </div>`;
+  }
 }
 
 function toggleCard(id) {
-  document.getElementById(`card-${id}`).classList.toggle("open");
+  const el = document.getElementById(`card-${id}`);
+  if (el) el.classList.toggle("open");
 }
 function toggleBriefing(ev, id) {
   ev.stopPropagation();
-  document.getElementById(`briefing-${id}`).classList.toggle("open");
+  const el = document.getElementById(`briefing-${id}`);
+  if (el) el.classList.toggle("open");
 }
 
 function render() {
   renderStats();
   renderFilters();
-  const filtered = currentFilter === "all" ? APPLICATIONS : APPLICATIONS.filter(a => a.status === currentFilter);
-  const sorted = [...filtered].sort((a, b) => new Date(b.date_applied) - new Date(a.date_applied));
-  document.getElementById("cards").innerHTML = sorted.map(renderCard).join("");
+  const data = (Array.isArray(APPLICATIONS) ? APPLICATIONS : []).filter(Boolean);
+  const filtered = currentFilter === "all" ? data : data.filter(a => a.status === currentFilter);
+  const sorted = [...filtered].sort((a, b) => new Date(b.date_applied || 0) - new Date(a.date_applied || 0));
+  const cardsHtml = sorted.map(renderCard).join("");
+  document.getElementById("cards").innerHTML = cardsHtml || `<div class="banner">No applications match this filter.</div>`;
 }
 
 render();

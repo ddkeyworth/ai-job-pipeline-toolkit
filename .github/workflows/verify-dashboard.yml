@@ -1,0 +1,44 @@
+name: Verify example dashboard is in sync
+
+# Checks that docs/index.html (the published demo) still matches what
+# scripts/build_dashboard.py would generate from examples/applications/.
+# Catches the case where someone edits the example data and forgets to
+# rebuild the dashboard before committing.
+#
+# No secrets, no API keys, nothing to configure — uses only the default
+# GITHUB_TOKEN GitHub Actions provides automatically for checkout.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "examples/applications/**"
+      - "docs/index.html"
+      - "scripts/build_dashboard.py"
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Rebuild dashboard from examples/
+        run: python scripts/build_dashboard.py
+
+      - name: Fail if docs/index.html doesn't match the committed version
+        run: |
+          if ! git diff --quiet -- docs/index.html; then
+            echo "::error::docs/index.html is out of sync with examples/applications/. Run 'python scripts/build_dashboard.py' locally and commit the result."
+            git diff -- docs/index.html
+            exit 1
+          fi
+          echo "docs/index.html matches examples/applications/ — in sync."

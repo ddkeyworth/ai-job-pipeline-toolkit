@@ -2,9 +2,13 @@
 
 An open-source job-application tracker and JD-fit scorer, built as a Claude skill. It runs entirely inside your own [Claude.ai](https://claude.ai) Project or [Claude Cowork](https://claude.ai/discover/cowork) session — no separate app, no account with anyone but Anthropic, no data collected by anyone.
 
-**[View the example dashboard →](https://your-username.github.io/ai-job-pipeline-toolkit/)** *(update this link once the repo is published — see "Publishing" below)*
+**[View the example dashboard →](https://dan-nackasha-keyworth.github.io/ai-job-pipeline-toolkit/)**
+
+<!-- SCREENSHOT_PLACEHOLDER -->
 
 The example above is entirely synthetic — fictional companies, fictional applications, generated to show what the tool produces. See "Getting started" to point it at your own data.
+
+**The skill logic itself has actually been run, not just written.** See [`TESTING.md`](TESTING.md) for the results: a real live-search verification against a real public company, a full scoring run against a real (if short-lived — see the log) job posting, and the recalibration agent run for real against the example dataset, including an honest account of what it did and didn't prove.
 
 ## What this actually is
 
