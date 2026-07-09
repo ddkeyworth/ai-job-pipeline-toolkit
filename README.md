@@ -4,7 +4,10 @@ An open-source job-application tracker and JD-fit scorer, built as a Claude skil
 
 **[View the example dashboard →](https://dan-nackasha-keyworth.github.io/ai-job-pipeline-toolkit/)**
 
-<!-- SCREENSHOT_PLACEHOLDER -->
+<p>
+  <img src="docs/assets/dashboard-pipeline.png" alt="Pipeline view — a filterable list of tracked applications with company, role, status, and score" width="49%">
+  <img src="docs/assets/dashboard-briefing-pack.png" alt="An expanded application card showing its score breakdown and full interview briefing pack" width="49%">
+</p>
 
 The example above is entirely synthetic — fictional companies, fictional applications, generated to show what the tool produces. See "Getting started" to point it at your own data.
 
