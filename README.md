@@ -69,8 +69,11 @@ Explicitly out of scope, by design, not oversight:
 
 1. `python scripts/generate_examples.py` — regenerates `examples/` from scratch if it's ever changed.
 2. `python scripts/build_dashboard.py` — rebuilds `docs/index.html` from whatever's currently in `examples/applications/`.
-3. Enable GitHub Pages: Settings → Pages → Source → Deploy from branch → `main` → `/docs`. No Actions workflow needed.
-4. Update the demo link at the top of this README once Pages is live.
+3. `python scripts/verify_recalibration.py` — sanity-checks the recalibration agent's gate and per-component signal against the current example data.
+4. Enable GitHub Pages: Settings → Pages → Source → Deploy from branch → `main` → `/docs`. No Actions workflow needed.
+5. Update the demo link at the top of this README once Pages is live.
+
+**Troubleshooting a stuck Pages deployment:** if GitHub Actions shows a "pages build and deployment" run as successful but the live site still serves old content (check via `curl -I` on the Pages URL and compare the `Last-Modified` header to your latest commit time), that's a GitHub-side publish issue, not a problem with the repo — the build succeeded but the CDN artifact didn't actually update. Fix: Settings → Pages → change the source folder to something else, save, then change it back to `/docs` and save again. This forces a fresh deployment and has reliably cleared the stuck state.
 
 ## License
 

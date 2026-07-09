@@ -1,9 +1,12 @@
 name: Verify example dashboard is in sync
 
-# Checks that docs/index.html (the published demo) still matches what
-# scripts/build_dashboard.py would generate from examples/applications/.
-# Catches the case where someone edits the example data and forgets to
-# rebuild the dashboard before committing.
+# Two checks, both against whatever's currently in examples/:
+# 1. docs/index.html (the published demo) still matches what
+#    scripts/build_dashboard.py would generate — catches someone editing
+#    the example data and forgetting to rebuild before committing.
+# 2. The recalibration agent's gate still passes and has signal on all
+#    five score components — catches example-data edits that silently
+#    break the demo's own premise (see scripts/verify_recalibration.py).
 #
 # No secrets, no API keys, nothing to configure — uses only the default
 # GITHUB_TOKEN GitHub Actions provides automatically for checkout.
@@ -15,6 +18,8 @@ on:
       - "examples/applications/**"
       - "docs/index.html"
       - "scripts/build_dashboard.py"
+      - "scripts/verify_recalibration.py"
+      - "config/weights.json"
   pull_request:
     branches: [main]
 
@@ -42,3 +47,6 @@ jobs:
             exit 1
           fi
           echo "docs/index.html matches examples/applications/ — in sync."
+
+      - name: Verify recalibration agent's gate and per-component signal
+        run: python scripts/verify_recalibration.py
