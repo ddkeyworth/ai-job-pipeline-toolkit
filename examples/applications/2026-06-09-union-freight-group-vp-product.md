@@ -1,6 +1,7 @@
 ---
 company: "Union Freight Group"
 role: "VP Product"
+date_scored: 2026-06-09
 date_applied: 2026-06-09
 status: applied
 source: "LinkedIn"

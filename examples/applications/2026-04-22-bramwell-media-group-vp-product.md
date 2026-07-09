@@ -1,6 +1,7 @@
 ---
 company: "Bramwell Media Group"
 role: "VP Product"
+date_scored: 2026-04-22
 date_applied: 2026-04-22
 status: rejected
 source: "LinkedIn"

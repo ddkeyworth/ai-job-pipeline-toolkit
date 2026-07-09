@@ -1,6 +1,7 @@
 ---
 company: "Alderwood Data"
 role: "Head of Product"
+date_scored: 2026-05-18
 date_applied: 2026-05-18
 status: interviewing
 source: "Referral"

@@ -62,11 +62,17 @@ def parse_application(path):
             "stages": stages,
         }
 
+    def date_str(v):
+        if v is None:
+            return None
+        return v.isoformat() if hasattr(v, "isoformat") else str(v)
+
     return {
         "id": app_id,
         "company": fm["company"],
         "role": fm["role"],
-        "date_applied": fm["date_applied"].isoformat() if hasattr(fm["date_applied"], "isoformat") else str(fm["date_applied"]),
+        "date_scored": date_str(fm.get("date_scored")),
+        "date_applied": date_str(fm.get("date_applied")),
         "status": fm["status"],
         "score": fm["score"],
         "outcome": fm.get("outcome"),

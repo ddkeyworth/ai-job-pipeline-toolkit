@@ -1,6 +1,7 @@
 ---
 company: "Ovalcrest Insurance"
 role: "VP Product Management"
+date_scored: 2026-05-02
 date_applied: 2026-05-02
 status: rejected
 source: "Company site"

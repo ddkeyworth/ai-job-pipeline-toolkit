@@ -1,6 +1,7 @@
 ---
 company: "Briarcliff AI"
 role: "Head of Product"
+date_scored: 2026-05-26
 date_applied: 2026-05-26
 status: interviewing
 source: "Company site"

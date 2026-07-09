@@ -1,6 +1,7 @@
 ---
 company: "Coastal Ledger"
 role: "Senior Director, Product"
+date_scored: 2026-06-05
 date_applied: 2026-06-05
 status: applied
 source: "Company site"

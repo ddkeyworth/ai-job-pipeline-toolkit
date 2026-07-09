@@ -1,6 +1,7 @@
 ---
 company: "Hollow Creek Devices"
 role: "Head of Product"
+date_scored: 2026-05-16
 date_applied: 2026-05-16
 status: rejected
 source: "Company site"

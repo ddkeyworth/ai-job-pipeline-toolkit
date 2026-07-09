@@ -55,7 +55,7 @@ Score against the user's stated comp floor (ask if not yet known). Unknown comp 
 Right to work, geography, visa, or other confirmed hard requirements. Test carefully before scoring low here — a soft inconvenience is not a blocker.
 
 ### Output
-State the score, tier, a one-line rationale per component, and explicitly flag any component that's an estimate rather than a confirmed fact (e.g. an anonymised listing with unverifiable company details).
+State the score, tier, a one-line rationale per component, and explicitly flag any component that's an estimate rather than a confirmed fact (e.g. an anonymised listing with unverifiable company details). Create the application file per `schema/SCHEMA.md` with `status: scored` and `date_applied: null` — scoring a JD doesn't mean it's been applied to. Not every scored JD gets a follow-up application, and the pipeline should show that honestly rather than only tracking JDs after the fact.
 
 ## Step 3: Live-search verification agent
 
@@ -70,7 +70,7 @@ This agent only ever reads public information about a company. It does not conta
 
 ## Step 4: Log an application / update status
 
-Create or update the application file per `schema/SCHEMA.md`. Once `status` moves to `interviewing` or beyond, add the Briefing pack section. Once an outcome is confirmed, set `score.locked: true` and **never revise a locked score again for any reason** — it's a prediction evaluated by the outcome, not adjusted to match it.
+Update the application file per `schema/SCHEMA.md` as things change. When the user confirms they've actually submitted an application for a role already scored under Step 2, move `status` from `scored` to `applied` and set `date_applied` to the real submission date. Once `status` moves to `interviewing` or beyond, add the Briefing pack section. Once an outcome is confirmed, set `score.locked: true` and **never revise a locked score again for any reason** — it's a prediction evaluated by the outcome, not adjusted to match it.
 
 ## Step 5: Regenerate the dashboard
 

@@ -1,6 +1,7 @@
 ---
 company: "Ferrous Metals Digital"
 role: "Head of Product"
+date_scored: 2026-04-18
 date_applied: 2026-04-18
 status: rejected
 source: "Company site"

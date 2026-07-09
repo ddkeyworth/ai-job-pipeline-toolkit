@@ -1,6 +1,7 @@
 ---
 company: "Solari Energy Corp"
 role: "Senior Director Product"
+date_scored: 2026-04-15
 date_applied: 2026-04-15
 status: rejected
 source: "LinkedIn"

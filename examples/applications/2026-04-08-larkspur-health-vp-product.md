@@ -1,6 +1,7 @@
 ---
 company: "Larkspur Health"
 role: "VP Product"
+date_scored: 2026-04-08
 date_applied: 2026-04-08
 status: rejected
 source: "Referral"

@@ -1,6 +1,7 @@
 ---
 company: "Northwind Retail Technologies"
 role: "Head of Product, Platform"
+date_scored: 2026-04-02
 date_applied: 2026-04-02
 status: rejected
 source: "LinkedIn"

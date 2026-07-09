@@ -1,6 +1,7 @@
 ---
 company: "Copperfield Logistics"
 role: "Senior Director Product"
+date_scored: 2026-05-09
 date_applied: 2026-05-09
 status: rejected
 source: "LinkedIn"

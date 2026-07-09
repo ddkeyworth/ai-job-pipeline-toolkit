@@ -1,6 +1,7 @@
 ---
 company: "Redshank Payments"
 role: "Director of Product"
+date_scored: 2026-05-11
 date_applied: 2026-05-11
 status: withdrawn
 source: "LinkedIn"

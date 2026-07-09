@@ -1,6 +1,7 @@
 ---
 company: "Vantage Point Telecom"
 role: "VP Product"
+date_scored: 2026-05-13
 date_applied: 2026-05-13
 status: rejected
 source: "LinkedIn"

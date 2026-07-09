@@ -1,6 +1,7 @@
 ---
 company: "Ashgrove Financial"
 role: "Director of Product Strategy"
+date_scored: 2026-04-05
 date_applied: 2026-04-05
 status: rejected
 source: "Company site"

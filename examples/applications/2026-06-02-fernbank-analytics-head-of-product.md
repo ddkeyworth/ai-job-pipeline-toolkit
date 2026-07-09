@@ -1,6 +1,7 @@
 ---
 company: "Fernbank Analytics"
 role: "Head of Product"
+date_scored: 2026-06-02
 date_applied: 2026-06-02
 status: applied
 source: "Referral"

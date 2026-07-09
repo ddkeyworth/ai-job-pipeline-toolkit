@@ -1,34 +1,34 @@
 ---
-company: "Kettlebrook Robotics"
+company: "Harrowgate Systems"
 role: "Head of Product"
-date_scored: 2026-04-11
-date_applied: 2026-04-11
-status: rejected
+date_scored: 2026-06-11
+date_applied: null
+status: scored
 source: "LinkedIn"
 
 score:
-  value: 74
+  value: 73
   tier: "Tier 2 — Strong callback odds"
-  locked: true
+  locked: false
   breakdown:
-    jd_fit: 38
+    jd_fit: 37
     seniority: 12
     competition: 14
     comp: 10
     blockers: 10
   estimated_fields: []
 
-outcome: rejected
-outcome_date: 2026-04-11
+outcome: null
+outcome_date: null
 
-comp_band: "£115k-130k OTE"
+comp_band: "£115k-128k OTE"
 ---
 
 ## JD summary
-Head of Product at Kettlebrook Robotics. Small robotics startup — good fit on paper, rejected anyway; not every high score converts.
+Head of Product at Harrowgate Systems. Scored, not yet applied — still deciding whether to prioritise this over other open processes.
 
 ## Score rationale
-- JD fit: 38/45
+- JD fit: 37/45
 - Seniority alignment: 12/15
 - Competition estimate: 14/20
 - Comp alignment: 10/10

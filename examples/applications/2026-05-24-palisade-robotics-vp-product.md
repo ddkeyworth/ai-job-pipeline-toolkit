@@ -1,6 +1,7 @@
 ---
 company: "Palisade Robotics"
 role: "VP Product"
+date_scored: 2026-05-24
 date_applied: 2026-05-24
 status: rejected
 source: "LinkedIn"

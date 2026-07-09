@@ -1,6 +1,7 @@
 ---
 company: "Granite Peak Software"
 role: "Director of Product"
+date_scored: 2026-04-29
 date_applied: 2026-04-29
 status: rejected
 source: "LinkedIn"

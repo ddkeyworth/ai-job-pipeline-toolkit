@@ -12,8 +12,9 @@ One file per tracked application. Markdown with YAML frontmatter. Suggested file
 ---
 company: "Acme Corp"
 role: "VP, Customer Success"
-date_applied: 2026-03-01
-status: applied            # applied | interviewing | rejected | withdrawn | offer
+date_scored: 2026-02-26      # always set — the date the JD was scored
+date_applied: 2026-03-01     # null until status is applied or later — see status note below
+status: applied            # scored | applied | interviewing | rejected | withdrawn | offer
 source: "LinkedIn"         # optional, free text
 
 score:
@@ -43,6 +44,8 @@ One line per component, matching the breakdown above.
 ## Caveats
 Anything estimated rather than confirmed (anonymised listing, unclear comp split, etc.)
 ```
+
+**`status: scored`** is the state every application starts in — a JD has been scored, nothing has been submitted yet. This is deliberately a first-class status, not an afterthought: scoring happens *before* the decision to apply, and a real pipeline includes JDs that were scored and never applied to, not just ones that made the cut. `date_applied` stays `null` for as long as `status` is `scored`. When the user actually submits, update `status` to `applied` and set `date_applied` to the real submission date — `date_scored` never changes.
 
 If `status` is `interviewing` or later, add a **Briefing pack** section to the body:
 

@@ -35,7 +35,7 @@ Scored using real, verified facts (Test 1's company data, and a real Glassdoor-s
 Ran `SKILL.md` Step 6 against the actual example dataset. The mechanical part of this test (reading outcomes, computing per-component means) is no longer a one-off manual calculation — it's `scripts/verify_recalibration.py`, wired into CI, so it re-runs on every future change to `examples/`. Current output:
 
 ```
-Total applications: 26
+Total applications: 29
 Logged outcomes: 22 (threshold: 20)  → gate PASSES
 Positive outcomes: 5 (threshold: 3)  → gate PASSES
 

@@ -1,6 +1,7 @@
 ---
 company: "Wrenfield Software"
 role: "Head of Product"
+date_scored: 2026-04-30
 date_applied: 2026-04-30
 status: offer
 source: "Referral"

@@ -1,6 +1,7 @@
 ---
 company: "TidePool Labs"
 role: "Head of Product"
+date_scored: 2026-04-25
 date_applied: 2026-04-25
 status: rejected
 source: "Referral"

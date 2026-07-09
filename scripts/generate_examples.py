@@ -31,6 +31,15 @@ APPLICATIONS = [
     ("2026-06-09", "Union Freight Group", "VP Product", "applied", None, 45, "Tier 4 — Long shot",
      28, 8, 5, 4, 10, ["competition", "comp"], None, "LinkedIn",
      "Large logistics incumbent, broad VP-level role draws a wide pool."),
+    ("2026-06-11", "Harrowgate Systems", "Head of Product", "scored", None, 73, "Tier 2 — Strong callback odds",
+     37, 12, 14, 10, 10, [], "£115k-128k OTE", "LinkedIn",
+     "Scored, not yet applied — still deciding whether to prioritise this over other open processes."),
+    ("2026-06-13", "Vireo Networks", "Director of Product", "scored", None, 44, "Tier 4 — Long shot",
+     29, 9, 4, 6, 10, ["competition"], None, "LinkedIn",
+     "Scored, not applied — large, well-known network infrastructure company; score alone made this a low priority."),
+    ("2026-06-14", "Elmscroft Data", "Head of Product", "scored", None, 86, "Tier 1 — Exceptional callback odds",
+     42, 14, 17, 10, 10, [], "£125k-138k OTE", "Referral",
+     "Scored today — strong match, referral in hand. Drafting the application next, not yet submitted."),
     ("2026-04-02", "Northwind Retail Technologies", "Head of Product, Platform", "rejected", "rejected", 58, "Tier 3 — Solid, worth applying",
      32, 12, 6, 8, 10, ["competition"], "£110k-125k OTE", "LinkedIn", "Large, recognisable retail-tech brand."),
     ("2026-04-05", "Ashgrove Financial", "Director of Product Strategy", "rejected", "rejected", 61, "Tier 3 — Solid, worth applying",
@@ -130,10 +139,12 @@ def write_simple(app):
     fname = f"{date}-{slug}-{slugify(role)}.md"
     est = json.dumps(estimated)
     comp_band_yaml = f'"{comp_band}"' if comp_band else "null"
+    date_applied = "null" if status == "scored" else date
     fm = f"""---
 company: "{company}"
 role: "{role}"
-date_applied: {date}
+date_scored: {date}
+date_applied: {date_applied}
 status: {status}
 source: "{source}"
 
@@ -181,6 +192,7 @@ def write_briefing(app):
     fm = f"""---
 company: "{app['company']}"
 role: "{app['role']}"
+date_scored: {app['date']}
 date_applied: {app['date']}
 status: {app['status']}
 source: "{app['source']}"

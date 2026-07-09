@@ -1,6 +1,7 @@
 ---
 company: "Millrace Systems"
 role: "Head of Product"
+date_scored: 2026-05-06
 date_applied: 2026-05-06
 status: rejected
 source: "Referral"

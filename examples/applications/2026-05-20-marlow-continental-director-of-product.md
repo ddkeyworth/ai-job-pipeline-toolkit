@@ -1,6 +1,7 @@
 ---
 company: "Marlow Continental"
 role: "Director of Product"
+date_scored: 2026-05-20
 date_applied: 2026-05-20
 status: rejected
 source: "LinkedIn"

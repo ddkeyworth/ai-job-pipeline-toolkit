@@ -1,6 +1,7 @@
 ---
 company: "Pemberton Health Tech"
 role: "VP Product"
+date_scored: 2026-05-22
 date_applied: 2026-05-22
 status: interviewing
 source: "LinkedIn"

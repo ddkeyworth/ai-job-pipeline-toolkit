@@ -1,6 +1,7 @@
 ---
 company: "Stonebridge Analytics"
 role: "VP Product"
+date_scored: 2026-05-04
 date_applied: 2026-05-04
 status: offer
 source: "LinkedIn"
