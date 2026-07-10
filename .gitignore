@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+
+# Personal planning notes, not part of the public project
+career-pipeline-oss-build-plan.md
