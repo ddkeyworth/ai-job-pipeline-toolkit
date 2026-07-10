@@ -51,6 +51,20 @@ blockers      10.0            9.6             +0.4
 
 **A gap this surfaced and fixed:** the dataset originally had zero examples with a real blocker, so `blockers` showed exactly zero variance — the recalibration agent correctly had no signal on that component at all, because the demo data never tested it. Fixed by adding one synthetic application with a genuine confirmed blocker (missing work authorisation), giving the agent real, if still weak, signal on all five components. Left the original zero-variance finding in this log's history (visible in the git diff) rather than quietly editing it away.
 
+## Test 4 — Dashboard prep-priority sort
+
+Added `next_interview_date` to the schema and a default "prep priority" sort to `docs/index.html`: active applications first, soonest known interview date on top, active applications with no known date behind them by most recent activity, rejected/withdrawn always last regardless of date. A sort control also allows switching to a flat score sort (full pipeline, ignoring status) or the old most-recent-activity order.
+
+Ran the rebuilt dashboard locally (`python -m http.server` against `docs/`) and drove it directly — no screenshots this session (the tool wasn't rendering), so verified via raw page text and DOM state instead, which is if anything a stricter check since it can't be fooled by something that merely *looks* right.
+
+**Prep priority (default):** Briarcliff AI (next interview 16 Jun) and Alderwood Data (next interview 19 Jun) sorted to the top, in that order. Every other active application (no known next-interview date) followed, ordered by most recent activity. All rejected/withdrawn applications — regardless of date — sorted after every active one.
+
+**Score sort:** re-sorted the same filtered set purely by `score.value` descending (88, 86, 84, 82, 81, 80, 79...), correctly mixing in closed applications rather than grouping by status — confirms this mode is a genuine flat full-pipeline sort, not prep-priority with a different tiebreaker.
+
+**Most recent activity:** reproduced the dashboard's original (pre-this-change) default ordering exactly, confirming the old behavior is preserved as an explicit option rather than lost.
+
+**Confidence:** confirmed — all three modes read back exactly as designed against the real rebuilt dataset, not asserted from reading the code alone.
+
 ## How to reproduce this
 
 **The mechanical part (Test 3's statistics)** is fully reproducible right now: `python scripts/verify_recalibration.py`. It re-runs in CI on every push that touches `examples/` or `config/weights.json`, so it isn't just a one-time check.
@@ -59,6 +73,6 @@ blockers      10.0            9.6             +0.4
 
 ## What this does and doesn't prove
 
-Proves: the scoring rubric, the live-search mechanism, and the recalibration computation all produce sensible, real output when actually run, including correctly surfacing a real disqualifying blocker rather than a flattering score. Proves the recalibration agent's statistical gate is now continuously verified, not a one-off claim.
+Proves: the scoring rubric, the live-search mechanism, and the recalibration computation all produce sensible, real output when actually run, including correctly surfacing a real disqualifying blocker rather than a flattering score. Proves the recalibration agent's statistical gate is now continuously verified, not a one-off claim. Proves the dashboard's sort logic — all three modes — behaves exactly as designed against real rebuilt data.
 
 Doesn't prove: that an independent Claude session, with no context from this build process, would interpret `SKILL.md` the same way. That's the one gap left un-closed here — see "How to reproduce this" above.

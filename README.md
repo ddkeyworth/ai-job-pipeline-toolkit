@@ -17,7 +17,7 @@ The example above is entirely synthetic — fictional companies, fictional appli
 
 - `SKILL.md` — a Claude skill that scores job descriptions for callback likelihood, tracks applications, and generates a dashboard.
 - A simple, documented file format for your applications (`schema/SCHEMA.md`) — one plain-text file per application, no database.
-- A static HTML dashboard (`docs/index.html`) that reads that data and shows a three-level view: your pipeline → interview stage detail → a full "briefing pack" per interview (company facts, comp, why it progressed, watch-outs, stage log).
+- A static HTML dashboard (`docs/index.html`) that reads that data and shows a three-level view: your pipeline → interview stage detail → a full "briefing pack" per interview (company facts, comp, why it progressed, watch-outs, stage log). Default sort is prep-priority — active applications first, soonest known interview date on top, closed ones always last — with a switch to sort by score instead.
 
 There is no backend, no server, and nothing to install beyond a text editor. The "AI" parts — scoring, live company research, dashboard generation — run as part of your normal Claude conversation, using your own Claude usage.
 

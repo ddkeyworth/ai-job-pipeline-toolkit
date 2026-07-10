@@ -78,6 +78,25 @@
     user-select: none;
   }
   .pill.active { background: var(--accent); color: #08111f; border-color: var(--accent); font-weight: 600; }
+  .sort-row {
+    max-width: 1100px;
+    margin: 0 auto 12px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .sort-row label { font-size: 12px; color: var(--text-dim); }
+  .sort-row select {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .next-interview { color: var(--accent); font-weight: 600; }
   main {
     max-width: 1100px;
     margin: 0 auto;
@@ -167,6 +186,15 @@
 
 <div class="filters" id="filters"></div>
 
+<div class="sort-row">
+  <label for="sort-select">Sort</label>
+  <select id="sort-select">
+    <option value="prep">Prep priority — soonest interview first</option>
+    <option value="score">Score — highest first</option>
+    <option value="recent">Most recent activity</option>
+  </select>
+</div>
+
 <main id="cards"></main>
 
 <footer>
@@ -198,6 +226,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-02",
+    "next_interview_date": null,
     "comp_band": "£110k-125k OTE",
     "jd_summary": "Head of Product, Platform at Northwind Retail Technologies. Large, recognisable retail-tech brand.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -224,6 +254,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-05",
+    "next_interview_date": null,
     "comp_band": "£100k-115k base",
     "jd_summary": "Director of Product Strategy at Ashgrove Financial. Large regulated financial services firm.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -250,6 +282,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-08",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Larkspur Health. Mid-size health-tech, moderately known.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -276,6 +310,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-11",
+    "next_interview_date": null,
     "comp_band": "£115k-130k OTE",
     "jd_summary": "Head of Product at Kettlebrook Robotics. Small robotics startup — good fit on paper, rejected anyway; not every high score converts.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -304,6 +340,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-15",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director Product at Solari Energy Corp. Large, well-funded energy technology company.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -330,6 +368,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-18",
+    "next_interview_date": null,
     "comp_band": "£105k-120k base",
     "jd_summary": "Head of Product at Ferrous Metals Digital. Mid-size industrial-tech firm.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -359,6 +399,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-22",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Bramwell Media Group. Large, famous media brand — very high competition.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -385,6 +427,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-25",
+    "next_interview_date": null,
     "comp_band": "£118k-132k OTE",
     "jd_summary": "Head of Product at TidePool Labs. Small private labs startup, narrow specialist role.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -411,6 +455,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-04-29",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Granite Peak Software. Mid-size, moderately known enterprise software vendor.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -437,6 +483,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "offer",
+    "outcome_date": "2026-04-30",
+    "next_interview_date": null,
     "comp_band": "£130k-145k OTE, confirmed above floor",
     "jd_summary": "Head of Product at Wrenfield Software.",
     "caveats": "No estimated fields.",
@@ -477,6 +525,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-02",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product Management at Ovalcrest Insurance. Large regulated insurer, broad pool.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -503,6 +553,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "offer",
+    "outcome_date": "2026-05-04",
+    "next_interview_date": null,
     "comp_band": "£122k-135k OTE, confirmed above floor",
     "jd_summary": "VP Product at Stonebridge Analytics.",
     "caveats": "No estimated fields.",
@@ -540,6 +592,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-06",
+    "next_interview_date": null,
     "comp_band": "£112k-128k OTE",
     "jd_summary": "Head of Product at Millrace Systems. Small private systems company, strong fit.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -566,6 +620,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-09",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director Product at Copperfield Logistics. Mid-size logistics tech firm.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -592,6 +648,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "withdrawn",
+    "outcome_date": "2026-05-11",
+    "next_interview_date": null,
     "comp_band": "£95k-105k base (below floor once confirmed)",
     "jd_summary": "Director of Product at Redshank Payments. Withdrew after confirmed comp band came in below floor.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -621,6 +679,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-13",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Vantage Point Telecom. Large, recognisable telecom operator.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -647,6 +707,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-16",
+    "next_interview_date": null,
     "comp_band": "£108k-122k OTE",
     "jd_summary": "Head of Product at Hollow Creek Devices. Small private hardware/devices startup.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -673,6 +735,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "interview",
+    "outcome_date": "2026-05-18",
+    "next_interview_date": "2026-06-19",
     "comp_band": "£125k-140k OTE",
     "jd_summary": "Head of Product at Alderwood Data.",
     "caveats": "No estimated fields.",
@@ -710,6 +774,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-20",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Marlow Continental. Large multinational, broad applicant pool.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -738,6 +804,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "interview",
+    "outcome_date": "2026-05-22",
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Pemberton Health Tech.",
     "caveats": "Comp estimated pending confirmation.",
@@ -772,6 +840,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": "rejected",
+    "outcome_date": "2026-05-24",
+    "next_interview_date": null,
     "comp_band": "£140k-155k OTE",
     "jd_summary": "VP Product at Palisade Robotics. Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support — a real, confirmed blocker, not a soft preference.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -800,6 +870,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": "interview",
+    "outcome_date": "2026-05-26",
+    "next_interview_date": "2026-06-16",
     "comp_band": null,
     "jd_summary": "Head of Product at Briarcliff AI.",
     "caveats": "Comp estimated pending confirmation.",
@@ -837,6 +909,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": "£95k-110k base + bonus (unconfirmed split)",
     "jd_summary": "Director of Product at Meridian Cloud Systems. Large, well-known public cloud platform — huge applicant pool expected.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -863,6 +937,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": "£120k-135k OTE",
     "jd_summary": "Head of Product at Fernbank Analytics. Small, private data-analytics startup, narrow role, strong direct fit.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -889,6 +965,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director, Product at Coastal Ledger. Mid-size fintech, moderately well-known in its niche.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -918,6 +996,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Union Freight Group. Large logistics incumbent, broad VP-level role draws a wide pool.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -944,6 +1024,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": "£115k-128k OTE",
     "jd_summary": "Head of Product at Harrowgate Systems. Scored, not yet applied — still deciding whether to prioritise this over other open processes.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -972,6 +1054,8 @@ const APPLICATIONS = /*__DATA__*/[
       ]
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Vireo Networks. Scored, not applied — large, well-known network infrastructure company; score alone made this a low priority.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
@@ -998,6 +1082,8 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": []
     },
     "outcome": null,
+    "outcome_date": null,
+    "next_interview_date": null,
     "comp_band": "£125k-138k OTE",
     "jd_summary": "Head of Product at Elmscroft Data. Scored today — strong match, referral in hand. Drafting the application next, not yet submitted.",
     "caveats": "No estimated fields; all components scored against confirmed information.",
@@ -1097,7 +1183,7 @@ function renderCard(app) {
       <div class="card-head" onclick="toggleCard('${esc(id)}')">
         <div>
           <div class="company">${esc(app.company || "Unknown company")}</div>
-          <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}</div>
+          <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}${app.next_interview_date ? ` &middot; <span class="next-interview">next interview ${esc(fmtDate(app.next_interview_date))}</span>` : ""}</div>
         </div>
         <div class="badge ${esc(status)}">${esc(status)}</div>
         <div class="score"><div class="v">${Number.isFinite(score.value) ? score.value : "—"}</div><div class="t">${esc(score.tier || "")}</div></div>
@@ -1140,16 +1226,50 @@ function toggleBriefing(ev, id) {
   if (el) el.classList.toggle("open");
 }
 
+const CLOSED_STATUSES = ["rejected", "withdrawn"];
+const activityDate = a => a.date_applied || a.date_scored || null;
+const closedDate = a => a.outcome_date || activityDate(a);
+
+// Active cards first, soonest known next-interview date on top; active cards
+// with no known date fall to the back of the active group (by most recent
+// activity); rejected/withdrawn always sort last, regardless of any date.
+function sortPrepPriority(list) {
+  const active = list.filter(a => !CLOSED_STATUSES.includes(a.status));
+  const closed = list.filter(a => CLOSED_STATUSES.includes(a.status));
+
+  const withDate = active.filter(a => a.next_interview_date);
+  const withoutDate = active.filter(a => !a.next_interview_date);
+
+  withDate.sort((a, b) => new Date(a.next_interview_date) - new Date(b.next_interview_date));
+  withoutDate.sort((a, b) => new Date(activityDate(b) || 0) - new Date(activityDate(a) || 0));
+  closed.sort((a, b) => new Date(closedDate(b) || 0) - new Date(closedDate(a) || 0));
+
+  return [...withDate, ...withoutDate, ...closed];
+}
+
+function sortByScore(list) {
+  return [...list].sort((a, b) => ((b.score && b.score.value) || 0) - ((a.score && a.score.value) || 0));
+}
+
+function sortByRecent(list) {
+  return [...list].sort((a, b) => new Date(activityDate(b) || 0) - new Date(activityDate(a) || 0));
+}
+
+let currentSort = "prep";
+
 function render() {
   renderStats();
   renderFilters();
   const data = (Array.isArray(APPLICATIONS) ? APPLICATIONS : []).filter(Boolean);
   const filtered = currentFilter === "all" ? data : data.filter(a => a.status === currentFilter);
-  const sortDate = a => a.date_applied || a.date_scored || 0;
-  const sorted = [...filtered].sort((a, b) => new Date(sortDate(b)) - new Date(sortDate(a)));
+  const sorted = currentSort === "score" ? sortByScore(filtered)
+    : currentSort === "recent" ? sortByRecent(filtered)
+    : sortPrepPriority(filtered);
   const cardsHtml = sorted.map(renderCard).join("");
   document.getElementById("cards").innerHTML = cardsHtml || `<div class="banner">No applications match this filter.</div>`;
 }
+
+document.getElementById("sort-select").addEventListener("change", e => { currentSort = e.target.value; render(); });
 
 render();
 </script>
