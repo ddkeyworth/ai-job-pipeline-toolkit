@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 59
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 33
@@ -35,4 +35,4 @@ Director of Product at Marlow Continental. Large multinational, broad applicant 
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

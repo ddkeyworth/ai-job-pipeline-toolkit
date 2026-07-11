@@ -4,7 +4,7 @@ Parses examples/applications/*.md and injects them as embedded JSON into
 docs/index.html, between the /*__DATA__*/ and /*__END_DATA__*/ markers.
 
 This is the one-time "build" for the example dashboard published via GitHub
-Pages. It is NOT required to use the toolkit day-to-day — when the skill
+Pages. It is NOT required to use the toolkit day-to-day – when the skill
 regenerates your own dashboard from your own tracked applications (see
 SKILL.md, Step 5), it does the equivalent of this step itself, inline, as
 part of answering you in chat. No npm, no bundler, no toolchain either way.
@@ -49,8 +49,10 @@ def parse_interviewer_profiles(text):
     profiles = []
     for m in re.finditer(r"####\s+(.+?)\n(.*?)(?=\n####\s|\Z)", text, re.DOTALL):
         header, block = m.group(1).strip(), m.group(2).strip()
-        if "—" in header:
-            name, title = (p.strip() for p in header.split("—", 1))
+        if "–" in header:
+            name, title = (p.strip() for p in header.split("–", 1))
+        elif "–" in header:  # backward-compat: older files may still use an em-dash
+            name, title = (p.strip() for p in header.split("–", 1))
         elif " - " in header:
             name, title = (p.strip() for p in header.split(" - ", 1))
         else:
@@ -68,14 +70,14 @@ def parse_interviewer_profiles(text):
 
 def parse_table(text):
     """Generic markdown table parser. Only lines starting with `|` count as
-    the table — everything else (an explanatory note above it, a caveat
+    the table – everything else (an explanatory note above it, a caveat
     paragraph below it, as in SCHEMA.md's own documented example) is
     prose surrounding the table, not part of it. First `|`-line is the
     header, second is the `---` separator (skipped), the rest are data
     rows. Column names aren't hardcoded (Regional intelligence is the
     first user, but this stays generic rather than assuming specific
     columns like Region/Relationship style/Decision style). Returns None
-    if there's no table — this section is genuinely optional, unlike the
+    if there's no table – this section is genuinely optional, unlike the
     five standard ones, so "absent" is a real, expected state, not a gap
     to placeholder-fill."""
     table_lines = [l.strip() for l in text.strip().splitlines() if l.strip().startswith("|")]
@@ -92,7 +94,7 @@ def parse_table(text):
 
 def extract_bp_section(bp_text, heading):
     """Pull one ###-level section's body out of a Briefing pack's raw text.
-    Exact heading match — module-level (not nested) so scripts/verify_consistency.py
+    Exact heading match – module-level (not nested) so scripts/verify_consistency.py
     can import this same function to round-trip SCHEMA.md's documented headings
     against the real parser, rather than a second, independently-drifting regex."""
     pat = rf"###\s+{re.escape(heading)}\s*\n(.*?)(?=\n###\s|\Z)"
@@ -101,7 +103,7 @@ def extract_bp_section(bp_text, heading):
 
 
 def parse_notes(text):
-    """Light structural split only — no semantic parsing. Returns
+    """Light structural split only – no semantic parsing. Returns
     [{"heading": str|None, "body": str}, ...]."""
     if not text.strip():
         return []
@@ -125,7 +127,7 @@ def parse_application(path):
 
     status = fm["status"]
     if status not in ALL_STATUSES:
-        raise ValueError(f"{path}: unknown status {status!r} — must be one of {ALL_STATUSES}")
+        raise ValueError(f"{path}: unknown status {status!r} – must be one of {ALL_STATUSES}")
 
     def section(heading):
         pat = rf"##\s+{re.escape(heading)}\s*\n(.*?)(?=\n##\s|\Z)"

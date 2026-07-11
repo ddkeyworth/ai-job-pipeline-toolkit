@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 45
-  tier: "Tier 4 — Long shot"
+  tier: "Tier 4 – Long shot"
   locked: false
   breakdown:
     jd_fit: 28
@@ -35,4 +35,4 @@ VP Product at Union Freight Group. Large logistics incumbent, broad VP-level rol
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 58
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 32
@@ -35,4 +35,4 @@ Head of Product, Platform at Northwind Retail Technologies. Large, recognisable 
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

@@ -3,13 +3,13 @@
 Reproducible check for the recalibration agent's underlying computation
 (SKILL.md, Step 6) against whatever is currently in examples/applications/.
 
-This is the mechanical, non-LLM part of the recalibration agent — reading
+This is the mechanical, non-LLM part of the recalibration agent – reading
 logged outcomes and computing per-component positive/negative score means.
 Making this a real script (not a one-off calculation in TESTING.md) means
 it's re-verified on every push via CI, not just checked once by hand.
 
 The LLM-interpreted parts of SKILL.md (actual scoring, live-search
-verification) aren't reproducible this way — they need an independent
+verification) aren't reproducible this way – they need an independent
 Claude session run, not a script. See TESTING.md for what this does and
 doesn't prove.
 
@@ -72,7 +72,7 @@ def main():
         all_vals = pos_vals + neg_vals
         pos_mean = statistics.mean(pos_vals) if pos_vals else float("nan")
         neg_mean = statistics.mean(neg_vals) if neg_vals else float("nan")
-        variance_flag = " (NO VARIANCE — agent has zero signal here)" if len(set(all_vals)) <= 1 else ""
+        variance_flag = " (NO VARIANCE – agent has zero signal here)" if len(set(all_vals)) <= 1 else ""
         if variance_flag:
             no_variance.append(c)
         print(f"{c:12s} positive mean={pos_mean:5.1f}  negative mean={neg_mean:5.1f}  diff={pos_mean - neg_mean:+5.1f}{variance_flag}")
@@ -81,7 +81,7 @@ def main():
     if no_variance:
         print(f"Components with no variance in example data: {', '.join(no_variance)}")
     else:
-        print("All five components have variance across the example data — the recalibration agent has some signal on every component.")
+        print("All five components have variance across the example data – the recalibration agent has some signal on every component.")
 
     if not gate_passes:
         print("\nFAIL: example dataset no longer crosses the recalibration gate threshold.")

@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 44
-  tier: "Tier 4 — Long shot"
+  tier: "Tier 4 – Long shot"
   locked: false
   breakdown:
     jd_fit: 29
@@ -25,7 +25,7 @@ comp_band: null
 ---
 
 ## JD summary
-Director of Product at Vireo Networks. Scored, not applied — large, well-known network infrastructure company; score alone made this a low priority.
+Director of Product at Vireo Networks. Scored, not applied – large, well-known network infrastructure company; score alone made this a low priority.
 
 ## Score rationale
 - JD fit: 29/45
@@ -35,4 +35,4 @@ Director of Product at Vireo Networks. Scored, not applied — large, well-known
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

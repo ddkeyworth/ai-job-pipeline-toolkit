@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 52
-  tier: "Tier 4 — Long shot"
+  tier: "Tier 4 – Long shot"
   locked: false
   breakdown:
     jd_fit: 30
@@ -25,7 +25,7 @@ comp_band: "£95k-110k base + bonus (unconfirmed split)"
 ---
 
 ## JD summary
-Director of Product at Meridian Cloud Systems. Large, well-known public cloud platform — huge applicant pool expected.
+Director of Product at Meridian Cloud Systems. Large, well-known public cloud platform – huge applicant pool expected.
 
 ## Score rationale
 - JD fit: 30/45
@@ -35,4 +35,4 @@ Director of Product at Meridian Cloud Systems. Large, well-known public cloud pl
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

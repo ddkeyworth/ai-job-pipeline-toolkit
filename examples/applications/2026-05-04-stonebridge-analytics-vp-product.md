@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 80
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 38
@@ -40,13 +40,13 @@ No estimated fields.
 ## Briefing pack
 
 ### Company facts
-Stonebridge Analytics — ~300 employees, Series C. See `examples/companies/stonebridge-analytics.json` for the cached source.
+Stonebridge Analytics – ~300 employees, Series C. See `examples/companies/stonebridge-analytics.json` for the cached source.
 
 ### Regional intelligence
 | Region | Relationship style | Decision style | Key nuances |
 |---|---|---|---|
-| UK | Direct, commercial | Moderate speed | Existing customer base concentrated here — role likely leans on this market's playbook as the template for expansion elsewhere. |
-| US | Results-first | Fast at SME, slower at enterprise | Stated growth target for the year — worth asking directly how much of the VP mandate is US-expansion-specific versus global product ownership. |
+| UK | Direct, commercial | Moderate speed | Existing customer base concentrated here – role likely leans on this market's playbook as the template for expansion elsewhere. |
+| US | Results-first | Fast at SME, slower at enterprise | Stated growth target for the year – worth asking directly how much of the VP mandate is US-expansion-specific versus global product ownership. |
 
 ### Comp
 £122k-135k OTE, confirmed above floor
@@ -55,10 +55,10 @@ Stonebridge Analytics — ~300 employees, Series C. See `examples/companies/ston
 Strong domain fit; moderate competition given company's mid-market scale.
 
 ### Unique selling points
-- **Mid-market SaaS scaling experience.** Operated at a similar company scale (a few hundred employees) previously — familiar with the specific coordination overhead at this size, distinct from either startup or enterprise.
+- **Mid-market SaaS scaling experience.** Operated at a similar company scale (a few hundred employees) previously – familiar with the specific coordination overhead at this size, distinct from either startup or enterprise.
 
 ### Interviewer profiles
-#### Farah Idris — Chief Product Officer
+#### Farah Idris – Chief Product Officer
 
 Final-round interviewer; previously VP Product at a larger analytics company before joining Stonebridge as CPO. [estimated]
 
@@ -67,19 +67,19 @@ Final-round interviewer; previously VP Product at a larger analytics company bef
 
 ### Prep questions
 **Q: How would you balance Wrenfield-style ownership versus a larger organisation's coordination overhead?**
-A: Larger orgs need more explicit alignment mechanisms (documented decisions, wider stakeholder review) — the skill is knowing when to invoke that process versus when it's genuinely a unilateral call.
+A: Larger orgs need more explicit alignment mechanisms (documented decisions, wider stakeholder review) – the skill is knowing when to invoke that process versus when it's genuinely a unilateral call.
 
 ### Questions to ask
 - What's the biggest source of friction between Product and Sales today?
 
 ### Watch-outs
-Slightly lower comp than Wrenfield — worth comparing full package, not just base, before deciding.
+Slightly lower comp than Wrenfield – worth comparing full package, not just base, before deciding.
 
 ### Notes
-Second live offer alongside Wrenfield — decision should weigh total package and role scope, not just base comp, before the Wrenfield deadline forces the choice.
+Second live offer alongside Wrenfield – decision should weigh total package and role scope, not just base comp, before the Wrenfield deadline forces the choice.
 
 ### Interview stage log
-- Stage 1 — 2026-05-11 — Recruiter screen — positive, moved forward
-- Stage 2 — 2026-05-19 — Hiring manager interview — positive, moved forward
-- Stage 3 — 2026-05-28 — Final panel — positive
-- Offer — 2026-06-02 — Extended, under review
+- Stage 1 – 2026-05-11 – Recruiter screen – positive, moved forward
+- Stage 2 – 2026-05-19 – Hiring manager interview – positive, moved forward
+- Stage 3 – 2026-05-28 – Final panel – positive
+- Offer – 2026-06-02 – Extended, under review

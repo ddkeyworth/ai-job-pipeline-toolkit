@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 63
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 34

@@ -1,21 +1,21 @@
 ---
 name: job-pipeline
-description: Tracks job applications, scores job descriptions for callback likelihood, and maintains a visual pipeline dashboard. Use this skill whenever the user wants to score a job description, log an application, update an application's status or outcome, review their pipeline, or ask for the dashboard to be regenerated. Works entirely on the user's own tracked data — never on data belonging to anyone else.
+description: Tracks job applications, scores job descriptions for callback likelihood, and maintains a visual pipeline dashboard. Use this skill whenever the user wants to score a job description, log an application, update an application's status or outcome, review their pipeline, or ask for the dashboard to be regenerated. Works entirely on the user's own tracked data – never on data belonging to anyone else.
 ---
 
 # Job Pipeline Toolkit
 
 An open-source job-application tracker and JD-fit scorer. This skill runs entirely inside your own Claude.ai or Cowork session, using your own account. It never contacts anyone on your behalf, never applies to anything, and never sends your data anywhere.
 
-Read `schema/SCHEMA.md` before doing anything else — it defines the file format everything below assumes.
+Read `schema/SCHEMA.md` before doing anything else – it defines the file format everything below assumes.
 
 ---
 
-## Security constraints — never violate these
+## Security constraints – never violate these
 
 - **No contact with anyone.** This skill researches and scores. It never emails, messages, applies, or otherwise contacts a company, recruiter, or any third party on the user's behalf, under any circumstance, even if asked to draft something "and send it." Drafting is fine; sending is not this skill's job.
 - **No data leaves the user's own environment.** Application data, scores, and the dashboard stay inside the user's own Claude Project or local folder. Never suggest uploading tracked data anywhere else.
-- **Never operate on someone else's data.** If asked to score or track a role on behalf of anyone other than the user, decline — this skill has no way to verify authorisation and the CV-baseline/comp-floor logic below assumes a single person's own history.
+- **Never operate on someone else's data.** If asked to score or track a role on behalf of anyone other than the user, decline – this skill has no way to verify authorisation and the CV-baseline/comp-floor logic below assumes a single person's own history.
 - **Live search is read-only research**, not outreach. It looks things up; it never posts, submits, or replies anywhere.
 
 ---
@@ -23,7 +23,7 @@ Read `schema/SCHEMA.md` before doing anything else — it defines the file forma
 ## Platform detection
 
 - **Running in Cowork** (or any environment with local file access): read and write application files directly in the folder the user has pointed you at. Write the regenerated dashboard back to that same folder.
-- **Running in a Claude.ai Project**: read application files from the Project's knowledge files. Regenerate the dashboard as an Artifact when asked — Claude.ai has no access to a local filesystem, so there's no "write it back to disk" step; the Artifact *is* the output.
+- **Running in a Claude.ai Project**: read application files from the Project's knowledge files. Regenerate the dashboard as an Artifact when asked – Claude.ai has no access to a local filesystem, so there's no "write it back to disk" step; the Artifact *is* the output.
 
 If you're not sure which context you're in, ask once rather than guessing.
 
@@ -31,49 +31,49 @@ If you're not sure which context you're in, ask once rather than guessing.
 
 ## Step 1: Find the CV baseline
 
-Locate the user's current CV/resume among their files (Project knowledge or local folder). If more than one candidate file exists, use the most recently modified one and say which you used. If none exists, ask for it — do not score anything without it.
+Locate the user's current CV/resume among their files (Project knowledge or local folder). If more than one candidate file exists, use the most recently modified one and say which you used. If none exists, ask for it – do not score anything without it.
 
 ## Step 2: Score a job description (100 points)
 
-Load `config/weights.json` for the current component weights — do not hardcode numbers here; the config file is the single source of truth so a user's edits are always respected.
+Load `config/weights.json` for the current component weights – do not hardcode numbers here; the config file is the single source of truth so a user's edits are always respected.
 
 ### JD fit
 How precisely the CV maps to the stated requirements: seniority, years of experience, specific must-have skills, domain/sector adjacency. Form one overall judgement rather than mechanically averaging sub-parts.
 
 ### Seniority alignment
-**Asymmetric.** Applying below one's evidenced level should rarely be penalised. A severe stretch upward — a role requiring scope or ownership the CV doesn't evidence — is the one scenario that should score near zero regardless of everything else. Don't split the difference.
+**Asymmetric.** Applying below one's evidenced level should rarely be penalised. A severe stretch upward – a role requiring scope or ownership the CV doesn't evidence – is the one scenario that should score near zero regardless of everything else. Don't split the difference.
 
 ### Competition estimate
-The component most sensitive to getting company facts right. Base this on company scale and profile (headcount, funding stage, public/private, brand recognition) rather than role seniority — massive or famous employers draw large pools regardless of the specific role. **This is what the live-search verification agent (below) exists to check** — don't estimate company scale from memory when a live lookup is available.
+The component most sensitive to getting company facts right. Base this on company scale and profile (headcount, funding stage, public/private, brand recognition) rather than role seniority – massive or famous employers draw large pools regardless of the specific role. **This is what the live-search verification agent (below) exists to check** – don't estimate company scale from memory when a live lookup is available.
 
-**Never use a platform's own "N people applied" counter as evidence** — it's a snapshot with no reliable relationship to the eventual total.
+**Never use a platform's own "N people applied" counter as evidence** – it's a snapshot with no reliable relationship to the eventual total.
 
 ### Comp alignment
-Score against the user's stated comp floor (ask if not yet known). Unknown comp is never penalised — only a confirmed band below the floor is.
+Score against the user's stated comp floor (ask if not yet known). Unknown comp is never penalised – only a confirmed band below the floor is.
 
 ### Blockers
-Right to work, geography, visa, or other confirmed hard requirements. Test carefully before scoring low here — a soft inconvenience is not a blocker.
+Right to work, geography, visa, or other confirmed hard requirements. Test carefully before scoring low here – a soft inconvenience is not a blocker.
 
 ### Output
-State the score, tier, a one-line rationale per component, and explicitly flag any component that's an estimate rather than a confirmed fact (e.g. an anonymised listing with unverifiable company details). Create the application file per `schema/SCHEMA.md` with `status: scored` and `date_applied: null` — scoring a JD doesn't mean it's been applied to. Not every scored JD gets a follow-up application, and the pipeline should show that honestly rather than only tracking JDs after the fact.
+State the score, tier, a one-line rationale per component, and explicitly flag any component that's an estimate rather than a confirmed fact (e.g. an anonymised listing with unverifiable company details). Create the application file per `schema/SCHEMA.md` with `status: scored` and `date_applied: null` – scoring a JD doesn't mean it's been applied to. Not every scored JD gets a follow-up application, and the pipeline should show that honestly rather than only tracking JDs after the fact.
 
 ## Step 3: Live-search verification agent
 
-Triggered automatically as part of scoring (Step 2), not a separate user request — but see the caching rule below, which is what keeps this cheap.
+Triggered automatically as part of scoring (Step 2), not a separate user request – but see the caching rule below, which is what keeps this cheap.
 
-1. Check `examples/companies/<company-slug>.json` (or the user's own `companies/` folder) for an existing entry less than 90 days old. If found, use it — **do not re-search**.
+1. Check `examples/companies/<company-slug>.json` (or the user's own `companies/` folder) for an existing entry less than 90 days old. If found, use it – **do not re-search**.
 2. If missing or stale, run live search to confirm: company size/headcount, funding stage or public status, sector, and anything relevant to the specific role. Also do a brief legitimacy sanity-check for anonymised or low-signal listings.
 3. Write the result to `companies/<company-slug>.json` following the schema, marking `confidence` as `confirmed` or `estimated`.
-4. Tell the user the score took a moment longer because it verified live, when that happens — never silent.
-5. **When the user identifies a named interviewer** (hiring manager, panel member — for a Briefing pack, see Step 4), run the same kind of bounded, read-only lookup on that individual: professional background, tenure, prior companies, anything publicly relevant to how they might approach the interview. Same confirmed/estimated sourcing transparency as company facts. **Explicit caveat, every time a lookup is thin:** public bios for individuals are typically sparser and staler than company data — flag that plainly rather than presenting a thin snippet with the same confidence as a verified funding round.
+4. Tell the user the score took a moment longer because it verified live, when that happens – never silent.
+5. **When the user identifies a named interviewer** (hiring manager, panel member – for a Briefing pack, see Step 4), run the same kind of bounded, read-only lookup on that individual: professional background, tenure, prior companies, anything publicly relevant to how they might approach the interview. Same confirmed/estimated sourcing transparency as company facts. **Explicit caveat, every time a lookup is thin:** public bios for individuals are typically sparser and staler than company data – flag that plainly rather than presenting a thin snippet with the same confidence as a verified funding round.
 
 This agent only ever reads public information about a company or a named individual. It does not contact either.
 
 ## Step 4: Log an application / update status
 
-Update the application file per `schema/SCHEMA.md` as things change, and update `status_date` to the date of every transition — it's the single source of truth the dashboard and recalibration agent both rely on, not a field to leave stale.
+Update the application file per `schema/SCHEMA.md` as things change, and update `status_date` to the date of every transition – it's the single source of truth the dashboard and recalibration agent both rely on, not a field to leave stale.
 
-**Status transitions.** The state machine is small and exhaustive — see `schema/SCHEMA.md` for the full table:
+**Status transitions.** The state machine is small and exhaustive – see `schema/SCHEMA.md` for the full table:
 
 ```
 scored       -> applied | didnt_apply
@@ -81,39 +81,39 @@ applied      -> rejected | assumed_rejected | interviewing
 interviewing -> offer | rejected_after_interview | withdrew_after_interview
 ```
 
-- When the user confirms they've actually submitted an application for a role already scored under Step 2, move `status` from `scored` to `applied` and set `date_applied` to the real submission date. If instead they decide **not** to submit, move `status` to `didnt_apply` — don't just leave it at `scored` indefinitely, which should mean "still deciding," not "decided against it."
-- When a rejection or withdrawal comes in, check whether `status` has ever been `interviewing` for this application — if it has, use `rejected_after_interview`/`withdrew_after_interview`, not the plain `rejected`. This isn't pedantry: reaching interview stage validates the scoring rubric's prediction (jd_fit/seniority/competition) regardless of what happens afterward, and collapsing that into a flat rejection throws away exactly the signal Step 6 needs. There's no separate status for withdrawing after applying but before interviewing — log it as `rejected` and note the real reason (e.g. comp confirmed below floor) in the JD summary; it's rare enough, and ambiguous enough for the recalibration signal, that it doesn't need its own state.
-- `assumed_rejected` is for silence-based inference only — see Step 5. Never set it just because the user assumes a rejection is likely; only the configured silence window or the user's own explicit call justifies it.
-- Once `status` reaches any closed status, or `offer`, set `score.locked: true` and **never revise a locked score again for any reason** — it's a prediction evaluated by the outcome, not adjusted to match it.
+- When the user confirms they've actually submitted an application for a role already scored under Step 2, move `status` from `scored` to `applied` and set `date_applied` to the real submission date. If instead they decide **not** to submit, move `status` to `didnt_apply` – don't just leave it at `scored` indefinitely, which should mean "still deciding," not "decided against it."
+- When a rejection or withdrawal comes in, check whether `status` has ever been `interviewing` for this application – if it has, use `rejected_after_interview`/`withdrew_after_interview`, not the plain `rejected`. This isn't pedantry: reaching interview stage validates the scoring rubric's prediction (jd_fit/seniority/competition) regardless of what happens afterward, and collapsing that into a flat rejection throws away exactly the signal Step 6 needs. There's no separate status for withdrawing after applying but before interviewing – log it as `rejected` and note the real reason (e.g. comp confirmed below floor) in the JD summary; it's rare enough, and ambiguous enough for the recalibration signal, that it doesn't need its own state.
+- `assumed_rejected` is for silence-based inference only – see Step 5. Never set it just because the user assumes a rejection is likely; only the configured silence window or the user's own explicit call justifies it.
+- Once `status` reaches any closed status, or `offer`, set `score.locked: true` and **never revise a locked score again for any reason** – it's a prediction evaluated by the outcome, not adjusted to match it.
 
-**Next interview date:** every time an `interviewing` application is updated, ask whether the next stage has a confirmed date and set `next_interview_date` accordingly — to that date if known, or back to `null` if the last stage just happened and the next one isn't booked yet. This is what the dashboard uses to show what's actually coming up next; a stale date left in the field is worse than no date at all.
+**Next interview date:** every time an `interviewing` application is updated, ask whether the next stage has a confirmed date and set `next_interview_date` accordingly – to that date if known, or back to `null` if the last stage just happened and the next one isn't booked yet. This is what the dashboard uses to show what's actually coming up next; a stale date left in the field is worse than no date at all.
 
-**Briefing pack — standard sections, not a menu.** Once `status` moves to `interviewing` or beyond, add the Briefing pack section per `schema/SCHEMA.md`. The five original fields (Company facts, Comp, Why it progressed/didn't, Watch-outs, Interview stage log) plus Unique selling points, Interviewer profiles, Prep questions, Questions to ask, and Notes are all **standard** — generate them by default, don't ask the user's permission first or wait to be asked for "more depth."
+**Briefing pack – standard sections, not a menu.** Once `status` moves to `interviewing` or beyond, add the Briefing pack section per `schema/SCHEMA.md`. The five original fields (Company facts, Comp, Why it progressed/didn't, Watch-outs, Interview stage log) plus Unique selling points, Interviewer profiles, Prep questions, Questions to ask, and Notes are all **standard** – generate them by default, don't ask the user's permission first or wait to be asked for "more depth."
 
-- **Unique selling points, Prep questions, Questions to ask:** always attempt real synthesis, grounded specifically in the user's own CV and cover letters (Step 1) cross-referenced against this role and company — never generic interview advice. A USP or answer without a traceable evidence source doesn't belong in the file.
-- **Interviewer profiles:** only for interviewers the user has actually named (see Step 3). If none are known yet, write the section anyway with a single placeholder entry — don't omit the section.
+- **Unique selling points, Prep questions, Questions to ask:** always attempt real synthesis, grounded specifically in the user's own CV and cover letters (Step 1) cross-referenced against this role and company – never generic interview advice. A USP or answer without a traceable evidence source doesn't belong in the file.
+- **Interviewer profiles:** only for interviewers the user has actually named (see Step 3). If none are known yet, write the section anyway with a single placeholder entry – don't omit the section.
 - **Notes:** the catch-all for anything situational (competitive landscape, warm-intro context, quotes from the user's own prior materials, a postmortem on why an earlier stage didn't land). Real content when there's something to say; a placeholder when there isn't.
-- **Regional intelligence is the one section that's genuinely optional, not standard.** Only add it when the role actually spans multiple markets in a way that matters for interview prep — a purely domestic role should never get an empty or placeholder regional table, just an omitted section. When it is relevant, this is general cultural/business-norm pattern knowledge, not a verified fact — say so plainly, the same way an estimated company fact gets flagged, rather than presenting it with company-facts-level confidence.
-- **`Currently unknown` placeholders** are for genuine gaps in the standard sections — mainly Interviewer profiles before a name is shared, and Notes before anything situational has come up. They should be rare for the other sections, not the default output: a tool that fills every section with confident-sounding genericness is worse than one that's honest about what it doesn't know yet, but a tool that defaults to placeholders everywhere it could have done real work is worse still. Write the placeholder as normal content in that section's own format (see `schema/SCHEMA.md` for the exact convention per section type — bullet, Q&A pair, profile block, or prose), always paired with a specific, actionable ask, e.g. `Currently unknown — share an interviewer's name if you'd like a profile added.` This is meant to be a living document, filled in over further conversation, not a one-shot output.
+- **Regional intelligence is the one section that's genuinely optional, not standard.** Only add it when the role actually spans multiple markets in a way that matters for interview prep – a purely domestic role should never get an empty or placeholder regional table, just an omitted section. When it is relevant, this is general cultural/business-norm pattern knowledge, not a verified fact – say so plainly, the same way an estimated company fact gets flagged, rather than presenting it with company-facts-level confidence.
+- **`Currently unknown` placeholders** are for genuine gaps in the standard sections – mainly Interviewer profiles before a name is shared, and Notes before anything situational has come up. They should be rare for the other sections, not the default output: a tool that fills every section with confident-sounding genericness is worse than one that's honest about what it doesn't know yet, but a tool that defaults to placeholders everywhere it could have done real work is worse still. Write the placeholder as normal content in that section's own format (see `schema/SCHEMA.md` for the exact convention per section type – bullet, Q&A pair, profile block, or prose), always paired with a specific, actionable ask, e.g. `Currently unknown – share an interviewer's name if you'd like a profile added.` This is meant to be a living document, filled in over further conversation, not a one-shot output.
 
 ## Step 5: Regenerate the dashboard
 
-Read every application file, build the three-level view (Pipeline → Interview stage → Briefing pack) per the dashboard template, and output/write it. Do this whenever asked, or after logging a new application/outcome if the user seems to be working through their pipeline in one sitting — but don't regenerate proactively on every single small edit if it wasn't asked for; that's unnecessary cost for no benefit.
+Read every application file, build the three-level view (Pipeline → Interview stage → Briefing pack) per the dashboard template, and output/write it. Do this whenever asked, or after logging a new application/outcome if the user seems to be working through their pipeline in one sitting – but don't regenerate proactively on every single small edit if it wasn't asked for; that's unnecessary cost for no benefit.
 
-**Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date`. For each one past the threshold, **propose** marking it `assumed_rejected` — state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once. `assumed_rejected` is only reachable from `applied`, per the state machine in Step 4 — an `interviewing` application that goes quiet stays `interviewing` until the user reports an actual outcome, not silently reclassified.
+**Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date`. For each one past the threshold, **propose** marking it `assumed_rejected` – state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once. `assumed_rejected` is only reachable from `applied`, per the state machine in Step 4 – an `interviewing` application that goes quiet stays `interviewing` until the user reports an actual outcome, not silently reclassified.
 
 ## Step 6: Pipeline self-review / recalibration agent
 
-**User-triggered only** — never run this automatically, not even after logging an outcome. Only run it when explicitly asked (e.g. "review my weights," "am I scoring this right?").
+**User-triggered only** – never run this automatically, not even after logging an outcome. Only run it when explicitly asked (e.g. "review my weights," "am I scoring this right?").
 
-1. Read every application file's `status` and `score.value`. Classify each via `scripts/_status.py`'s `recalibration_signal()`: reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrew_after_interview`) is **positive** regardless of the eventual outcome; a confirmed negative without ever reaching interview (`rejected`, `assumed_rejected`) is **negative**; everything else (`didnt_apply`, or a status that hasn't resolved yet) is excluded — it's a deliberate pass or hasn't resolved yet, neither of which says anything about candidate fit.
+1. Read every application file's `status` and `score.value`. Classify each via `scripts/_status.py`'s `recalibration_signal()`: reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrew_after_interview`) is **positive** regardless of the eventual outcome; a confirmed negative without ever reaching interview (`rejected`, `assumed_rejected`) is **negative**; everything else (`didnt_apply`, or a status that hasn't resolved yet) is excluded – it's a deliberate pass or hasn't resolved yet, neither of which says anything about candidate fit.
 2. Check against `config/weights.json → recalibration` thresholds: at least `min_logged_outcomes` applications with a signal, and at least `min_positive_outcomes` positive ones.
 3. **Below threshold: say so plainly.** State how many logged and positive signals exist now, how many more are needed, and stop there. Do not propose a change anyway "for what it's worth."
 4. **At or above threshold:** look for components whose scores don't seem to correlate with the positive/negative split (e.g. a component that's consistently high on negatives and low on positives suggests it's mis-weighted). Propose a specific, small adjustment to `config/weights.json`, with:
    - The reasoning in plain terms (which component, what pattern, how many data points it's based on).
-   - An explicit confidence caveat — this is a weak signal from a small sample, not a validated finding, however large the sample gets in absolute terms.
+   - An explicit confidence caveat – this is a weak signal from a small sample, not a validated finding, however large the sample gets in absolute terms.
    - The change presented for the user's approval, never applied silently.
-5. This checks calibration drift against outcomes. It does not audit the scoring logic itself for bugs — that's out of scope for this agent.
+5. This checks calibration drift against outcomes. It does not audit the scoring logic itself for bugs – that's out of scope for this agent.
 
 ---
 

@@ -9,7 +9,7 @@ source: "Referral"
 
 score:
   value: 70
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 36

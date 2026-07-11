@@ -1,4 +1,4 @@
-# No API keys or secrets are used by this project — this is just standard hygiene.
+# No API keys or secrets are used by this project – this is just standard hygiene.
 .env
 .env.*
 __pycache__/

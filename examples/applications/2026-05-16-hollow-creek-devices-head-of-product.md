@@ -9,7 +9,7 @@ source: "Company site"
 
 score:
   value: 72
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 37

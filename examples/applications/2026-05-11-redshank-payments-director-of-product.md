@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 71
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 36
@@ -25,7 +25,7 @@ comp_band: "£95k-105k base, confirmed below floor"
 ---
 
 ## JD summary
-Director of Product at Redshank Payments. Scored well on fit, but the comp band came back confirmed below floor before applying — decided not to submit rather than pursue a role that couldn't clear the floor regardless of interview performance.
+Director of Product at Redshank Payments. Scored well on fit, but the comp band came back confirmed below floor before applying – decided not to submit rather than pursue a role that couldn't clear the floor regardless of interview performance.
 
 ## Score rationale
 - JD fit: 36/45

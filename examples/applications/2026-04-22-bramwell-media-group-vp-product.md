@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 48
-  tier: "Tier 4 — Long shot"
+  tier: "Tier 4 – Long shot"
   locked: true
   breakdown:
     jd_fit: 29
@@ -25,7 +25,7 @@ comp_band: null
 ---
 
 ## JD summary
-VP Product at Bramwell Media Group. Large, famous media brand — very high competition.
+VP Product at Bramwell Media Group. Large, famous media brand – very high competition.
 
 ## Score rationale
 - JD fit: 29/45
@@ -35,4 +35,4 @@ VP Product at Bramwell Media Group. Large, famous media brand — very high comp
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.

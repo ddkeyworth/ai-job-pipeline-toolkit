@@ -9,7 +9,7 @@ source: "Referral"
 
 score:
   value: 88
-  tier: "Tier 1 — Exceptional callback odds"
+  tier: "Tier 1 – Exceptional callback odds"
   locked: true
   breakdown:
     jd_fit: 42
@@ -40,7 +40,7 @@ No estimated fields.
 ## Briefing pack
 
 ### Company facts
-Wrenfield Software — ~60 employees, Series B. See `examples/companies/wrenfield-software.json` for the cached source.
+Wrenfield Software – ~60 employees, Series B. See `examples/companies/wrenfield-software.json` for the cached source.
 
 ### Comp
 £130k-145k OTE, confirmed above floor
@@ -49,11 +49,11 @@ Wrenfield Software — ~60 employees, Series B. See `examples/companies/wrenfiel
 Very close mandate match plus a warm referral; comp confirmed early and above floor.
 
 ### Unique selling points
-- **Direct mandate match.** Role scope mirrors a product owned end-to-end at a similarly-staged prior company — not an adjacent-domain stretch.
+- **Direct mandate match.** Role scope mirrors a product owned end-to-end at a similarly-staged prior company – not an adjacent-domain stretch.
 - **Warm referral already vouching for delivery track record.** Referral came from a former colleague now at Wrenfield who worked directly with the candidate on a prior shipped product.
 
 ### Interviewer profiles
-#### Dev Ahluwalia — VP Product (line manager)
+#### Dev Ahluwalia – VP Product (line manager)
 
 Ran the Stage 2 and Stage 3 rounds; joined Wrenfield at Series A after a scaling-stage role at a larger SaaS company. [estimated]
 
@@ -62,17 +62,17 @@ Ran the Stage 2 and Stage 3 rounds; joined Wrenfield at Series A after a scaling
 
 ### Prep questions
 **Q: What would make you turn down an otherwise-solid offer?**
-A: A comp band confirmed below floor, or a mandate that turns out narrower in practice than described in the process — neither applies here, comp is confirmed above floor.
+A: A comp band confirmed below floor, or a mandate that turns out narrower in practice than described in the process – neither applies here, comp is confirmed above floor.
 
 **Q: How do you evaluate a smaller company's risk profile before accepting?**
-A: Runway relative to current burn, and whether the role is backed by the current funding round or contingent on the next one — worth confirming explicitly during the offer conversation, not assuming.
+A: Runway relative to current burn, and whether the role is backed by the current funding round or contingent on the next one – worth confirming explicitly during the offer conversation, not assuming.
 
 ### Questions to ask
 - Is there flexibility on the start date given other processes still in flight?
 - What does the first-90-days success definition look like from Dev's side specifically?
 
 ### Watch-outs
-- **Decision deadline is tight.** Relative to other processes still in flight — worth being direct about needing a short extension if one is required.
+- **Decision deadline is tight.** Relative to other processes still in flight – worth being direct about needing a short extension if one is required.
 
 ### Notes
 #### Negotiation notes
@@ -80,7 +80,7 @@ A: Runway relative to current burn, and whether the role is backed by the curren
 Comp already confirmed above floor, so negotiation leverage is mainly about start date and any signing considerations, not base/OTE. Worth comparing total package (not just base) against Stonebridge before deciding between the two.
 
 ### Interview stage log
-- Stage 1 — 2026-05-06 — Recruiter screen — positive, moved forward
-- Stage 2 — 2026-05-14 — Hiring manager interview — positive, moved forward
-- Stage 3 — 2026-05-21 — Final panel — positive
-- Offer — 2026-05-27 — Extended, under review
+- Stage 1 – 2026-05-06 – Recruiter screen – positive, moved forward
+- Stage 2 – 2026-05-14 – Hiring manager interview – positive, moved forward
+- Stage 3 – 2026-05-21 – Final panel – positive
+- Offer – 2026-05-27 – Extended, under review

@@ -4,20 +4,20 @@ Consistency checks that nothing else in CI catches:
 
 1. SCHEMA.md's own documented Briefing pack example is round-tripped through
    the real parser (scripts/build_dashboard.py's extract_bp_section() and
-   friends) — every heading the docs claim is supported must actually parse
+   friends) – every heading the docs claim is supported must actually parse
    to non-empty content. This exists because that exact class of bug shipped
    once already this session: SCHEMA.md documented "### Why it progressed /
    didn't" while the parser looked for the exact string "Why it progressed",
    and nothing caught the mismatch until it was found by hand.
 
 2. docs/index.html's JS STATUS_ORDER array is regex-extracted and compared
-   against scripts/_status.py's ALL_STATUSES — the Python and JS sides of the
+   against scripts/_status.py's ALL_STATUSES – the Python and JS sides of the
    status vocabulary have no shared import (one's a script, one's browser
    JS), so nothing else would catch them drifting apart.
 
 3. docs/index.html's JS REACHED_INTERVIEW / NO_INTERVIEW_NEGATIVE arrays
    (used by the dashboard's headline "Interviewed"/"Rejected" counts) are
-   compared against scripts/_status.py's sets of the same name — same drift
+   compared against scripts/_status.py's sets of the same name – same drift
    risk as (2), for the headline stats added alongside the status vocabulary
    simplification.
 

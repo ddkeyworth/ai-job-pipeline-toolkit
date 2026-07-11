@@ -9,7 +9,7 @@ source: "Company site"
 
 score:
   value: 66
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 34

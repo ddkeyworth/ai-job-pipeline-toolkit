@@ -9,7 +9,7 @@ source: "Referral"
 
 score:
   value: 86
-  tier: "Tier 1 — Exceptional callback odds"
+  tier: "Tier 1 – Exceptional callback odds"
   locked: false
   breakdown:
     jd_fit: 42
@@ -25,7 +25,7 @@ comp_band: "£125k-138k OTE"
 ---
 
 ## JD summary
-Head of Product at Elmscroft Data. Scored today — strong match, referral in hand. Drafting the application next, not yet submitted.
+Head of Product at Elmscroft Data. Scored today – strong match, referral in hand. Drafting the application next, not yet submitted.
 
 ## Score rationale
 - JD fit: 42/45

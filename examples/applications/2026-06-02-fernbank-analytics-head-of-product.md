@@ -9,7 +9,7 @@ source: "Referral"
 
 score:
   value: 81
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: false
   breakdown:
     jd_fit: 40

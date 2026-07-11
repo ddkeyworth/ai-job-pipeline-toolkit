@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 73
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: false
   breakdown:
     jd_fit: 37
@@ -25,7 +25,7 @@ comp_band: "£115k-128k OTE"
 ---
 
 ## JD summary
-Head of Product at Harrowgate Systems. Scored, not yet applied — still deciding whether to prioritise this over other open processes.
+Head of Product at Harrowgate Systems. Scored, not yet applied – still deciding whether to prioritise this over other open processes.
 
 ## Score rationale
 - JD fit: 37/45

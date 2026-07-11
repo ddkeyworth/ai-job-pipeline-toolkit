@@ -1,5 +1,5 @@
 {
-  "_notes": "Default starting weights, not validated for any individual user. Edit the 'max' values to change scoring emphasis — they should sum to 100. See README.md for guidance before changing these on day one: with no outcome history yet, you have no basis to know your own weighting should differ from the default. Let the recalibration agent (see SKILL.md) suggest changes once you have enough outcome data, rather than guessing upfront.",
+  "_notes": "Default starting weights, not validated for any individual user. Edit the 'max' values to change scoring emphasis – they should sum to 100. See README.md for guidance before changing these on day one: with no outcome history yet, you have no basis to know your own weighting should differ from the default. Let the recalibration agent (see SKILL.md) suggest changes once you have enough outcome data, rather than guessing upfront.",
 
   "components": {
     "jd_fit": {
@@ -16,7 +16,7 @@
     },
     "comp": {
       "max": 10,
-      "description": "Alignment against the candidate's stated compensation floor. Unknown comp is never penalised — only a confirmed band below the floor is."
+      "description": "Alignment against the candidate's stated compensation floor. Unknown comp is never penalised – only a confirmed band below the floor is."
     },
     "blockers": {
       "max": 10,
@@ -27,12 +27,12 @@
   "recalibration": {
     "min_logged_outcomes": 20,
     "min_positive_outcomes": 3,
-    "_notes": "The recalibration agent will not propose any weight change below these thresholds — it will say plainly that there isn't enough data yet. Even at the threshold, treat any suggestion as a weak signal, not a validated finding. These numbers are a deliberately conservative floor, not a target to rush toward. 'Positive'/'negative' here are derived from status via scripts/_status.py — reaching interview stage counts as positive even if the process later ends in rejection or withdrawal."
+    "_notes": "The recalibration agent will not propose any weight change below these thresholds – it will say plainly that there isn't enough data yet. Even at the threshold, treat any suggestion as a weak signal, not a validated finding. These numbers are a deliberately conservative floor, not a target to rush toward. 'Positive'/'negative' here are derived from status via scripts/_status.py – reaching interview stage counts as positive even if the process later ends in rejection or withdrawal."
   },
 
   "pipeline_hygiene": {
     "assumed_rejected_after_days": 21,
-    "_notes": "When regenerating the dashboard or reviewing the pipeline, the skill checks applied/awaiting_recruiter/interviewing applications with no activity since status_date past this many days, and proposes marking them assumed_rejected — never sets it silently. 21 days is a deliberately generous default; tighten it if your own experience says otherwise."
+    "_notes": "When regenerating the dashboard or reviewing the pipeline, the skill checks applied/awaiting_recruiter/interviewing applications with no activity since status_date past this many days, and proposes marking them assumed_rejected – never sets it silently. 21 days is a deliberately generous default; tighten it if your own experience says otherwise."
   },
 
   "company_cache_ttl_days": 90

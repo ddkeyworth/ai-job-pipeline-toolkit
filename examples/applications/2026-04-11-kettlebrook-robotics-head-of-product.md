@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 74
-  tier: "Tier 2 — Strong callback odds"
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 38
@@ -25,7 +25,7 @@ comp_band: "£115k-130k OTE"
 ---
 
 ## JD summary
-Head of Product at Kettlebrook Robotics. Small robotics startup — good fit on paper, rejected anyway; not every high score converts.
+Head of Product at Kettlebrook Robotics. Small robotics startup – good fit on paper, rejected anyway; not every high score converts.
 
 ## Score rationale
 - JD fit: 38/45

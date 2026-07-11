@@ -9,7 +9,7 @@ source: "LinkedIn"
 
 score:
   value: 64
-  tier: "Tier 3 — Solid, worth applying"
+  tier: "Tier 3 – Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 34
@@ -25,7 +25,7 @@ comp_band: "£105k-118k OTE"
 ---
 
 ## JD summary
-Director of Product at Oakridge Ventures. Applied and heard nothing since — no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection.
+Director of Product at Oakridge Ventures. Applied and heard nothing since – no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection.
 
 ## Score rationale
 - JD fit: 34/45

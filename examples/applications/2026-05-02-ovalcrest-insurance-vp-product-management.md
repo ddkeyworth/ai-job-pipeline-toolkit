@@ -9,7 +9,7 @@ source: "Company site"
 
 score:
   value: 52
-  tier: "Tier 4 — Long shot"
+  tier: "Tier 4 – Long shot"
   locked: true
   breakdown:
     jd_fit: 30
@@ -35,4 +35,4 @@ VP Product Management at Ovalcrest Insurance. Large regulated insurer, broad poo
 - Blockers: 10/10
 
 ## Caveats
-Competition and/or comp estimated — see estimated_fields above.
+Competition and/or comp estimated – see estimated_fields above.
