@@ -47,23 +47,33 @@ Anything estimated rather than confirmed (anonymised listing, unclear comp split
 
 ### Status values
 
+The state machine is small and exhaustive — every status is reached from exactly one place:
+
+```
+scored       -> applied | didnt_apply
+applied      -> rejected | assumed_rejected | interviewing
+interviewing -> offer | rejected_after_interview | withdrew_after_interview
+```
+
 | Status | Meaning | Active / closed |
 |---|---|---|
-| `scored` | JD scored, nothing submitted yet | active |
+| `scored` | JD scored, decision pending | active |
 | `applied` | Submitted, no response yet | active |
-| `awaiting_recruiter` | Process paused on a recruiter-side gate (eligibility check, reference check) | active |
 | `interviewing` | In an active interview process | active |
 | `offer` | Offer extended | active |
+| `didnt_apply` | Scored, then a deliberate decision **not** to submit — distinct from `scored`, which means the decision is still pending | closed |
 | `rejected` | Rejected **before** ever reaching interview stage | closed |
 | `rejected_after_interview` | Rejected **after** reaching interview stage | closed |
-| `withdrawn` | Withdrew **before** interview stage | closed |
-| `withdrawn_after_interview` | Withdrew **after** interview stage | closed |
+| `withdrew_after_interview` | Withdrew **after** reaching interview stage | closed |
 | `assumed_rejected` | No response past a configurable silence window (`config/weights.json → pipeline_hygiene`) — inferred, never confirmed | closed |
-| `role_closed` | Listing pulled or filled externally — not a judgement on the candidate | closed |
+
+Two earlier candidates for this list — a recruiter-gating status and an externally-closed-role status — were tried and dropped: too messy to track in practice, and not enough signal to justify the extra states. Removed rather than left in unused.
 
 The pre/post-interview split on rejection and withdrawal is deliberate, not pedantic: reaching interview stage is itself a validated positive signal for the scoring rubric (jd_fit/seniority/competition correctly predicted a callback), regardless of what happens afterward. Collapsing `rejected_after_interview` into plain `rejected` would throw away exactly the signal the recalibration agent needs — see `SKILL.md` → Step 6.
 
-**`status: scored`** is the state every application starts in. This is deliberately first-class, not an afterthought: scoring happens *before* the decision to apply, and a real pipeline includes JDs that were scored and never applied to, not just ones that made the cut. `date_applied` stays `null` for as long as `status` is `scored`.
+**`status: scored`** is the state every application starts in. This is deliberately first-class, not an afterthought: scoring happens *before* the decision to apply, and a real pipeline includes JDs that were scored and never applied to, not just ones that made the cut. `date_applied` stays `null` for as long as `status` is `scored`. Once a deliberate decision is made not to apply, move to `didnt_apply` rather than leaving it at `scored` indefinitely — `scored` should mean "still deciding," not "decided against it."
+
+There is deliberately no status for withdrawing after applying but before interviewing — in practice that's rare enough, and ambiguous enough for the recalibration signal, that it's folded into `rejected` (see `SKILL.md` → Step 4 for how to log it honestly in the JD summary even though the status itself doesn't distinguish it).
 
 **`status_date`** updates every time `status` changes — it's what the dashboard's sort falls back to for closed applications, and what silence-based `assumed_rejected` detection compares against (see `SKILL.md` → Step 5). There is no separate `outcome`/`outcome_date` field — `status` plus `status_date` is the single source of truth for where an application stands; a second, independently-mutable field for the same fact is exactly the kind of thing that drifts out of sync over time.
 

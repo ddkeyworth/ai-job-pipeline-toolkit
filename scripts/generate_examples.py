@@ -78,23 +78,17 @@ APPLICATIONS = [
     ("2026-05-24", "Palisade Robotics", "VP Product", "rejected", 42, "Tier 4 — Long shot",
      36, 13, 12, 10, 3, [], "£140k-155k OTE", "LinkedIn",
      "Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support — a real, confirmed blocker, not a soft preference."),
-    ("2026-05-11", "Redshank Payments", "Director of Product", "withdrawn", 69, "Tier 3 — Solid, worth applying",
-     36, 12, 11, 10, 10, [], "£95k-105k base (below floor once confirmed)", "LinkedIn",
-     "Withdrew after confirmed comp band came in below floor."),
+    ("2026-05-11", "Redshank Payments", "Director of Product", "didnt_apply", 71, "Tier 2 — Strong callback odds",
+     36, 12, 11, 2, 10, [], "£95k-105k base, confirmed below floor", "LinkedIn",
+     "Scored well on fit, but the comp band came back confirmed below floor before applying — decided not to submit rather than pursue a role that couldn't clear the floor regardless of interview performance."),
     ("2026-05-30", "Oakridge Ventures", "Director of Product", "assumed_rejected", 64, "Tier 3 — Solid, worth applying",
      34, 11, 10, 9, 10, [], "£105k-118k OTE", "LinkedIn",
      "Applied and heard nothing since — no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection."),
-    ("2026-06-01", "Pinehollow Systems", "Head of Product", "role_closed", 71, "Tier 2 — Strong callback odds",
-     37, 13, 13, 8, 10, [], "£110k-125k OTE", "Company site",
-     "Listing disappeared from the careers page three weeks after applying, no response received — the recruiter later confirmed the role was pulled internally, not filled. Not a judgement on the application."),
-    ("2026-06-10", "Cross Timber Logistics", "VP Product", "awaiting_recruiter", 67, "Tier 3 — Solid, worth applying",
-     35, 12, 10, 10, 10, [], None, "LinkedIn",
-     "Applied and had a positive informal chat with the hiring manager, but the process is paused pending a right-to-work eligibility check on the recruiter's side before it can formally proceed."),
 ]
 
 # Fully fleshed briefing-pack applications — interviewing / offer / and the
 # two "reached interview, then didn't convert" statuses this needs a real
-# example of (rejected_after_interview, withdrawn_after_interview).
+# example of (rejected_after_interview, withdrew_after_interview).
 #
 # Alderwood, Wrenfield get full depth throughout. Pemberton deliberately
 # keeps some sections as genuine "Currently unknown" placeholders — the
@@ -332,7 +326,7 @@ BRIEFING_APPS = [
     ),
     dict(
         date="2026-05-19", status_date="2026-06-10",
-        company="Silverlake Systems", role="VP Product", status="withdrawn_after_interview",
+        company="Silverlake Systems", role="VP Product", status="withdrew_after_interview",
         score=71, tier="Tier 3 — Solid, worth applying", jd_fit=36, seniority=13, competition=12, comp=8, blockers=10,
         estimated_fields=["comp"], comp_band=None, source="Referral",
         company_size="~180 employees", funding="Series B", competition_tier="moderate",
@@ -373,7 +367,7 @@ def write_simple(app):
     fname = f"{date}-{slug}-{slugify(role)}.md"
     est = json.dumps(estimated)
     comp_band_yaml = f'"{comp_band}"' if comp_band else "null"
-    date_applied = "null" if status == "scored" else date
+    date_applied = "null" if status in ("scored", "didnt_apply") else date
     locked = "true" if should_lock(status) else "false"
     fm = f"""---
 company: "{company}"

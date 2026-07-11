@@ -3,7 +3,7 @@ company: "Silverlake Systems"
 role: "VP Product"
 date_scored: 2026-05-19
 date_applied: 2026-05-19
-status: withdrawn_after_interview
+status: withdrew_after_interview
 status_date: 2026-06-10
 source: "Referral"
 

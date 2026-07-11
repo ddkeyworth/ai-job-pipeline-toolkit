@@ -73,10 +73,16 @@ This agent only ever reads public information about a company or a named individ
 
 Update the application file per `schema/SCHEMA.md` as things change, and update `status_date` to the date of every transition — it's the single source of truth the dashboard and recalibration agent both rely on, not a field to leave stale.
 
-**Status transitions:**
-- When the user confirms they've actually submitted an application for a role already scored under Step 2, move `status` from `scored` to `applied` and set `date_applied` to the real submission date.
-- When a rejection or withdrawal comes in, check whether `status` has ever been `interviewing` for this application — if it has, use `rejected_after_interview`/`withdrawn_after_interview`, not the plain `rejected`/`withdrawn`. This isn't pedantry: reaching interview stage validates the scoring rubric's prediction (jd_fit/seniority/competition) regardless of what happens afterward, and collapsing that into a flat rejection throws away exactly the signal Step 6 needs.
-- Use `awaiting_recruiter` when the user reports the process is paused on a recruiter-side gate (eligibility check, reference check), and `role_closed` when a listing was pulled or filled externally rather than the candidate being personally rejected — neither is a judgement on the candidate, and `role_closed` should be excluded from recalibration accordingly (handled automatically by `scripts/_status.py`, nothing to do here).
+**Status transitions.** The state machine is small and exhaustive — see `schema/SCHEMA.md` for the full table:
+
+```
+scored       -> applied | didnt_apply
+applied      -> rejected | assumed_rejected | interviewing
+interviewing -> offer | rejected_after_interview | withdrew_after_interview
+```
+
+- When the user confirms they've actually submitted an application for a role already scored under Step 2, move `status` from `scored` to `applied` and set `date_applied` to the real submission date. If instead they decide **not** to submit, move `status` to `didnt_apply` — don't just leave it at `scored` indefinitely, which should mean "still deciding," not "decided against it."
+- When a rejection or withdrawal comes in, check whether `status` has ever been `interviewing` for this application — if it has, use `rejected_after_interview`/`withdrew_after_interview`, not the plain `rejected`. This isn't pedantry: reaching interview stage validates the scoring rubric's prediction (jd_fit/seniority/competition) regardless of what happens afterward, and collapsing that into a flat rejection throws away exactly the signal Step 6 needs. There's no separate status for withdrawing after applying but before interviewing — log it as `rejected` and note the real reason (e.g. comp confirmed below floor) in the JD summary; it's rare enough, and ambiguous enough for the recalibration signal, that it doesn't need its own state.
 - `assumed_rejected` is for silence-based inference only — see Step 5. Never set it just because the user assumes a rejection is likely; only the configured silence window or the user's own explicit call justifies it.
 - Once `status` reaches any closed status, or `offer`, set `score.locked: true` and **never revise a locked score again for any reason** — it's a prediction evaluated by the outcome, not adjusted to match it.
 
@@ -93,13 +99,13 @@ Update the application file per `schema/SCHEMA.md` as things change, and update 
 
 Read every application file, build the three-level view (Pipeline → Interview stage → Briefing pack) per the dashboard template, and output/write it. Do this whenever asked, or after logging a new application/outcome if the user seems to be working through their pipeline in one sitting — but don't regenerate proactively on every single small edit if it wasn't asked for; that's unnecessary cost for no benefit.
 
-**Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied`/`awaiting_recruiter`/`interviewing` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date` (or the most recent interview stage log entry, if later). For each one past the threshold, **propose** marking it `assumed_rejected` — state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once.
+**Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date`. For each one past the threshold, **propose** marking it `assumed_rejected` — state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once. `assumed_rejected` is only reachable from `applied`, per the state machine in Step 4 — an `interviewing` application that goes quiet stays `interviewing` until the user reports an actual outcome, not silently reclassified.
 
 ## Step 6: Pipeline self-review / recalibration agent
 
 **User-triggered only** — never run this automatically, not even after logging an outcome. Only run it when explicitly asked (e.g. "review my weights," "am I scoring this right?").
 
-1. Read every application file's `status` and `score.value`. Classify each via `scripts/_status.py`'s `recalibration_signal()`: reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrawn_after_interview`) is **positive** regardless of the eventual outcome; a confirmed negative without ever reaching interview (`rejected`, `withdrawn`, `assumed_rejected`) is **negative**; everything else (`role_closed`, or a status that hasn't resolved yet) is excluded — it says nothing about candidate fit, or hasn't resolved yet.
+1. Read every application file's `status` and `score.value`. Classify each via `scripts/_status.py`'s `recalibration_signal()`: reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrew_after_interview`) is **positive** regardless of the eventual outcome; a confirmed negative without ever reaching interview (`rejected`, `assumed_rejected`) is **negative**; everything else (`didnt_apply`, or a status that hasn't resolved yet) is excluded — it's a deliberate pass or hasn't resolved yet, neither of which says anything about candidate fit.
 2. Check against `config/weights.json → recalibration` thresholds: at least `min_logged_outcomes` applications with a signal, and at least `min_positive_outcomes` positive ones.
 3. **Below threshold: say so plainly.** State how many logged and positive signals exist now, how many more are needed, and stop there. Do not propose a change anyway "for what it's worth."
 4. **At or above threshold:** look for components whose scores don't seem to correlate with the positive/negative split (e.g. a component that's consistently high on negatives and low on positives suggests it's mis-weighted). Propose a specific, small adjustment to `config/weights.json`, with:

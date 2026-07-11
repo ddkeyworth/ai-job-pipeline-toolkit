@@ -8,16 +8,25 @@ docs/index.html's JS STATUS_ORDER array is the browser-side mirror of
 ALL_STATUSES below. scripts/verify_consistency.py checks the two stay in
 sync — this file is the single source of truth; the JS array is derived
 from it by hand and verified, not generated.
+
+The state machine is deliberately exhaustive and small — every status has
+exactly one place it's reached from:
+  scored       -> applied | didnt_apply
+  applied      -> rejected | assumed_rejected | interviewing
+  interviewing -> offer | rejected_after_interview | withdrew_after_interview
+
+Two earlier statuses (awaiting_recruiter, role_closed) were tried and
+dropped as too messy to track in practice / not useful signal — removed
+rather than kept around unused.
 """
 
-ACTIVE_STATUSES = ["scored", "applied", "awaiting_recruiter", "interviewing", "offer"]
+ACTIVE_STATUSES = ["scored", "applied", "interviewing", "offer"]
 CLOSED_STATUSES = [
+    "didnt_apply",
     "rejected",
     "rejected_after_interview",
-    "withdrawn",
-    "withdrawn_after_interview",
+    "withdrew_after_interview",
     "assumed_rejected",
-    "role_closed",
 ]
 ALL_STATUSES = ACTIVE_STATUSES + CLOSED_STATUSES
 
@@ -25,10 +34,11 @@ ALL_STATUSES = ACTIVE_STATUSES + CLOSED_STATUSES
 # (jd_fit/seniority/competition) regardless of what happens afterward —
 # a rejection after interview is a different signal than never being
 # interviewed at all, and must not be collapsed into the same bucket.
-REACHED_INTERVIEW = {"interviewing", "offer", "rejected_after_interview", "withdrawn_after_interview"}
-NO_INTERVIEW_NEGATIVE = {"rejected", "withdrawn", "assumed_rejected"}
-# role_closed / scored / applied / awaiting_recruiter: excluded from
-# recalibration — no verdict on candidate fit, or not yet resolved.
+REACHED_INTERVIEW = {"interviewing", "offer", "rejected_after_interview", "withdrew_after_interview"}
+NO_INTERVIEW_NEGATIVE = {"rejected", "assumed_rejected"}
+# didnt_apply / scored / applied: excluded from recalibration — a
+# deliberate pass or an unresolved application says nothing about whether
+# the scoring rubric's prediction was right.
 
 
 # Score-locking is a distinct concept from the active/closed dashboard
