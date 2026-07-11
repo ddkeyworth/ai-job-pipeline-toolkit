@@ -17,7 +17,9 @@ The example above is entirely synthetic — fictional companies, fictional appli
 
 - `SKILL.md` — a Claude skill that scores job descriptions for callback likelihood, tracks applications, and generates a dashboard.
 - A simple, documented file format for your applications (`schema/SCHEMA.md`) — one plain-text file per application, no database.
-- A static HTML dashboard (`docs/index.html`) that reads that data and shows a three-level view: your pipeline → interview stage detail → a full "briefing pack" per interview (company facts, comp, why it progressed, watch-outs, stage log). Default sort is prep-priority — active applications first, soonest known interview date on top, closed ones always last — with a switch to sort by score instead.
+- A static HTML dashboard (`docs/index.html`) that reads that data and shows a three-level view: your pipeline → interview stage detail → a full "briefing pack" per interview. Default sort is prep-priority — active applications first, soonest known interview date on top, closed ones always last — with a switch to sort by score instead.
+- An eleven-value status vocabulary (see `schema/SCHEMA.md`) that distinguishes rejection/withdrawal before vs. after reaching interview stage, plus silence-inferred rejection, recruiter-side gates, and externally closed roles — because reaching interview stage validates the scoring rubric's prediction regardless of what happens afterward, and a flat "rejected" throws that signal away.
+- Briefing packs are standard-depth by default once an application reaches interview stage — company facts, comp, unique selling points, named-interviewer profiles, prep questions, questions to ask, watch-outs, and a freeform notes catch-all, all generated from your own CV/cover letters, not generic advice. Genuine gaps say `Currently unknown` plus a specific ask, rather than being invented or omitted — a living document filled in over conversation, not a one-shot output.
 
 There is no backend, no server, and nothing to install beyond a text editor. The "AI" parts — scoring, live company research, dashboard generation — run as part of your normal Claude conversation, using your own Claude usage.
 
@@ -70,8 +72,9 @@ Explicitly out of scope, by design, not oversight:
 1. `python scripts/generate_examples.py` — regenerates `examples/` from scratch if it's ever changed.
 2. `python scripts/build_dashboard.py` — rebuilds `docs/index.html` from whatever's currently in `examples/applications/`.
 3. `python scripts/verify_recalibration.py` — sanity-checks the recalibration agent's gate and per-component signal against the current example data.
-4. Enable GitHub Pages: Settings → Pages → Source → Deploy from branch → `main` → `/docs`. No Actions workflow needed.
-5. Update the demo link at the top of this README once Pages is live.
+4. `python scripts/verify_consistency.py` — checks `SCHEMA.md`'s documented Briefing pack example actually parses, and that `docs/index.html`'s status list matches `scripts/_status.py`.
+5. Enable GitHub Pages: Settings → Pages → Source → Deploy from branch → `main` → `/docs`. No Actions workflow needed.
+6. Update the demo link at the top of this README once Pages is live.
 
 **Troubleshooting a stuck Pages deployment:** if GitHub Actions shows a "pages build and deployment" run as successful but the live site still serves old content (check via `curl -I` on the Pages URL and compare the `Last-Modified` header to your latest commit time), that's a GitHub-side publish issue, not a problem with the repo — the build succeeded but the CDN artifact didn't actually update. Fix: Settings → Pages → change the source folder to something else, save, then change it back to `/docs` and save again. This forces a fresh deployment and has reliably cleared the stuck state.
 

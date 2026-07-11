@@ -4,6 +4,7 @@ role: "VP Product"
 date_scored: 2026-04-08
 date_applied: 2026-04-08
 status: rejected
+status_date: 2026-04-08
 source: "Referral"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 8
     blockers: 10
   estimated_fields: []
-
-outcome: rejected
-outcome_date: 2026-04-08
 
 next_interview_date: null
 

@@ -4,6 +4,7 @@ role: "VP Product"
 date_scored: 2026-05-24
 date_applied: 2026-05-24
 status: rejected
+status_date: 2026-05-24
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 10
     blockers: 3
   estimated_fields: []
-
-outcome: rejected
-outcome_date: 2026-05-24
 
 next_interview_date: null
 

@@ -4,6 +4,7 @@ role: "Head of Product"
 date_scored: 2026-06-14
 date_applied: null
 status: scored
+status_date: 2026-06-14
 source: "Referral"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 10
     blockers: 10
   estimated_fields: []
-
-outcome: null
-outcome_date: null
 
 next_interview_date: null
 

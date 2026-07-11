@@ -1,37 +1,37 @@
 ---
-company: "Granite Peak Software"
+company: "Oakridge Ventures"
 role: "Director of Product"
-date_scored: 2026-04-29
-date_applied: 2026-04-29
-status: rejected
-status_date: 2026-04-29
+date_scored: 2026-05-30
+date_applied: 2026-05-30
+status: assumed_rejected
+status_date: 2026-05-30
 source: "LinkedIn"
 
 score:
-  value: 63
+  value: 64
   tier: "Tier 3 — Solid, worth applying"
   locked: true
   breakdown:
     jd_fit: 34
     seniority: 11
     competition: 10
-    comp: 8
+    comp: 9
     blockers: 10
   estimated_fields: []
 
 next_interview_date: null
 
-comp_band: null
+comp_band: "£105k-118k OTE"
 ---
 
 ## JD summary
-Director of Product at Granite Peak Software. Mid-size, moderately known enterprise software vendor.
+Director of Product at Oakridge Ventures. Applied and heard nothing since — no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection.
 
 ## Score rationale
 - JD fit: 34/45
 - Seniority alignment: 11/15
 - Competition estimate: 10/20
-- Comp alignment: 8/10
+- Comp alignment: 9/10
 - Blockers: 10/10
 
 ## Caveats

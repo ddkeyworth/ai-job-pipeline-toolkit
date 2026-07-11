@@ -4,6 +4,7 @@ role: "Director of Product"
 date_scored: 2026-06-13
 date_applied: null
 status: scored
+status_date: 2026-06-13
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 6
     blockers: 10
   estimated_fields: ["competition"]
-
-outcome: null
-outcome_date: null
 
 next_interview_date: null
 

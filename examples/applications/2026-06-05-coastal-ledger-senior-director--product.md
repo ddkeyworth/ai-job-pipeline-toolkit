@@ -4,6 +4,7 @@ role: "Senior Director, Product"
 date_scored: 2026-06-05
 date_applied: 2026-06-05
 status: applied
+status_date: 2026-06-05
 source: "Company site"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 10
     blockers: 10
   estimated_fields: []
-
-outcome: null
-outcome_date: null
 
 next_interview_date: null
 

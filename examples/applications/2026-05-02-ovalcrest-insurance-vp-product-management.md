@@ -4,6 +4,7 @@ role: "VP Product Management"
 date_scored: 2026-05-02
 date_applied: 2026-05-02
 status: rejected
+status_date: 2026-05-02
 source: "Company site"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 6
     blockers: 10
   estimated_fields: ["competition", "comp"]
-
-outcome: rejected
-outcome_date: 2026-05-02
 
 next_interview_date: null
 

@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Three tests, run 2026-07-09, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Six tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
 
 **Note on scope:** the two tests below that use a real company ([REDACTED-COMPANY]) are validation exercises only — no application was submitted, no contact was made with anyone, and [REDACTED-COMPANY]'s real data is never written into `examples/`, which stays 100% fictional as documented in the README. This log is the one place in the repo where a real, well-known public company is named, specifically to prove the tool's mechanisms work on real inputs, not just synthetic ones designed to make it look good.
 
@@ -65,14 +65,49 @@ Ran the rebuilt dashboard locally (`python -m http.server` against `docs/`) and 
 
 **Confidence:** confirmed — all three modes read back exactly as designed against the real rebuilt dataset, not asserted from reading the code alone.
 
+## Test 5 — Briefing Pack v2 (standard sections, honest placeholders)
+
+Extended the Briefing pack schema with five new sections (Unique selling points, Interviewer profiles, Prep questions, Questions to ask, Notes) and their parsers in `scripts/build_dashboard.py`. Also found and fixed a real, pre-existing bug during this work: `SCHEMA.md` documented `### Why it progressed / didn't` as the heading, but the parser looked for the exact string `"Why it progressed"` — a file written exactly as documented wouldn't have parsed correctly. Nothing in CI would have caught this (the diff-check only compares build output to committed output, and both were silently wrong together), so `scripts/verify_consistency.py` now round-trips `SCHEMA.md`'s own documented example through the real parser on every push, specifically to close this bug class.
+
+Regenerated all 34 example applications via `scripts/generate_examples.py`. Ran the rebuilt dashboard locally and drove it directly (not just read the code):
+
+- **Full-depth card (Alderwood Data):** all ten Briefing pack sections rendered with real content — 3 USPs, 2 interviewer profiles (one with both "assessing"/"play it" callouts filled in, proving the optional-callout path), 4 Q&A pairs, 3 questions to ask, bullet-format watch-outs, a Notes sub-section. Confirmed a real bug live: USP/watch-out titles rendered with a double period (`"...experience.."`) because the markdown source already includes the period inside the bold text and the renderer added a second one — fixed in `docs/index.html`, re-verified.
+- **Placeholder card (Pemberton Health Tech):** deliberately built with an unknown interviewer and unknown Notes, to prove the placeholder path actually works, not just claim it. Confirmed via DOM inspection: exactly one `.unknown`-classed element for the interviewer profile (name renders as "Currently unknown", title as the specific ask), and the Notes prose paragraph also correctly gets the `.unknown` treatment — both written as normal content in their section's own format, no special-case rendering path needed.
+- **Briarcliff AI:** interviewer profile with no optional callouts filled in — confirmed the callout lines simply don't render rather than showing empty labels.
+
+## Test 6 — Status vocabulary v2 (pre/post-interview split, recalibration signal)
+
+Extended `status` from six values to eleven (`awaiting_recruiter`, `rejected_after_interview`, `withdrawn_after_interview`, `assumed_rejected`, `role_closed` added), replacing the separate `outcome`/`outcome_date` fields entirely — a second, independently-mutable source of truth for the same fact `status` now expresses more precisely was exactly the kind of thing that caused the Test 5 bug above. Recalibration and score-locking now derive everything from `status` via a new shared module, `scripts/_status.py`, imported by both `build_dashboard.py` and `verify_recalibration.py` so the two can't drift apart the way `outcome` could.
+
+Added two new fully-fleshed examples specifically to prove the pre/post-interview distinction actually changes the recalibration signal, not just the display label — **Fenwick Data Systems** (`rejected_after_interview`, two positive interview stages before losing to an internal candidate) and **Silverlake Systems** (`withdrawn_after_interview`, withdrew after Stage 2 once comp was confirmed below floor).
+
+Ran `python scripts/verify_recalibration.py` before and after this change against the full 34-application set:
+
+```
+Total applications: 34
+Logged outcomes: 25 (threshold: 20)  → gate PASSES
+Positive outcomes: 7 (threshold: 3)  → gate PASSES
+
+Component     Positive mean   Negative mean   Diff
+jd_fit        38.7            34.3            +4.4
+seniority     13.6            11.4            +2.1
+competition   14.3            9.9             +4.3
+comp          9.1             8.4             +0.8
+blockers      10.0            9.6             +0.4
+```
+
+Positive outcomes rose from 5 to 7 — Fenwick and Silverlake now correctly count as positive signal (they validated the scoring rubric's prediction by reaching interview) rather than being indistinguishable from a flat rejection, which is the entire point of this change. Confirmed `score.locked` derives correctly for every status via `scripts/_status.py`'s `should_lock()`: `true` for all six closed statuses and for `offer` (terminal for locking purposes even though it stays in the dashboard's active group for sorting), `false` for `scored`/`applied`/`awaiting_recruiter`/`interviewing`. Also ran `scripts/verify_consistency.py`'s second check — confirmed `docs/index.html`'s JS `STATUS_ORDER` array matches `scripts/_status.py`'s `ALL_STATUSES` exactly, closing the same class of Python/JS drift risk the SCHEMA.md check closes for docs/parser drift.
+
+Confirmed in the live dashboard: `rejected_after_interview` and `withdrawn_after_interview` sort into the closed group (bottom, regardless of date) alongside the other four closed statuses, with distinct badge labels ("Rejected (post-interview)", "Withdrawn (post-interview)") and an expanded stats bar showing the pre/post split explicitly rather than burying it behind filter pills — that split is the actual signal this change exists to surface.
+
 ## How to reproduce this
 
-**The mechanical part (Test 3's statistics)** is fully reproducible right now: `python scripts/verify_recalibration.py`. It re-runs in CI on every push that touches `examples/` or `config/weights.json`, so it isn't just a one-time check.
+**The mechanical parts (Test 3's statistics, Test 5/6's consistency checks)** are fully reproducible right now: `python scripts/verify_recalibration.py` and `python scripts/verify_consistency.py`. Both re-run in CI on every push that touches `examples/`, `docs/index.html`, `schema/SCHEMA.md`, `scripts/_status.py`, or `config/weights.json`, so none of this is a one-time check.
 
-**The LLM-interpreted parts (Tests 1 and 2 — actual scoring, actual live search)** are harder to make deterministic the same way, because they depend on a Claude session interpreting `SKILL.md`, not running fixed code. The honest limitation: both were run once, manually, in the same session that wrote the skill. The strongest way to independently verify these — not yet done, a good next step for whoever picks this up — is to open a genuinely fresh Claude.ai or Cowork session with no prior context, install `SKILL.md` cold, and re-score the same role (or a new one) to see whether an independent run produces comparably sound reasoning. That's a real test of the skill as *written*, rather than as *remembered by the person who wrote it*.
+**The LLM-interpreted parts (Tests 1 and 2 — actual scoring, actual live search; and the "real synthesis, not generic filler" quality bar for Briefing pack v2's USPs/prep Q&A, which no script can verify)** are harder to make deterministic the same way, because they depend on a Claude session interpreting `SKILL.md`, not running fixed code. The honest limitation: all of it was run once, manually, in the same sessions that wrote the skill. The strongest way to independently verify this — not yet done, a good next step for whoever picks this up — is to open a genuinely fresh Claude.ai or Cowork session with no prior context, install `SKILL.md` cold, and re-score a role and generate a Briefing pack to see whether an independent run produces comparably sound reasoning and genuinely grounded (not generic) content. That's a real test of the skill as *written*, rather than as *remembered by the person who wrote it*.
 
 ## What this does and doesn't prove
 
-Proves: the scoring rubric, the live-search mechanism, and the recalibration computation all produce sensible, real output when actually run, including correctly surfacing a real disqualifying blocker rather than a flattering score. Proves the recalibration agent's statistical gate is now continuously verified, not a one-off claim. Proves the dashboard's sort logic — all three modes — behaves exactly as designed against real rebuilt data.
+Proves: the scoring rubric, the live-search mechanism, and the recalibration computation all produce sensible, real output when actually run, including correctly surfacing a real disqualifying blocker rather than a flattering score. Proves the recalibration agent's statistical gate is now continuously verified, not a one-off claim, and that it correctly treats a post-interview rejection as positive signal, not a flat negative. Proves the dashboard's sort logic and the eleven-status vocabulary behave exactly as designed against real rebuilt data. Proves the Briefing pack v2 sections — both fully-populated and honestly-placeholdered — render correctly, and found and fixed two real bugs (a docs/parser heading mismatch, a double-period rendering bug) by actually running the thing rather than trusting the code by inspection.
 
-Doesn't prove: that an independent Claude session, with no context from this build process, would interpret `SKILL.md` the same way. That's the one gap left un-closed here — see "How to reproduce this" above.
+Doesn't prove: that an independent Claude session, with no context from this build process, would interpret `SKILL.md` the same way — including, now, whether it would default to genuine synthesis over `Currently unknown` placeholders as intended, rather than either extreme. That's the one gap left un-closed here — see "How to reproduce this" above.

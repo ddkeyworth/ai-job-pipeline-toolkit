@@ -4,6 +4,7 @@ role: "VP Product"
 date_scored: 2026-06-09
 date_applied: 2026-06-09
 status: applied
+status_date: 2026-06-09
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 4
     blockers: 10
   estimated_fields: ["competition", "comp"]
-
-outcome: null
-outcome_date: null
 
 next_interview_date: null
 

@@ -4,6 +4,7 @@ role: "Director of Product Strategy"
 date_scored: 2026-04-05
 date_applied: 2026-04-05
 status: rejected
+status_date: 2026-04-05
 source: "Company site"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 8
     blockers: 10
   estimated_fields: []
-
-outcome: rejected
-outcome_date: 2026-04-05
 
 next_interview_date: null
 

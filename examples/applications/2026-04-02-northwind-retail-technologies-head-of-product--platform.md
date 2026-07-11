@@ -4,6 +4,7 @@ role: "Head of Product, Platform"
 date_scored: 2026-04-02
 date_applied: 2026-04-02
 status: rejected
+status_date: 2026-04-02
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 8
     blockers: 10
   estimated_fields: ["competition"]
-
-outcome: rejected
-outcome_date: 2026-04-02
 
 next_interview_date: null
 

@@ -4,6 +4,7 @@ role: "Director of Product"
 date_scored: 2026-05-11
 date_applied: 2026-05-11
 status: withdrawn
+status_date: 2026-05-11
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 10
     blockers: 10
   estimated_fields: []
-
-outcome: withdrawn
-outcome_date: 2026-05-11
 
 next_interview_date: null
 

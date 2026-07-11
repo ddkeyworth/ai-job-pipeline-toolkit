@@ -4,6 +4,7 @@ role: "Senior Director Product"
 date_scored: 2026-05-09
 date_applied: 2026-05-09
 status: rejected
+status_date: 2026-05-09
 source: "LinkedIn"
 
 score:
@@ -17,9 +18,6 @@ score:
     comp: 8
     blockers: 10
   estimated_fields: []
-
-outcome: rejected
-outcome_date: 2026-05-09
 
 next_interview_date: null
 
