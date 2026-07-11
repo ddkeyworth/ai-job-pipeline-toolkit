@@ -37,6 +37,7 @@ from build_dashboard import (
     parse_notes,
     parse_plain_bullets,
     parse_qa,
+    parse_table,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,6 +47,7 @@ DASHBOARD_PATH = os.path.join(ROOT, "docs", "index.html")
 # heading -> a function that should return truthy content for SCHEMA.md's example
 CHECKS = {
     "Company facts": lambda bp: extract_bp_section(bp, "Company facts"),
+    "Regional intelligence": lambda bp: parse_table(extract_bp_section(bp, "Regional intelligence")),
     "Comp": lambda bp: extract_bp_section(bp, "Comp"),
     "Why it progressed / didn't": lambda bp: extract_bp_section(bp, "Why it progressed / didn't"),
     "Unique selling points": lambda bp: parse_bullet_pairs(extract_bp_section(bp, "Unique selling points")),

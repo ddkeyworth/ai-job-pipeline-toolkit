@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Ten tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Twelve tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
 
 **Note on scope:** the two tests below that use a real company ([REDACTED-COMPANY]) are validation exercises only — no application was submitted, no contact was made with anyone, and [REDACTED-COMPANY]'s real data is never written into `examples/`, which stays 100% fictional as documented in the README. This log is the one place in the repo where a real, well-known public company is named, specifically to prove the tool's mechanisms work on real inputs, not just synthetic ones designed to make it look good.
 
@@ -189,6 +189,27 @@ Independent check:     interviewedAvg=79.4, notInterviewedAvg=62.1  — matches 
 ```
 
 The ~17-point gap is directionally consistent with Test 6/7's per-component recalibration means (positive means consistently higher than negative means across jd_fit, seniority, competition) — this is the same underlying signal, just expressed as one overall number instead of five per-component ones. Colored to match each tile (green for Interviewed, red for Not interviewed); confirmed via `getComputedStyle()`, not just visual assumption.
+
+## Test 11 — Regional intelligence: first-class, genuinely optional
+
+Promoted "regional intelligence" (relationship/decision-making style by market) out of the generic Notes catch-all into its own structured section — real table parsing and rendering, not just prose. Unlike the five standard sections, this one is deliberately **not** forced onto every application with a placeholder: it's genuinely absent for single-market roles, present only when the role actually spans multiple markets.
+
+**Found and fixed a real bug during this work, before it shipped:** the first version of `parse_table()` treated every line in the section as a table row — but `SCHEMA.md`'s own documented example (correctly, realistically) has an explanatory note before the table and a caveat paragraph after it, not just the bare table. Tested against the actual documented example directly:
+
+```
+Before fix: headers = ["*(Optional — only when the role genuinely spans..."]  — the prose note, not the table header
+After fix:  headers = ["Region", "Relationship style", "Decision style", "Key nuances"]  — correct
+```
+
+Fixed by filtering to only lines starting with `|` before parsing — prose above and below the table is now correctly ignored. Added "Regional intelligence" to `scripts/verify_consistency.py`'s round-trip check (now 11 sections checked, up from 10) so this exact bug class can't silently return.
+
+Added real example data to Stonebridge Analytics (the one existing example with a plausible multi-market angle — ~300 employees, Series C). Confirmed live in the browser: Stonebridge's briefing pack shows a real two-row table (UK, US) with the caveat "General cultural/business-norm patterns, not verified facts" underneath; Alderwood Data's briefing pack (no regional data) shows no "Regional intelligence" section title at all — confirmed via `.section-title` enumeration, not just visual inspection — proving the optional-not-placeholder design actually holds, not just in theory.
+
+## Test 12 — Average score on the Total tracked headline tile
+
+Added the same average-score treatment already on Interviewed/Not interviewed to Total tracked, plus a clarifying sub-title ("every application, any status") — genuinely informative, not just visual padding, since without it "Total tracked" could be misread as only counting resolved applications the way its two sibling tiles do.
+
+Verified live: Total tracked reads "avg score 66.6" against an independently-computed manual average of the same 32 applications' `score.value` (also 66.6, exact match) — sitting between Interviewed's 79.4 and Not interviewed's 62.1, which is the expected shape (Total is a blend of resolved-positive, resolved-negative, and unresolved applications, so it should land between the two resolved extremes). All three tiles now share the same four-line structure (number, label, sub-title, avg) and each avg is colored to match its tile (blue/green/red).
 
 ## How to reproduce this
 

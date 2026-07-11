@@ -66,6 +66,30 @@ def parse_interviewer_profiles(text):
     return profiles
 
 
+def parse_table(text):
+    """Generic markdown table parser. Only lines starting with `|` count as
+    the table — everything else (an explanatory note above it, a caveat
+    paragraph below it, as in SCHEMA.md's own documented example) is
+    prose surrounding the table, not part of it. First `|`-line is the
+    header, second is the `---` separator (skipped), the rest are data
+    rows. Column names aren't hardcoded (Regional intelligence is the
+    first user, but this stays generic rather than assuming specific
+    columns like Region/Relationship style/Decision style). Returns None
+    if there's no table — this section is genuinely optional, unlike the
+    five standard ones, so "absent" is a real, expected state, not a gap
+    to placeholder-fill."""
+    table_lines = [l.strip() for l in text.strip().splitlines() if l.strip().startswith("|")]
+    if len(table_lines) < 2:
+        return None
+
+    def cells(line):
+        return [c.strip() for c in line.strip().strip("|").split("|")]
+
+    headers = cells(table_lines[0])
+    rows = [cells(l) for l in table_lines[2:]]  # table_lines[1] is the --- separator
+    return {"headers": headers, "rows": rows}
+
+
 def extract_bp_section(bp_text, heading):
     """Pull one ###-level section's body out of a Briefing pack's raw text.
     Exact heading match — module-level (not nested) so scripts/verify_consistency.py
@@ -129,6 +153,7 @@ def parse_application(path):
 
         briefing = {
             "company_facts": bp_section("Company facts"),
+            "regional_intelligence": parse_table(bp_section("Regional intelligence")),
             "comp": bp_section("Comp"),
             "why": bp_section("Why it progressed / didn't"),
             "watch": watch_text if not watch_bullets else "",

@@ -263,6 +263,12 @@ BRIEFING_APPS = [
         estimated_fields=[], comp_band="£122k-135k OTE, confirmed above floor", source="LinkedIn",
         company_size="~300 employees", funding="Series C", competition_tier="moderate",
         why="Strong domain fit; moderate competition given company's mid-market scale.",
+        regional_intelligence=[
+            {"region": "UK", "relationship_style": "Direct, commercial", "decision_style": "Moderate speed",
+             "nuances": "Existing customer base concentrated here — role likely leans on this market's playbook as the template for expansion elsewhere."},
+            {"region": "US", "relationship_style": "Results-first", "decision_style": "Fast at SME, slower at enterprise",
+             "nuances": "Stated growth target for the year — worth asking directly how much of the VP mandate is US-expansion-specific versus global product ownership."},
+        ],
         usps=[
             {"title": "Mid-market SaaS scaling experience",
              "body": "Operated at a similar company scale (a few hundred employees) previously — familiar with the specific coordination overhead at this size, distinct from either startup or enterprise."},
@@ -416,6 +422,18 @@ def usps_md(items):
     return "\n".join(f"- **{i['title']}.** {i['body']}" for i in items)
 
 
+def region_table_md(regions):
+    if not regions:
+        return ""
+    header = "| Region | Relationship style | Decision style | Key nuances |"
+    sep = "|---|---|---|---|"
+    rows = "\n".join(
+        f"| {r['region']} | {r['relationship_style']} | {r['decision_style']} | {r['nuances']} |"
+        for r in regions
+    )
+    return f"{header}\n{sep}\n{rows}"
+
+
 def profiles_md(profiles):
     blocks = []
     for p in profiles:
@@ -465,6 +483,8 @@ def write_briefing(app):
     watch_section = (
         usps_md(app["watch_bullets"]) if app.get("watch_bullets") else app.get("watch", "")
     )
+    region_table = region_table_md(app.get("regional_intelligence"))
+    region_section = f"\n### Regional intelligence\n{region_table}\n" if region_table else ""
 
     fm = f"""---
 company: "{app['company']}"
@@ -509,7 +529,7 @@ comp_band: {comp_band_yaml}
 
 ### Company facts
 {app['company']} — {app['company_size']}, {app['funding']}. See `examples/companies/{slug}.json` for the cached source.
-
+{region_section}
 ### Comp
 {app['comp_band'] if app['comp_band'] else "Not yet confirmed."}
 

@@ -42,6 +42,12 @@ No estimated fields.
 ### Company facts
 Stonebridge Analytics — ~300 employees, Series C. See `examples/companies/stonebridge-analytics.json` for the cached source.
 
+### Regional intelligence
+| Region | Relationship style | Decision style | Key nuances |
+|---|---|---|---|
+| UK | Direct, commercial | Moderate speed | Existing customer base concentrated here — role likely leans on this market's playbook as the template for expansion elsewhere. |
+| US | Results-first | Fast at SME, slower at enterprise | Stated growth target for the year — worth asking directly how much of the VP mandate is US-expansion-specific versus global product ownership. |
+
 ### Comp
 £122k-135k OTE, confirmed above floor
 
