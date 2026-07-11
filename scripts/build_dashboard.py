@@ -14,11 +14,79 @@ Run from the repo root: python scripts/build_dashboard.py
 import json
 import os
 import re
+import sys
 import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _status import ALL_STATUSES
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPS_DIR = os.path.join(ROOT, "examples", "applications")
 DASHBOARD = os.path.join(ROOT, "docs", "index.html")
+
+
+def parse_bullet_pairs(text):
+    """- **Title.** Body.  ->  [{"title": ..., "body": ...}]"""
+    return [
+        {"title": m.group(1).strip(), "body": m.group(2).strip()}
+        for m in re.finditer(r"^-\s+\*\*(.+?)\*\*\s*(.*)$", text, re.MULTILINE)
+    ]
+
+
+def parse_plain_bullets(text):
+    return [line.strip("- ").strip() for line in text.splitlines() if line.strip().startswith("-")]
+
+
+def parse_qa(text):
+    """**Q: ...?**\nA: answer (optionally multi-line) -> [{"q":..., "a":...}]"""
+    return [
+        {"q": m.group(1).strip(), "a": m.group(2).strip()}
+        for m in re.finditer(r"\*\*Q:\s*(.+?)\*\*\s*\n(?:A:\s*)?(.*?)(?=\n\*\*Q:|\Z)", text, re.DOTALL)
+    ]
+
+
+def parse_interviewer_profiles(text):
+    profiles = []
+    for m in re.finditer(r"####\s+(.+?)\n(.*?)(?=\n####\s|\Z)", text, re.DOTALL):
+        header, block = m.group(1).strip(), m.group(2).strip()
+        if "—" in header:
+            name, title = (p.strip() for p in header.split("—", 1))
+        elif " - " in header:
+            name, title = (p.strip() for p in header.split(" - ", 1))
+        else:
+            name, title = header, ""
+        assessing = re.search(r"\*\*What they're assessing:\*\*\s*(.*?)(?=\n\*\*|\Z)", block, re.DOTALL)
+        play_it = re.search(r"\*\*How to play it:\*\*\s*(.*?)(?=\n\*\*|\Z)", block, re.DOTALL)
+        background = re.split(r"\n\*\*What they're assessing:|\n\*\*How to play it:", block)[0].strip()
+        profiles.append({
+            "name": name, "title": title, "background": background,
+            "assessing": assessing.group(1).strip() if assessing else "",
+            "play_it": play_it.group(1).strip() if play_it else "",
+        })
+    return profiles
+
+
+def extract_bp_section(bp_text, heading):
+    """Pull one ###-level section's body out of a Briefing pack's raw text.
+    Exact heading match — module-level (not nested) so scripts/verify_consistency.py
+    can import this same function to round-trip SCHEMA.md's documented headings
+    against the real parser, rather than a second, independently-drifting regex."""
+    pat = rf"###\s+{re.escape(heading)}\s*\n(.*?)(?=\n###\s|\Z)"
+    sm = re.search(pat, bp_text, re.DOTALL)
+    return sm.group(1).strip() if sm else ""
+
+
+def parse_notes(text):
+    """Light structural split only — no semantic parsing. Returns
+    [{"heading": str|None, "body": str}, ...]."""
+    if not text.strip():
+        return []
+    if "#### " not in text:
+        return [{"heading": None, "body": text.strip()}]
+    return [
+        {"heading": m.group(1).strip(), "body": m.group(2).strip()}
+        for m in re.finditer(r"####\s+(.+?)\n(.*?)(?=\n####\s|\Z)", text, re.DOTALL)
+    ]
 
 
 def parse_application(path):
@@ -30,6 +98,10 @@ def parse_application(path):
         raise ValueError(f"No frontmatter found in {path}")
     frontmatter_raw, body = m.group(1), m.group(2)
     fm = yaml.safe_load(frontmatter_raw)
+
+    status = fm["status"]
+    if status not in ALL_STATUSES:
+        raise ValueError(f"{path}: unknown status {status!r} — must be one of {ALL_STATUSES}")
 
     def section(heading):
         pat = rf"##\s+{re.escape(heading)}\s*\n(.*?)(?=\n##\s|\Z)"
@@ -47,18 +119,25 @@ def parse_application(path):
         bp_text = bp_match.group(1) if bp_match else ""
 
         def bp_section(heading):
-            pat = rf"###\s+{re.escape(heading)}\s*\n(.*?)(?=\n###\s|\Z)"
-            sm = re.search(pat, bp_text, re.DOTALL)
-            return sm.group(1).strip() if sm else ""
+            return extract_bp_section(bp_text, heading)
 
         stage_log_text = bp_section("Interview stage log")
         stages = [line.strip("- ").strip() for line in stage_log_text.splitlines() if line.strip().startswith("-")]
 
+        watch_text = bp_section("Watch-outs")
+        watch_bullets = parse_bullet_pairs(watch_text)
+
         briefing = {
             "company_facts": bp_section("Company facts"),
             "comp": bp_section("Comp"),
-            "why": bp_section("Why it progressed"),
-            "watch": bp_section("Watch-outs"),
+            "why": bp_section("Why it progressed / didn't"),
+            "watch": watch_text if not watch_bullets else "",
+            "watch_bullets": watch_bullets,
+            "usps": parse_bullet_pairs(bp_section("Unique selling points")),
+            "interviewer_profiles": parse_interviewer_profiles(bp_section("Interviewer profiles")),
+            "prep_qa": parse_qa(bp_section("Prep questions")),
+            "questions_to_ask": parse_plain_bullets(bp_section("Questions to ask")),
+            "notes": parse_notes(bp_section("Notes")),
             "stages": stages,
         }
 
@@ -73,10 +152,9 @@ def parse_application(path):
         "role": fm["role"],
         "date_scored": date_str(fm.get("date_scored")),
         "date_applied": date_str(fm.get("date_applied")),
-        "status": fm["status"],
+        "status": status,
+        "status_date": date_str(fm.get("status_date")),
         "score": fm["score"],
-        "outcome": fm.get("outcome"),
-        "outcome_date": date_str(fm.get("outcome_date")),
         "next_interview_date": date_str(fm.get("next_interview_date")),
         "comp_band": fm.get("comp_band"),
         "jd_summary": jd_summary,

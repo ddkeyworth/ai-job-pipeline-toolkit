@@ -131,10 +131,15 @@
   }
   .badge.scored { background: #2f2a42; color: #b39bf5; }
   .badge.applied { background: #2a3542; color: #8fb4e3; }
+  .badge.awaiting_recruiter { background: #2a3542; color: #8fb4e3; }
   .badge.interviewing { background: #2a3f33; color: var(--good); }
   .badge.offer { background: #3a3323; color: var(--warn); }
   .badge.rejected { background: #3a2727; color: var(--bad); }
+  .badge.rejected_after_interview { background: #3a2727; color: var(--bad); }
   .badge.withdrawn { background: #2b2b2b; color: var(--neutral); }
+  .badge.withdrawn_after_interview { background: #2b2b2b; color: var(--neutral); }
+  .badge.assumed_rejected { background: #2b2b2b; color: var(--neutral); border: 1px dashed var(--neutral); }
+  .badge.role_closed { background: #2b2b2b; color: var(--neutral); }
   .badge.error { background: #4a2e1f; color: #e0954f; }
   .card.error-card { border-color: #6b4423; }
   .score { text-align: right; }
@@ -152,6 +157,7 @@
   .estimated { color: var(--warn); }
   .prose { font-size: 13.5px; color: var(--text); }
   .prose p { margin: 4px 0 10px; }
+  .unknown { color: var(--text-dim); font-style: italic; }
   .briefing-toggle {
     margin-top: 14px;
     background: var(--panel-2);
@@ -167,6 +173,26 @@
   .stage-log { list-style: none; margin: 0; padding: 0; font-size: 13px; }
   .stage-log li { padding: 4px 0; border-bottom: 1px dashed var(--border); }
   .stage-log li:last-child { border-bottom: none; }
+  .usp-list, .watchout-list { list-style: none; margin: 0; padding: 0; }
+  .usp { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+  .usp:last-child { border-bottom: none; }
+  .usp-title { font-weight: 600; color: var(--text); }
+  .usp-body { color: var(--text-dim); }
+  .watchout { background: rgba(217,106,106,0.07); border: 1px solid rgba(217,106,106,0.18); border-radius: 7px; padding: 8px 10px; margin-bottom: 6px; font-size: 13.5px; }
+  .watchout-title { font-weight: 600; color: var(--bad); }
+  .watchout-body { color: var(--text-dim); }
+  .qa-block { padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .qa-block:last-child { border-bottom: none; }
+  .qa-q { font-weight: 600; font-size: 13.5px; }
+  .qa-a { font-size: 13.5px; color: var(--text-dim); margin-top: 4px; }
+  .question-list { list-style: disc; margin: 0; padding-left: 18px; font-size: 13.5px; }
+  .question { padding: 2px 0; }
+  .profile-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .profile-name { font-weight: 600; }
+  .profile-title { color: var(--text-dim); font-size: 12px; }
+  .profile-callout { font-size: 13px; margin-top: 6px; }
+  .profile-callout b { color: var(--text); }
+  .notes-heading { font-weight: 600; font-size: 13px; margin: 10px 0 4px; }
   footer { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; color: var(--text-dim); font-size: 12px; }
   footer a { color: var(--accent); }
 </style>
@@ -210,6 +236,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-02",
     "date_applied": "2026-04-02",
     "status": "rejected",
+    "status_date": "2026-04-02",
     "score": {
       "value": 58,
       "tier": "Tier 3 — Solid, worth applying",
@@ -225,8 +252,6 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-02",
     "next_interview_date": null,
     "comp_band": "£110k-125k OTE",
     "jd_summary": "Head of Product, Platform at Northwind Retail Technologies. Large, recognisable retail-tech brand.",
@@ -240,6 +265,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-05",
     "date_applied": "2026-04-05",
     "status": "rejected",
+    "status_date": "2026-04-05",
     "score": {
       "value": 61,
       "tier": "Tier 3 — Solid, worth applying",
@@ -253,8 +279,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-05",
     "next_interview_date": null,
     "comp_band": "£100k-115k base",
     "jd_summary": "Director of Product Strategy at Ashgrove Financial. Large regulated financial services firm.",
@@ -268,6 +292,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-08",
     "date_applied": "2026-04-08",
     "status": "rejected",
+    "status_date": "2026-04-08",
     "score": {
       "value": 70,
       "tier": "Tier 3 — Solid, worth applying",
@@ -281,8 +306,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-08",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Larkspur Health. Mid-size health-tech, moderately known.",
@@ -296,6 +319,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-11",
     "date_applied": "2026-04-11",
     "status": "rejected",
+    "status_date": "2026-04-11",
     "score": {
       "value": 74,
       "tier": "Tier 2 — Strong callback odds",
@@ -309,8 +333,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-11",
     "next_interview_date": null,
     "comp_band": "£115k-130k OTE",
     "jd_summary": "Head of Product at Kettlebrook Robotics. Small robotics startup — good fit on paper, rejected anyway; not every high score converts.",
@@ -324,6 +346,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-15",
     "date_applied": "2026-04-15",
     "status": "rejected",
+    "status_date": "2026-04-15",
     "score": {
       "value": 55,
       "tier": "Tier 4 — Long shot",
@@ -339,8 +362,6 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-15",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director Product at Solari Energy Corp. Large, well-funded energy technology company.",
@@ -354,6 +375,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-18",
     "date_applied": "2026-04-18",
     "status": "rejected",
+    "status_date": "2026-04-18",
     "score": {
       "value": 66,
       "tier": "Tier 3 — Solid, worth applying",
@@ -367,8 +389,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-18",
     "next_interview_date": null,
     "comp_band": "£105k-120k base",
     "jd_summary": "Head of Product at Ferrous Metals Digital. Mid-size industrial-tech firm.",
@@ -382,6 +402,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-22",
     "date_applied": "2026-04-22",
     "status": "rejected",
+    "status_date": "2026-04-22",
     "score": {
       "value": 48,
       "tier": "Tier 4 — Long shot",
@@ -398,8 +419,6 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-22",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Bramwell Media Group. Large, famous media brand — very high competition.",
@@ -413,6 +432,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-25",
     "date_applied": "2026-04-25",
     "status": "rejected",
+    "status_date": "2026-04-25",
     "score": {
       "value": 77,
       "tier": "Tier 2 — Strong callback odds",
@@ -426,8 +446,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-25",
     "next_interview_date": null,
     "comp_band": "£118k-132k OTE",
     "jd_summary": "Head of Product at TidePool Labs. Small private labs startup, narrow specialist role.",
@@ -441,6 +459,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-29",
     "date_applied": "2026-04-29",
     "status": "rejected",
+    "status_date": "2026-04-29",
     "score": {
       "value": 63,
       "tier": "Tier 3 — Solid, worth applying",
@@ -454,8 +473,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-04-29",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Granite Peak Software. Mid-size, moderately known enterprise software vendor.",
@@ -469,6 +486,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-04-30",
     "date_applied": "2026-04-30",
     "status": "offer",
+    "status_date": "2026-05-27",
     "score": {
       "value": 88,
       "tier": "Tier 1 — Exceptional callback odds",
@@ -482,8 +500,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "offer",
-    "outcome_date": "2026-04-30",
     "next_interview_date": null,
     "comp_band": "£130k-145k OTE, confirmed above floor",
     "jd_summary": "Head of Product at Wrenfield Software.",
@@ -492,7 +508,52 @@ const APPLICATIONS = /*__DATA__*/[
       "company_facts": "Wrenfield Software — ~60 employees, Series B. See `examples/companies/wrenfield-software.json` for the cached source.",
       "comp": "£130k-145k OTE, confirmed above floor",
       "why": "Very close mandate match plus a warm referral; comp confirmed early and above floor.",
-      "watch": "Decision deadline is tight relative to other processes still in flight.",
+      "watch": "",
+      "watch_bullets": [
+        {
+          "title": "Decision deadline is tight.",
+          "body": "Relative to other processes still in flight — worth being direct about needing a short extension if one is required."
+        }
+      ],
+      "usps": [
+        {
+          "title": "Direct mandate match.",
+          "body": "Role scope mirrors a product owned end-to-end at a similarly-staged prior company — not an adjacent-domain stretch."
+        },
+        {
+          "title": "Warm referral already vouching for delivery track record.",
+          "body": "Referral came from a former colleague now at Wrenfield who worked directly with the candidate on a prior shipped product."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Dev Ahluwalia",
+          "title": "VP Product (line manager)",
+          "background": "Ran the Stage 2 and Stage 3 rounds; joined Wrenfield at Series A after a scaling-stage role at a larger SaaS company. [estimated]",
+          "assessing": "Whether the candidate can own the full roadmap independently at this stage, not just execute a handed-down plan.",
+          "play_it": "Frame answers around ownership and judgement calls made solo, not process followed."
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "What would make you turn down an otherwise-solid offer?",
+          "a": "A comp band confirmed below floor, or a mandate that turns out narrower in practice than described in the process — neither applies here, comp is confirmed above floor."
+        },
+        {
+          "q": "How do you evaluate a smaller company's risk profile before accepting?",
+          "a": "Runway relative to current burn, and whether the role is backed by the current funding round or contingent on the next one — worth confirming explicitly during the offer conversation, not assuming."
+        }
+      ],
+      "questions_to_ask": [
+        "Is there flexibility on the start date given other processes still in flight?",
+        "What does the first-90-days success definition look like from Dev's side specifically?"
+      ],
+      "notes": [
+        {
+          "heading": "Negotiation notes",
+          "body": "Comp already confirmed above floor, so negotiation leverage is mainly about start date and any signing considerations, not base/OTE. Worth comparing total package (not just base) against Stonebridge before deciding between the two."
+        }
+      ],
       "stages": [
         "Stage 1 — 2026-05-06 — Recruiter screen — positive, moved forward",
         "Stage 2 — 2026-05-14 — Hiring manager interview — positive, moved forward",
@@ -508,6 +569,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-02",
     "date_applied": "2026-05-02",
     "status": "rejected",
+    "status_date": "2026-05-02",
     "score": {
       "value": 52,
       "tier": "Tier 4 — Long shot",
@@ -524,8 +586,6 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-02",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product Management at Ovalcrest Insurance. Large regulated insurer, broad pool.",
@@ -539,6 +599,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-04",
     "date_applied": "2026-05-04",
     "status": "offer",
+    "status_date": "2026-06-02",
     "score": {
       "value": 80,
       "tier": "Tier 2 — Strong callback odds",
@@ -552,8 +613,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "offer",
-    "outcome_date": "2026-05-04",
     "next_interview_date": null,
     "comp_band": "£122k-135k OTE, confirmed above floor",
     "jd_summary": "VP Product at Stonebridge Analytics.",
@@ -563,6 +622,37 @@ const APPLICATIONS = /*__DATA__*/[
       "comp": "£122k-135k OTE, confirmed above floor",
       "why": "Strong domain fit; moderate competition given company's mid-market scale.",
       "watch": "Slightly lower comp than Wrenfield — worth comparing full package, not just base, before deciding.",
+      "watch_bullets": [],
+      "usps": [
+        {
+          "title": "Mid-market SaaS scaling experience.",
+          "body": "Operated at a similar company scale (a few hundred employees) previously — familiar with the specific coordination overhead at this size, distinct from either startup or enterprise."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Farah Idris",
+          "title": "Chief Product Officer",
+          "background": "Final-round interviewer; previously VP Product at a larger analytics company before joining Stonebridge as CPO. [estimated]",
+          "assessing": "Strategic thinking at VP level, and cross-functional credibility with Sales and Engineering leadership.",
+          "play_it": "Bring examples of cross-functional alignment, not just product execution."
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "How would you balance Wrenfield-style ownership versus a larger organisation's coordination overhead?",
+          "a": "Larger orgs need more explicit alignment mechanisms (documented decisions, wider stakeholder review) — the skill is knowing when to invoke that process versus when it's genuinely a unilateral call."
+        }
+      ],
+      "questions_to_ask": [
+        "What's the biggest source of friction between Product and Sales today?"
+      ],
+      "notes": [
+        {
+          "heading": null,
+          "body": "Second live offer alongside Wrenfield — decision should weigh total package and role scope, not just base comp, before the Wrenfield deadline forces the choice."
+        }
+      ],
       "stages": [
         "Stage 1 — 2026-05-11 — Recruiter screen — positive, moved forward",
         "Stage 2 — 2026-05-19 — Hiring manager interview — positive, moved forward",
@@ -578,6 +668,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-06",
     "date_applied": "2026-05-06",
     "status": "rejected",
+    "status_date": "2026-05-06",
     "score": {
       "value": 79,
       "tier": "Tier 2 — Strong callback odds",
@@ -591,8 +682,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-06",
     "next_interview_date": null,
     "comp_band": "£112k-128k OTE",
     "jd_summary": "Head of Product at Millrace Systems. Small private systems company, strong fit.",
@@ -606,6 +695,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-09",
     "date_applied": "2026-05-09",
     "status": "rejected",
+    "status_date": "2026-05-09",
     "score": {
       "value": 65,
       "tier": "Tier 3 — Solid, worth applying",
@@ -619,8 +709,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-09",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director Product at Copperfield Logistics. Mid-size logistics tech firm.",
@@ -634,6 +722,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-11",
     "date_applied": "2026-05-11",
     "status": "withdrawn",
+    "status_date": "2026-05-11",
     "score": {
       "value": 69,
       "tier": "Tier 3 — Solid, worth applying",
@@ -647,8 +736,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "withdrawn",
-    "outcome_date": "2026-05-11",
     "next_interview_date": null,
     "comp_band": "£95k-105k base (below floor once confirmed)",
     "jd_summary": "Director of Product at Redshank Payments. Withdrew after confirmed comp band came in below floor.",
@@ -662,6 +749,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-13",
     "date_applied": "2026-05-13",
     "status": "rejected",
+    "status_date": "2026-05-13",
     "score": {
       "value": 50,
       "tier": "Tier 4 — Long shot",
@@ -678,13 +766,93 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-13",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Vantage Point Telecom. Large, recognisable telecom operator.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
     "briefing": null
+  },
+  {
+    "id": "2026-05-15-fenwick-data-systems-head-of-product",
+    "company": "Fenwick Data Systems",
+    "role": "Head of Product",
+    "date_scored": "2026-05-15",
+    "date_applied": "2026-05-15",
+    "status": "rejected_after_interview",
+    "status_date": "2026-06-12",
+    "score": {
+      "value": 75,
+      "tier": "Tier 2 — Strong callback odds",
+      "locked": true,
+      "breakdown": {
+        "jd_fit": 38,
+        "seniority": 13,
+        "competition": 14,
+        "comp": 10,
+        "blockers": 10
+      },
+      "estimated_fields": []
+    },
+    "next_interview_date": null,
+    "comp_band": "£118k-130k OTE",
+    "jd_summary": "Head of Product at Fenwick Data Systems.",
+    "caveats": "No estimated fields.",
+    "briefing": {
+      "company_facts": "Fenwick Data Systems — ~120 employees, Series B. See `examples/companies/fenwick-data-systems.json` for the cached source.",
+      "comp": "£118k-130k OTE",
+      "why": "Progressed through two positive interview stages; ultimately lost out to an internal candidate at the final round — the scoring rubric correctly predicted engagement (jd_fit, seniority, competition all landed within range) even though the outcome wasn't a hire. A useful real example of why rejected_after_interview is tracked separately from a flat rejection.",
+      "watch": "",
+      "watch_bullets": [
+        {
+          "title": "Internal-candidate risk wasn't asked about directly.",
+          "body": "Worth asking early and directly in future processes whether an internal candidate exists — a structural disadvantage no interview performance overcomes, and better to know going in."
+        }
+      ],
+      "usps": [
+        {
+          "title": "Direct domain overlap.",
+          "body": "Prior role covered an almost identical product category, which is likely why the process moved quickly through the first two stages."
+        },
+        {
+          "title": "Demonstrated delivery under ambiguity.",
+          "body": "Shipped a v1 product with an incomplete spec at a prior company, which came up directly in the Stage 2 conversation."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Owen Bright",
+          "title": "Head of Engineering",
+          "background": "Ran the Stage 2 technical/collaboration interview. [estimated]",
+          "assessing": "Whether the candidate would be an easy, low-friction partner for engineering leadership day to day.",
+          "play_it": ""
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "How do you handle disagreement with an engineering lead over scope?",
+          "a": "Separate the technical disagreement from the relationship — push on the technical point with evidence, but explicitly signal that disagreement on scope isn't a verdict on the working relationship."
+        },
+        {
+          "q": "What would you want to know in the first week here that you wouldn't get from the JD?",
+          "a": "Whatever's currently the biggest unresolved internal debate about product direction — that's usually the real job, not what's written in the posting."
+        }
+      ],
+      "questions_to_ask": [
+        "Is there an internal candidate also being considered for this role?",
+        "What does success in the first quarter look like specifically?"
+      ],
+      "notes": [
+        {
+          "heading": "Why it didn't progress",
+          "body": "Recruiter confirmed after the final round that an internal candidate with existing platform context was preferred. Not a reflection of interview performance — both prior stages were explicitly described as positive. The scoring rubric's prediction (this would land an interview) was validated; the eventual outcome was decided by a factor the scoring model doesn't and can't account for."
+        }
+      ],
+      "stages": [
+        "Stage 1 — 2026-05-22 — Recruiter screen — positive, moved forward",
+        "Stage 2 — 2026-06-02 — Engineering collaboration interview — positive, moved to final round",
+        "Stage 3 — 2026-06-12 — Final round — rejected, internal candidate preferred"
+      ]
+    }
   },
   {
     "id": "2026-05-16-hollow-creek-devices-head-of-product",
@@ -693,6 +861,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-16",
     "date_applied": "2026-05-16",
     "status": "rejected",
+    "status_date": "2026-05-16",
     "score": {
       "value": 72,
       "tier": "Tier 2 — Strong callback odds",
@@ -706,8 +875,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-16",
     "next_interview_date": null,
     "comp_band": "£108k-122k OTE",
     "jd_summary": "Head of Product at Hollow Creek Devices. Small private hardware/devices startup.",
@@ -721,10 +888,11 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-18",
     "date_applied": "2026-05-18",
     "status": "interviewing",
+    "status_date": "2026-06-04",
     "score": {
       "value": 84,
       "tier": "Tier 1 — Exceptional callback odds",
-      "locked": true,
+      "locked": false,
       "breakdown": {
         "jd_fit": 41,
         "seniority": 14,
@@ -734,8 +902,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "interview",
-    "outcome_date": "2026-05-18",
     "next_interview_date": "2026-06-19",
     "comp_band": "£125k-140k OTE",
     "jd_summary": "Head of Product at Alderwood Data.",
@@ -744,10 +910,148 @@ const APPLICATIONS = /*__DATA__*/[
       "company_facts": "Alderwood Data — ~40 employees, Seed/Series A, privately held. See `examples/companies/alderwood-data.json` for the cached source.",
       "comp": "£125k-140k OTE",
       "why": "Direct fit on a narrow, specialist product mandate; referral likely helped surface the application quickly.",
-      "watch": "Small team — later interview stages likely to probe hands-on delivery experience, not just strategy.",
+      "watch": "",
+      "watch_bullets": [
+        {
+          "title": "Small team.",
+          "body": "Later interview stages likely to probe hands-on delivery experience, not just strategy."
+        },
+        {
+          "title": "Founder-level scrutiny.",
+          "body": "Marcus reportedly likes being pushed back on — over-agreeing may read as weak rather than diplomatic."
+        }
+      ],
+      "usps": [
+        {
+          "title": "Direct data-platform PM experience.",
+          "body": "Owned the roadmap for a usage-based analytics product at a prior 60-person startup, taking it from 12 to 40 paying accounts in nine months — close to Alderwood's own stage and product shape."
+        },
+        {
+          "title": "Comfortable operating without a large team.",
+          "body": "Ran product, a chunk of go-to-market, and customer research solo for five months before a second PM was hired — the kind of stretch this role is asking for."
+        },
+        {
+          "title": "Track record shipping to specialist buyers.",
+          "body": "Built onboarding flows for data engineers, not consumer users — Alderwood's buyer persona (data/analytics leads) is a similarly technical, low-tolerance-for-fluff audience."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Priya Nandan",
+          "title": "Head of Product",
+          "background": "Joined Alderwood roughly 18 months ago from a mid-size data-infrastructure company; previously an IC engineer before moving into product. [estimated — public bio is thin]",
+          "assessing": "Whether the candidate can operate with real autonomy on a small team, not just describe a strategy.",
+          "play_it": "Lead with specific examples of decisions made without a large team backing you up, not frameworks."
+        },
+        {
+          "name": "Marcus Webb",
+          "title": "Co-founder & CEO",
+          "background": "Second-time founder; previously built and sold a smaller developer-tools company. [estimated]",
+          "assessing": "Product instinct, and whether the candidate will push back on him rather than just agree.",
+          "play_it": "Bring one genuine, prepared disagreement or pushback on the product direction — he reportedly values candidates who challenge him respectfully."
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "Walk me through a product decision you made that you'd now do differently.",
+          "a": "The analytics onboarding flow at [prior company] launched with too many configuration steps up front — usage data showed a third of new accounts stalled before their first real report. Simplified to a single default view with configuration deferred until after first value, which measurably improved week-one activation."
+        },
+        {
+          "q": "How would you prioritise between a feature a big prospect is asking for and your own roadmap conviction?",
+          "a": "Ask whether the request generalises — if three or more other accounts would plausibly want it too, it's probably signal, not a one-off. If it's genuinely bespoke to one prospect, the answer is usually 'not on the roadmap, happy to discuss as a paid customisation' rather than letting one deal reshape the product."
+        },
+        {
+          "q": "You'd be one of two PMs here. How do you divide scope with a peer without stepping on each other?",
+          "a": "Split by customer segment or product surface, not by task type — task-based splits create constant hand-offs and ambiguity about who owns a decision. A clear owner per surface, with a standing weekly sync to flag anything that crosses the boundary."
+        },
+        {
+          "q": "What's a metric you'd push back on if leadership over-indexed on it?",
+          "a": "Raw signup count without an activation gate — easy to inflate with top-of-funnel spend and tells you almost nothing about whether the product is actually landing. Would push for a paired activation-rate metric alongside any growth target."
+        }
+      ],
+      "questions_to_ask": [
+        "How is the roadmap actually prioritised day to day — a formal process, or Priya and Marcus's judgement call?",
+        "What's the biggest thing that's broken as you've scaled from roughly 12 to 40 employees?",
+        "What would make the next six months a clear success for this hire specifically?"
+      ],
+      "notes": [
+        {
+          "heading": "Logistics",
+          "body": "Role is London-hybrid, two days/week in office — confirm this is workable before the panel round, not after an offer."
+        }
+      ],
       "stages": [
         "Stage 1 — 2026-05-25 — Recruiter screen — positive, moved forward",
         "Stage 2 — 2026-06-04 — Hiring manager interview — positive, moved to panel"
+      ]
+    }
+  },
+  {
+    "id": "2026-05-19-silverlake-systems-vp-product",
+    "company": "Silverlake Systems",
+    "role": "VP Product",
+    "date_scored": "2026-05-19",
+    "date_applied": "2026-05-19",
+    "status": "withdrawn_after_interview",
+    "status_date": "2026-06-10",
+    "score": {
+      "value": 71,
+      "tier": "Tier 3 — Solid, worth applying",
+      "locked": true,
+      "breakdown": {
+        "jd_fit": 36,
+        "seniority": 13,
+        "competition": 12,
+        "comp": 8,
+        "blockers": 10
+      },
+      "estimated_fields": [
+        "comp"
+      ]
+    },
+    "next_interview_date": null,
+    "comp_band": null,
+    "jd_summary": "VP Product at Silverlake Systems.",
+    "caveats": "Comp estimated pending confirmation.",
+    "briefing": {
+      "company_facts": "Silverlake Systems — ~180 employees, Series B. See `examples/companies/silverlake-systems.json` for the cached source.",
+      "comp": "Not yet confirmed.",
+      "why": "Withdrew after Stage 2 once the comp band was finally confirmed — well below floor, despite an earlier verbal indication from the recruiter that it would be competitive.",
+      "watch": "Get the comp band confirmed in writing before Stage 1, not verbally after Stage 2 — this is the second process this floor issue has surfaced late in.",
+      "watch_bullets": [],
+      "usps": [
+        {
+          "title": "Referral-backed credibility.",
+          "body": "Referral from a current Silverlake employee helped the process move quickly through Stage 1."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Currently unknown",
+          "title": "no further interviewer met before withdrawing",
+          "background": "Stage 2 was with the hiring manager, but no name or background was captured before the process ended.",
+          "assessing": "",
+          "play_it": ""
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "How would you handle a comp mismatch discovered mid-process?",
+          "a": "Raise it directly and immediately rather than continuing through further stages on the assumption it might improve — continuing signals the floor is negotiable when it isn't, and wastes both sides' time."
+        }
+      ],
+      "questions_to_ask": [
+        "What's the actual confirmed comp band, in writing, before the next stage?"
+      ],
+      "notes": [
+        {
+          "heading": "Why withdrew",
+          "body": "The recruiter's Stage 1 verbal indication ('should be competitive') didn't match the actual confirmed band once pressed for specifics after Stage 2 — around 15% below floor. Withdrew rather than continue a process that couldn't clear the floor regardless of interview performance."
+        }
+      ],
+      "stages": [
+        "Stage 1 — 2026-05-26 — Recruiter screen — positive, moved forward",
+        "Stage 2 — 2026-06-10 — Hiring manager interview — positive, but comp band confirmed below floor immediately after; withdrew same week"
       ]
     }
   },
@@ -758,6 +1062,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-20",
     "date_applied": "2026-05-20",
     "status": "rejected",
+    "status_date": "2026-05-20",
     "score": {
       "value": 59,
       "tier": "Tier 3 — Solid, worth applying",
@@ -773,8 +1078,6 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-20",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Marlow Continental. Large multinational, broad applicant pool.",
@@ -788,10 +1091,11 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-22",
     "date_applied": "2026-05-22",
     "status": "interviewing",
+    "status_date": "2026-05-29",
     "score": {
       "value": 76,
       "tier": "Tier 2 — Strong callback odds",
-      "locked": true,
+      "locked": false,
       "breakdown": {
         "jd_fit": 36,
         "seniority": 13,
@@ -803,8 +1107,6 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": "interview",
-    "outcome_date": "2026-05-22",
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Pemberton Health Tech.",
@@ -814,6 +1116,50 @@ const APPLICATIONS = /*__DATA__*/[
       "comp": "Not yet confirmed.",
       "why": "Solid domain adjacency; moderate competition given the company's mid-market profile.",
       "watch": "Comp band still unconfirmed — worth raising directly before a later stage.",
+      "watch_bullets": [],
+      "usps": [
+        {
+          "title": "Regulated-sector product experience.",
+          "body": "Shipped features inside a healthcare-adjacent compliance framework at a prior role — Pemberton's health-tech context carries similar constraints."
+        },
+        {
+          "title": "VP-level scope already evidenced.",
+          "body": "Managed a small product team, not just an individual-contributor role, at the current seniority level."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Currently unknown",
+          "title": "share an interviewer's name if you'd like a profile added",
+          "background": "No interviewer named yet beyond the Stage 1 recruiter screen.",
+          "assessing": "",
+          "play_it": ""
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "How would you approach roadmap prioritisation inside a compliance-heavy product?",
+          "a": "Treat compliance requirements as a fixed floor, not a competing priority — they get built regardless of ROI debate, and the actual prioritisation conversation happens on everything above that floor."
+        },
+        {
+          "q": "What's your experience managing a small product team, not just being an IC?",
+          "a": "Managed two PMs at [prior company] — the main shift was moving from owning decisions to owning the quality of other people's decisions, which meant more time in 1:1 review of their rationale and less time writing specs myself."
+        },
+        {
+          "q": "Health-tech buyers are often risk-averse. How does that change how you'd position a new feature?",
+          "a": "Lead with what doesn't change (existing workflows, compliance posture) before what does — risk-averse buyers respond to evidence that the new thing doesn't destabilise what already works, not just to the upside case."
+        }
+      ],
+      "questions_to_ask": [
+        "What does the compliance/product relationship actually look like day to day — a blocking gate, or an embedded partner?",
+        "What's driving the VP Product hire specifically now, versus six months ago?"
+      ],
+      "notes": [
+        {
+          "heading": null,
+          "body": "Currently unknown — nothing situational to flag yet; will add if something comes up in later stages."
+        }
+      ],
       "stages": [
         "Stage 1 — 2026-05-29 — Recruiter screen — positive, moved forward"
       ]
@@ -826,6 +1172,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-24",
     "date_applied": "2026-05-24",
     "status": "rejected",
+    "status_date": "2026-05-24",
     "score": {
       "value": 42,
       "tier": "Tier 4 — Long shot",
@@ -839,8 +1186,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": "rejected",
-    "outcome_date": "2026-05-24",
     "next_interview_date": null,
     "comp_band": "£140k-155k OTE",
     "jd_summary": "VP Product at Palisade Robotics. Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support — a real, confirmed blocker, not a soft preference.",
@@ -854,10 +1199,11 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-26",
     "date_applied": "2026-05-26",
     "status": "interviewing",
+    "status_date": "2026-06-08",
     "score": {
       "value": 82,
       "tier": "Tier 1 — Exceptional callback odds",
-      "locked": true,
+      "locked": false,
       "breakdown": {
         "jd_fit": 40,
         "seniority": 14,
@@ -869,8 +1215,6 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": "interview",
-    "outcome_date": "2026-05-26",
     "next_interview_date": "2026-06-16",
     "comp_band": null,
     "jd_summary": "Head of Product at Briarcliff AI.",
@@ -880,6 +1224,50 @@ const APPLICATIONS = /*__DATA__*/[
       "comp": "Not yet confirmed.",
       "why": "Small, narrow-mandate startup role; strong overlap with prior product-led growth experience.",
       "watch": "Fast-moving process — later stages may compress quickly; keep availability flexible.",
+      "watch_bullets": [],
+      "usps": [
+        {
+          "title": "Product-led growth track record.",
+          "body": "Drove self-serve activation improvements that reduced time-to-first-value from 9 minutes to under 2 at a prior PLG product — directly relevant to Briarcliff's stated self-serve motion."
+        },
+        {
+          "title": "Comfortable in a genuinely early-stage environment.",
+          "body": "Joined a 15-person company as first PM hire previously — knows what building process from nothing actually requires, not just how to operate inside an existing one."
+        }
+      ],
+      "interviewer_profiles": [
+        {
+          "name": "Elena Torres",
+          "title": "Founder",
+          "background": "Ran the founder screen. Previously a senior engineer at a larger AI infrastructure company before starting Briarcliff. [estimated — limited public information available]",
+          "assessing": "",
+          "play_it": ""
+        }
+      ],
+      "prep_qa": [
+        {
+          "q": "What would you do in the first 30 days here?",
+          "a": "Spend the first two weeks almost entirely in user conversations and usage data before proposing any roadmap change — at 25 people, the risk isn't lack of ideas, it's building the wrong thing fast."
+        },
+        {
+          "q": "How do you think about product-market fit signal at this stage versus a later one?",
+          "a": "Retention curves that flatten, not vanity signups — at this stage, a small number of users who won't stop using it is a stronger signal than a larger number who tried it once."
+        },
+        {
+          "q": "The process has moved quickly. What questions haven't you had a chance to ask yet that you'd want answered before a final round?",
+          "a": "What's the realistic runway, and is this hire funded by the current round or contingent on the next one — directly affects how much risk this role represents."
+        }
+      ],
+      "questions_to_ask": [
+        "What's the split today between self-serve and any assisted/sales-led motion, and is that expected to shift?",
+        "What does Elena see as the single biggest product risk over the next two quarters?"
+      ],
+      "notes": [
+        {
+          "heading": null,
+          "body": "Process has moved unusually fast — screen to panel in one week. Worth asking directly whether that pace reflects urgency to fill the role or just a lean, fast-moving team; the answer changes how much leverage exists in later comp conversations."
+        }
+      ],
       "stages": [
         "Stage 1 — 2026-06-01 — Founder screen — positive, moved forward",
         "Stage 2 — 2026-06-08 — Product deep-dive — positive, moved to final round"
@@ -893,6 +1281,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-05-28",
     "date_applied": "2026-05-28",
     "status": "applied",
+    "status_date": "2026-05-28",
     "score": {
       "value": 52,
       "tier": "Tier 4 — Long shot",
@@ -908,12 +1297,64 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": "£95k-110k base + bonus (unconfirmed split)",
     "jd_summary": "Director of Product at Meridian Cloud Systems. Large, well-known public cloud platform — huge applicant pool expected.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
+    "briefing": null
+  },
+  {
+    "id": "2026-05-30-oakridge-ventures-director-of-product",
+    "company": "Oakridge Ventures",
+    "role": "Director of Product",
+    "date_scored": "2026-05-30",
+    "date_applied": "2026-05-30",
+    "status": "assumed_rejected",
+    "status_date": "2026-05-30",
+    "score": {
+      "value": 64,
+      "tier": "Tier 3 — Solid, worth applying",
+      "locked": true,
+      "breakdown": {
+        "jd_fit": 34,
+        "seniority": 11,
+        "competition": 10,
+        "comp": 9,
+        "blockers": 10
+      },
+      "estimated_fields": []
+    },
+    "next_interview_date": null,
+    "comp_band": "£105k-118k OTE",
+    "jd_summary": "Director of Product at Oakridge Ventures. Applied and heard nothing since — no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection.",
+    "caveats": "No estimated fields; all components scored against confirmed information.",
+    "briefing": null
+  },
+  {
+    "id": "2026-06-01-pinehollow-systems-head-of-product",
+    "company": "Pinehollow Systems",
+    "role": "Head of Product",
+    "date_scored": "2026-06-01",
+    "date_applied": "2026-06-01",
+    "status": "role_closed",
+    "status_date": "2026-06-01",
+    "score": {
+      "value": 71,
+      "tier": "Tier 2 — Strong callback odds",
+      "locked": true,
+      "breakdown": {
+        "jd_fit": 37,
+        "seniority": 13,
+        "competition": 13,
+        "comp": 8,
+        "blockers": 10
+      },
+      "estimated_fields": []
+    },
+    "next_interview_date": null,
+    "comp_band": "£110k-125k OTE",
+    "jd_summary": "Head of Product at Pinehollow Systems. Listing disappeared from the careers page three weeks after applying, no response received — the recruiter later confirmed the role was pulled internally, not filled. Not a judgement on the application.",
+    "caveats": "No estimated fields; all components scored against confirmed information.",
     "briefing": null
   },
   {
@@ -923,6 +1364,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-02",
     "date_applied": "2026-06-02",
     "status": "applied",
+    "status_date": "2026-06-02",
     "score": {
       "value": 81,
       "tier": "Tier 2 — Strong callback odds",
@@ -936,8 +1378,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": "£120k-135k OTE",
     "jd_summary": "Head of Product at Fernbank Analytics. Small, private data-analytics startup, narrow role, strong direct fit.",
@@ -951,6 +1391,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-05",
     "date_applied": "2026-06-05",
     "status": "applied",
+    "status_date": "2026-06-05",
     "score": {
       "value": 68,
       "tier": "Tier 3 — Solid, worth applying",
@@ -964,8 +1405,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Senior Director, Product at Coastal Ledger. Mid-size fintech, moderately well-known in its niche.",
@@ -979,6 +1418,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-09",
     "date_applied": "2026-06-09",
     "status": "applied",
+    "status_date": "2026-06-09",
     "score": {
       "value": 45,
       "tier": "Tier 4 — Long shot",
@@ -995,12 +1435,37 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "VP Product at Union Freight Group. Large logistics incumbent, broad VP-level role draws a wide pool.",
     "caveats": "Competition and/or comp estimated — see estimated_fields above.",
+    "briefing": null
+  },
+  {
+    "id": "2026-06-10-cross-timber-logistics-vp-product",
+    "company": "Cross Timber Logistics",
+    "role": "VP Product",
+    "date_scored": "2026-06-10",
+    "date_applied": "2026-06-10",
+    "status": "awaiting_recruiter",
+    "status_date": "2026-06-10",
+    "score": {
+      "value": 67,
+      "tier": "Tier 3 — Solid, worth applying",
+      "locked": false,
+      "breakdown": {
+        "jd_fit": 35,
+        "seniority": 12,
+        "competition": 10,
+        "comp": 10,
+        "blockers": 10
+      },
+      "estimated_fields": []
+    },
+    "next_interview_date": null,
+    "comp_band": null,
+    "jd_summary": "VP Product at Cross Timber Logistics. Applied and had a positive informal chat with the hiring manager, but the process is paused pending a right-to-work eligibility check on the recruiter's side before it can formally proceed.",
+    "caveats": "No estimated fields; all components scored against confirmed information.",
     "briefing": null
   },
   {
@@ -1010,6 +1475,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-11",
     "date_applied": null,
     "status": "scored",
+    "status_date": "2026-06-11",
     "score": {
       "value": 73,
       "tier": "Tier 2 — Strong callback odds",
@@ -1023,8 +1489,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": "£115k-128k OTE",
     "jd_summary": "Head of Product at Harrowgate Systems. Scored, not yet applied — still deciding whether to prioritise this over other open processes.",
@@ -1038,6 +1502,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-13",
     "date_applied": null,
     "status": "scored",
+    "status_date": "2026-06-13",
     "score": {
       "value": 44,
       "tier": "Tier 4 — Long shot",
@@ -1053,8 +1518,6 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": null,
     "jd_summary": "Director of Product at Vireo Networks. Scored, not applied — large, well-known network infrastructure company; score alone made this a low priority.",
@@ -1068,6 +1531,7 @@ const APPLICATIONS = /*__DATA__*/[
     "date_scored": "2026-06-14",
     "date_applied": null,
     "status": "scored",
+    "status_date": "2026-06-14",
     "score": {
       "value": 86,
       "tier": "Tier 1 — Exceptional callback odds",
@@ -1081,8 +1545,6 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
-    "outcome": null,
-    "outcome_date": null,
     "next_interview_date": null,
     "comp_band": "£125k-138k OTE",
     "jd_summary": "Head of Product at Elmscroft Data. Scored today — strong match, referral in hand. Drafting the application next, not yet submitted.",
@@ -1091,7 +1553,26 @@ const APPLICATIONS = /*__DATA__*/[
   }
 ]/*__END_DATA__*/;
 
-const STATUS_ORDER = ["scored", "applied", "interviewing", "offer", "rejected", "withdrawn"];
+const STATUS_ORDER = [
+  "scored", "applied", "awaiting_recruiter", "interviewing", "offer",
+  "rejected", "rejected_after_interview", "withdrawn", "withdrawn_after_interview",
+  "assumed_rejected", "role_closed"
+];
+
+const STATUS_LABELS = {
+  scored: "Scored",
+  applied: "Applied",
+  awaiting_recruiter: "Awaiting recruiter",
+  interviewing: "Interviewing",
+  offer: "Offer",
+  rejected: "Rejected",
+  rejected_after_interview: "Rejected (post-interview)",
+  withdrawn: "Withdrawn",
+  withdrawn_after_interview: "Withdrawn (post-interview)",
+  assumed_rejected: "Assumed rejected",
+  role_closed: "Role closed",
+};
+const statusLabel = s => STATUS_LABELS[s] || s;
 
 function fmtDate(d) {
   if (!d) return "";
@@ -1108,9 +1589,15 @@ function renderStats() {
     { l: "Total tracked", n: total },
     { l: "Scored, not applied", n: byStatus.scored || 0 },
     { l: "Applied", n: byStatus.applied || 0 },
+    { l: "Awaiting recruiter", n: byStatus.awaiting_recruiter || 0 },
     { l: "Interviewing", n: byStatus.interviewing || 0 },
     { l: "Offers", n: byStatus.offer || 0 },
     { l: "Rejected", n: byStatus.rejected || 0 },
+    { l: "Rejected (post-interview)", n: byStatus.rejected_after_interview || 0 },
+    { l: "Assumed rejected", n: byStatus.assumed_rejected || 0 },
+    { l: "Withdrawn", n: byStatus.withdrawn || 0 },
+    { l: "Withdrawn (post-interview)", n: byStatus.withdrawn_after_interview || 0 },
+    { l: "Role closed", n: byStatus.role_closed || 0 },
   ];
   document.getElementById("stats").innerHTML = stats.map(s =>
     `<div class="stat"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`
@@ -1122,7 +1609,7 @@ let currentFilter = "all";
 function renderFilters() {
   const filters = ["all", ...STATUS_ORDER];
   document.getElementById("filters").innerHTML = filters.map(f =>
-    `<div class="pill ${f === currentFilter ? "active" : ""}" data-filter="${f}">${f === "all" ? "All" : f[0].toUpperCase() + f.slice(1)}</div>`
+    `<div class="pill ${f === currentFilter ? "active" : ""}" data-filter="${f}">${f === "all" ? "All" : esc(statusLabel(f))}</div>`
   ).join("");
   document.querySelectorAll(".pill").forEach(p => p.onclick = () => { currentFilter = p.dataset.filter; render(); });
 }
@@ -1140,6 +1627,53 @@ function scoreBar(label, value, max, estimated) {
     <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
     <div>${v}/${m}</div>
   </div>`;
+}
+
+// "Currently unknown" placeholders are written as normal content in each
+// section's own format (see SCHEMA.md) — this just flags them visually so
+// gaps are easy to spot at a glance, not a separate code path.
+const isUnknown = s => String(s ?? "").trim().startsWith("Currently unknown");
+
+function proseParagraphs(text) {
+  if (!text) return `<p class="unknown">Not available.</p>`;
+  const cls = isUnknown(text) ? ' class="unknown"' : "";
+  return String(text).split(/\n\s*\n/).map(p => `<p${cls}>${esc(p.trim())}</p>`).join("");
+}
+function renderBulletPairs(items, kind) {
+  if (!items || !items.length) return `<p class="unknown">Not available.</p>`;
+  return `<ul class="${kind}-list">${items.map(i => {
+    const cls = i.title === "Currently unknown" ? " unknown" : "";
+    return `<li class="${kind}${cls}"><span class="${kind}-title">${esc(i.title)}</span> <span class="${kind}-body">${esc(i.body)}</span></li>`;
+  }).join("")}</ul>`;
+}
+function renderQa(pairs) {
+  if (!pairs || !pairs.length) return `<p class="unknown">Not available.</p>`;
+  return pairs.map(p => {
+    const cls = p.q === "Currently unknown" ? ' class="unknown"' : "";
+    return `<div class="qa-block"${cls}><div class="qa-q">Q: ${esc(p.q)}</div><div class="qa-a">${esc(p.a)}</div></div>`;
+  }).join("");
+}
+function renderQuestions(list) {
+  if (!list || !list.length) return `<p class="unknown">Not available.</p>`;
+  return `<ul class="question-list">${list.map(q => `<li class="question">${esc(q)}</li>`).join("")}</ul>`;
+}
+function renderProfiles(profiles) {
+  if (!profiles || !profiles.length) return `<p class="unknown">Not available.</p>`;
+  return profiles.map(p => {
+    const cls = p.name === "Currently unknown" ? ' class="unknown"' : "";
+    return `
+    <div class="profile-card"${cls}>
+      <div class="profile-name">${esc(p.name)}</div>
+      ${p.title ? `<div class="profile-title">${esc(p.title)}</div>` : ""}
+      ${p.background ? `<div class="prose"><p>${esc(p.background)}</p></div>` : ""}
+      ${p.assessing ? `<div class="profile-callout"><b>What they're assessing:</b> ${esc(p.assessing)}</div>` : ""}
+      ${p.play_it ? `<div class="profile-callout"><b>How to play it:</b> ${esc(p.play_it)}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+function renderNotes(blocks) {
+  if (!blocks || !blocks.length) return `<p class="unknown">Not available.</p>`;
+  return blocks.map(b => `${b.heading ? `<div class="notes-heading">${esc(b.heading)}</div>` : ""}${proseParagraphs(b.body)}`).join("");
 }
 
 // Malformed application data (a bad hand-edit, a missing field) should never
@@ -1164,16 +1698,29 @@ function renderCard(app) {
     const briefing = app.briefing && typeof app.briefing === "object" ? app.briefing : null;
     const stages = briefing && Array.isArray(briefing.stages) ? briefing.stages : [];
     const briefingBtn = briefing ? `<button class="briefing-toggle" onclick="toggleBriefing(event, '${esc(id)}')">View briefing pack</button>` : "";
+    // Once a briefing exists at all (status has reached interviewing), every
+    // standard section renders — real content or an honest "Currently
+    // unknown" placeholder (see SCHEMA.md), never an omitted header.
     const briefingHtml = briefing ? `
       <div class="briefing" id="briefing-${esc(id)}">
         <div class="section-title">Company facts</div>
-        <div class="prose"><p>${esc(briefing.company_facts || "Not available.")}</p></div>
+        <div class="prose">${proseParagraphs(briefing.company_facts)}</div>
         <div class="section-title">Comp</div>
-        <div class="prose"><p>${esc(briefing.comp || "Not available.")}</p></div>
-        <div class="section-title">Why it progressed</div>
-        <div class="prose"><p>${esc(briefing.why || "Not available.")}</p></div>
+        <div class="prose">${proseParagraphs(briefing.comp)}</div>
+        <div class="section-title">Why it progressed / didn't</div>
+        <div class="prose">${proseParagraphs(briefing.why)}</div>
+        <div class="section-title">Unique selling points</div>
+        ${renderBulletPairs(briefing.usps, "usp")}
+        <div class="section-title">Interviewer profiles</div>
+        ${renderProfiles(briefing.interviewer_profiles)}
+        <div class="section-title">Prep questions</div>
+        ${renderQa(briefing.prep_qa)}
+        <div class="section-title">Questions to ask</div>
+        ${renderQuestions(briefing.questions_to_ask)}
         <div class="section-title">Watch-outs</div>
-        <div class="prose"><p>${esc(briefing.watch || "Not available.")}</p></div>
+        ${briefing.watch_bullets && briefing.watch_bullets.length ? renderBulletPairs(briefing.watch_bullets, "watchout") : proseParagraphs(briefing.watch)}
+        <div class="section-title">Notes</div>
+        ${renderNotes(briefing.notes)}
         <div class="section-title">Interview stage log</div>
         <ul class="stage-log">${stages.map(s => `<li>${esc(s)}</li>`).join("") || "<li>No stages logged.</li>"}</ul>
       </div>` : "";
@@ -1185,7 +1732,7 @@ function renderCard(app) {
           <div class="company">${esc(app.company || "Unknown company")}</div>
           <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}${app.next_interview_date ? ` &middot; <span class="next-interview">next interview ${esc(fmtDate(app.next_interview_date))}</span>` : ""}</div>
         </div>
-        <div class="badge ${esc(status)}">${esc(status)}</div>
+        <div class="badge ${esc(status)}">${esc(statusLabel(status))}</div>
         <div class="score"><div class="v">${Number.isFinite(score.value) ? score.value : "—"}</div><div class="t">${esc(score.tier || "")}</div></div>
         <div class="chevron">&#9656;</div>
       </div>
@@ -1226,9 +1773,12 @@ function toggleBriefing(ev, id) {
   if (el) el.classList.toggle("open");
 }
 
-const CLOSED_STATUSES = ["rejected", "withdrawn"];
+const CLOSED_STATUSES = [
+  "rejected", "rejected_after_interview", "withdrawn",
+  "withdrawn_after_interview", "assumed_rejected", "role_closed"
+];
 const activityDate = a => a.date_applied || a.date_scored || null;
-const closedDate = a => a.outcome_date || activityDate(a);
+const closedDate = a => a.status_date || activityDate(a);
 
 // Active cards first, soonest known next-interview date on top; active cards
 // with no known date fall to the back of the active group (by most recent

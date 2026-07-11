@@ -1,12 +1,16 @@
 name: Verify example dashboard is in sync
 
-# Two checks, both against whatever's currently in examples/:
+# Three checks, all against whatever's currently in examples/ and docs/:
 # 1. docs/index.html (the published demo) still matches what
 #    scripts/build_dashboard.py would generate — catches someone editing
 #    the example data and forgetting to rebuild before committing.
 # 2. The recalibration agent's gate still passes and has signal on all
 #    five score components — catches example-data edits that silently
 #    break the demo's own premise (see scripts/verify_recalibration.py).
+# 3. SCHEMA.md's documented Briefing pack example actually parses, and
+#    docs/index.html's STATUS_ORDER matches scripts/_status.py — catches
+#    documentation/parser and Python/JS drift (see
+#    scripts/verify_consistency.py; this exact class of bug shipped once).
 #
 # No secrets, no API keys, nothing to configure — uses only the default
 # GITHUB_TOKEN GitHub Actions provides automatically for checkout.
@@ -17,8 +21,11 @@ on:
     paths:
       - "examples/applications/**"
       - "docs/index.html"
+      - "schema/SCHEMA.md"
+      - "scripts/_status.py"
       - "scripts/build_dashboard.py"
       - "scripts/verify_recalibration.py"
+      - "scripts/verify_consistency.py"
       - "config/weights.json"
   pull_request:
     branches: [main]
@@ -50,3 +57,6 @@ jobs:
 
       - name: Verify recalibration agent's gate and per-component signal
         run: python scripts/verify_recalibration.py
+
+      - name: Verify SCHEMA.md/parser and Python/JS status-list consistency
+        run: python scripts/verify_consistency.py

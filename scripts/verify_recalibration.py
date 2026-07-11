@@ -25,6 +25,9 @@ import sys
 
 import yaml
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _status import recalibration_signal
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPS_DIR = os.path.join(ROOT, "examples", "applications")
 WEIGHTS_PATH = os.path.join(ROOT, "config", "weights.json")
@@ -49,9 +52,10 @@ def main():
     min_positive = weights["recalibration"]["min_positive_outcomes"]
 
     apps = load_applications()
-    logged = [a for a in apps if a.get("outcome")]
-    positive = [a for a in logged if a["outcome"] in ("interview", "offer")]
-    negative = [a for a in logged if a["outcome"] in ("rejected", "withdrawn")]
+    signals = [(a, recalibration_signal(a["status"])) for a in apps]
+    logged = [a for a, sig in signals if sig is not None]
+    positive = [a for a, sig in signals if sig == "positive"]
+    negative = [a for a, sig in signals if sig == "negative"]
 
     gate_passes = len(logged) >= min_logged and len(positive) >= min_positive
 
