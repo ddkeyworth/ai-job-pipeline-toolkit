@@ -133,6 +133,8 @@
     font-size: 13px;
   }
   .next-interview { color: var(--accent); font-weight: 600; }
+  .briefing-link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+  .briefing-link:hover { opacity: .8; }
   main {
     max-width: 1100px;
     margin: 0 auto;
@@ -1806,7 +1808,7 @@ function renderCard(app) {
       <div class="card-head" onclick="toggleCard('${esc(id)}')">
         <div>
           <div class="company">${esc(app.company || "Unknown company")}</div>
-          <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}${app.next_interview_date ? ` &middot; <span class="next-interview">next interview ${esc(fmtDate(app.next_interview_date))}</span>` : ""}</div>
+          <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}${app.next_interview_date ? ` &middot; <span class="next-interview">next interview ${esc(fmtDate(app.next_interview_date))}</span>` : ""}${briefing ? ` &middot; <span class="briefing-link" onclick="openBriefing(event, '${esc(id)}')">briefing pack</span>` : ""}</div>
         </div>
         <div class="badge ${esc(status)}">${esc(statusLabel(status))}</div>
         <div class="score"><div class="v">${Number.isFinite(score.value) ? score.value : "–"}</div><div class="t">${esc(score.tier || "")}</div></div>
@@ -1847,6 +1849,16 @@ function toggleBriefing(ev, id) {
   ev.stopPropagation();
   const el = document.getElementById(`briefing-${id}`);
   if (el) el.classList.toggle("open");
+}
+// Shortcut from the role-line link: goes straight to an open card with the
+// briefing already open, instead of expand-then-click-again. Sets open
+// rather than toggling, so clicking it twice never collapses anything.
+function openBriefing(ev, id) {
+  ev.stopPropagation();
+  const card = document.getElementById(`card-${id}`);
+  const briefing = document.getElementById(`briefing-${id}`);
+  if (card) card.classList.add("open");
+  if (briefing) briefing.classList.add("open");
 }
 
 const CLOSED_STATUSES = [
