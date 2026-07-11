@@ -66,6 +66,9 @@
   .headline-stat.not-interviewed .n { color: var(--bad); }
   .headline-stat .l { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; }
   .headline-stat .sub { font-size: 11px; color: var(--text-dim); opacity: .75; margin-top: 2px; }
+  .headline-stat .avg { font-size: 12px; font-weight: 600; margin-top: 6px; }
+  .headline-stat.interviewed .avg { color: var(--good); }
+  .headline-stat.not-interviewed .avg { color: var(--bad); }
   .flow-toggle-wrap { max-width: 1100px; margin: 0 auto 12px; padding: 0 24px; }
   .flow-toggle-wrap .briefing-toggle { margin-top: 0; }
   .status-flow { display: none; max-width: 1100px; margin: 0 auto 16px; padding: 16px 24px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; flex-direction: column; gap: 10px; }
@@ -1590,15 +1593,20 @@ function fmtDate(d) {
 function renderHeadlineStats() {
   const data = Array.isArray(APPLICATIONS) ? APPLICATIONS.filter(Boolean) : [];
   const total = data.length;
-  const interviewed = data.filter(a => REACHED_INTERVIEW.includes(a.status)).length;
-  const notInterviewed = data.filter(a => NO_INTERVIEW_NEGATIVE.includes(a.status)).length;
+  const interviewedApps = data.filter(a => REACHED_INTERVIEW.includes(a.status));
+  const notInterviewedApps = data.filter(a => NO_INTERVIEW_NEGATIVE.includes(a.status));
+  const avgScore = list => {
+    const vals = list.map(a => a.score && a.score.value).filter(Number.isFinite);
+    return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : null;
+  };
+  const fmtAvg = v => v === null ? "" : `avg score ${v.toFixed(1)}`;
   const headline = [
     { cls: "total", l: "Total tracked", n: total },
-    { cls: "interviewed", l: "Interviewed", sub: "reached interview stage, any outcome", n: interviewed },
-    { cls: "not-interviewed", l: "Not interviewed", sub: "confirmed rejected, interview never reached", n: notInterviewed },
+    { cls: "interviewed", l: "Interviewed", sub: "reached interview stage, any outcome", avg: fmtAvg(avgScore(interviewedApps)), n: interviewedApps.length },
+    { cls: "not-interviewed", l: "Not interviewed", sub: "confirmed rejected, interview never reached", avg: fmtAvg(avgScore(notInterviewedApps)), n: notInterviewedApps.length },
   ];
   document.getElementById("headline-stats").innerHTML = headline.map(s =>
-    `<div class="headline-stat ${s.cls}"><div class="n">${s.n}</div><div class="l">${esc(s.l)}</div>${s.sub ? `<div class="sub">${esc(s.sub)}</div>` : ""}</div>`
+    `<div class="headline-stat ${s.cls}"><div class="n">${s.n}</div><div class="l">${esc(s.l)}</div>${s.sub ? `<div class="sub">${esc(s.sub)}</div>` : ""}${s.avg ? `<div class="avg">${esc(s.avg)}</div>` : ""}</div>`
   ).join("");
 }
 

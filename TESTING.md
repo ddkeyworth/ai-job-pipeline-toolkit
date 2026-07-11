@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Nine tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Ten tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
 
 **Note on scope:** the two tests below that use a real company ([REDACTED-COMPANY]) are validation exercises only — no application was submitted, no contact was made with anyone, and [REDACTED-COMPANY]'s real data is never written into `examples/`, which stays 100% fictional as documented in the README. This log is the one place in the repo where a real, well-known public company is named, specifically to prove the tool's mechanisms work on real inputs, not just synthetic ones designed to make it look good.
 
@@ -175,6 +175,20 @@ docs/index.html's REACHED_INTERVIEW and NO_INTERVIEW_NEGATIVE match scripts/_sta
 ```
 
 Confirmed in the browser via DOM inspection: filter pills, the per-status stats grid, and the flow legend all read `Scored → Didn't apply → Applied → Rejected → Assumed rejected → Interviewing → Rejected post-interview → Withdrew post-interview → Offer` — the same order in all three places, no drift between them, `Offer` last everywhere it appears.
+
+## Test 10 — Average score by Interviewed vs. Not interviewed
+
+Requested feature: the legacy hand-maintained tracker this toolkit is replacing showed average score for interviewed vs. not-interviewed applications, and it's genuinely useful — it's the most direct visual answer to "is the scoring rubric actually predicting callbacks." Added to the two relevant headline tiles (`docs/index.html`'s `renderHeadlineStats()`), reusing the exact same `REACHED_INTERVIEW`/`NO_INTERVIEW_NEGATIVE` groupings the counts and the recalibration agent already use — no new classification logic, no new drift risk.
+
+Verified by computing the same average independently in the browser console (not just reading the code) and comparing against what the tile actually rendered:
+
+```
+Interviewed tile:      "avg score 79.4"
+Not interviewed tile:  "avg score 62.1"
+Independent check:     interviewedAvg=79.4, notInterviewedAvg=62.1  — matches exactly
+```
+
+The ~17-point gap is directionally consistent with Test 6/7's per-component recalibration means (positive means consistently higher than negative means across jd_fit, seniority, competition) — this is the same underlying signal, just expressed as one overall number instead of five per-component ones. Colored to match each tile (green for Interviewed, red for Not interviewed); confirmed via `getComputedStyle()`, not just visual assumption.
 
 ## How to reproduce this
 
