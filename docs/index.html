@@ -59,11 +59,11 @@
   }
   .headline-stat.total { border-color: var(--accent); }
   .headline-stat.interviewed { border-color: var(--good); }
-  .headline-stat.rejected { border-color: var(--bad); }
+  .headline-stat.not-interviewed { border-color: var(--bad); }
   .headline-stat .n { font-size: 32px; font-weight: 700; line-height: 1; }
   .headline-stat.total .n { color: var(--accent); }
   .headline-stat.interviewed .n { color: var(--good); }
-  .headline-stat.rejected .n { color: var(--bad); }
+  .headline-stat.not-interviewed .n { color: var(--bad); }
   .headline-stat .l { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; }
   .headline-stat .sub { font-size: 11px; color: var(--text-dim); opacity: .75; margin-top: 2px; }
   .flow-toggle-wrap { max-width: 1100px; margin: 0 auto 12px; padding: 0 24px; }
@@ -1592,11 +1592,11 @@ function renderHeadlineStats() {
   const data = Array.isArray(APPLICATIONS) ? APPLICATIONS.filter(Boolean) : [];
   const total = data.length;
   const interviewed = data.filter(a => REACHED_INTERVIEW.includes(a.status)).length;
-  const rejected = data.filter(a => NO_INTERVIEW_NEGATIVE.includes(a.status)).length;
+  const notInterviewed = data.filter(a => NO_INTERVIEW_NEGATIVE.includes(a.status)).length;
   const headline = [
     { cls: "total", l: "Total tracked", n: total },
     { cls: "interviewed", l: "Interviewed", sub: "reached interview stage, any outcome", n: interviewed },
-    { cls: "rejected", l: "Rejected", sub: "no interview reached", n: rejected },
+    { cls: "not-interviewed", l: "Not interviewed", sub: "confirmed rejected, interview never reached", n: notInterviewed },
   ];
   document.getElementById("headline-stats").innerHTML = headline.map(s =>
     `<div class="headline-stat ${s.cls}"><div class="n">${s.n}</div><div class="l">${esc(s.l)}</div>${s.sub ? `<div class="sub">${esc(s.sub)}</div>` : ""}</div>`
