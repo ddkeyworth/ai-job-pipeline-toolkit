@@ -242,8 +242,8 @@
   <div class="flow-row">
     <span class="badge scored">Scored</span>
     <span class="flow-arrow">&#8594;</span>
-    <span class="badge applied">Applied</span>
     <span class="badge didnt_apply">Didn't apply</span>
+    <span class="badge applied">Applied</span>
   </div>
   <div class="flow-row">
     <span class="badge applied">Applied</span>
@@ -255,9 +255,9 @@
   <div class="flow-row">
     <span class="badge interviewing">Interviewing</span>
     <span class="flow-arrow">&#8594;</span>
-    <span class="badge offer">Offer</span>
     <span class="badge rejected_after_interview">Rejected post-interview</span>
     <span class="badge withdrew_after_interview">Withdrew post-interview</span>
+    <span class="badge offer">Offer</span>
   </div>
 </div>
 
@@ -1555,21 +1555,20 @@ const APPLICATIONS = /*__DATA__*/[
 ]/*__END_DATA__*/;
 
 const STATUS_ORDER = [
-  "scored", "applied", "interviewing", "offer",
-  "didnt_apply", "rejected", "rejected_after_interview",
-  "withdrew_after_interview", "assumed_rejected"
+  "scored", "didnt_apply", "applied", "rejected", "assumed_rejected",
+  "interviewing", "rejected_after_interview", "withdrew_after_interview", "offer"
 ];
 
 const STATUS_LABELS = {
   scored: "Scored",
-  applied: "Applied",
-  interviewing: "Interviewing",
-  offer: "Offer",
   didnt_apply: "Didn't apply",
+  applied: "Applied",
   rejected: "Rejected",
+  assumed_rejected: "Assumed rejected",
+  interviewing: "Interviewing",
   rejected_after_interview: "Rejected post-interview",
   withdrew_after_interview: "Withdrew post-interview",
-  assumed_rejected: "Assumed rejected",
+  offer: "Offer",
 };
 const statusLabel = s => STATUS_LABELS[s] || s;
 
@@ -1609,14 +1608,14 @@ function renderStats() {
   data.forEach(a => byStatus[a.status] = (byStatus[a.status] || 0) + 1);
   const stats = [
     { l: "Scored, not applied", n: byStatus.scored || 0 },
-    { l: "Applied", n: byStatus.applied || 0 },
-    { l: "Interviewing", n: byStatus.interviewing || 0 },
-    { l: "Offers", n: byStatus.offer || 0 },
     { l: "Didn't apply", n: byStatus.didnt_apply || 0 },
+    { l: "Applied", n: byStatus.applied || 0 },
     { l: "Rejected", n: byStatus.rejected || 0 },
-    { l: "Rejected post-interview", n: byStatus.rejected_after_interview || 0 },
     { l: "Assumed rejected", n: byStatus.assumed_rejected || 0 },
+    { l: "Interviewing", n: byStatus.interviewing || 0 },
+    { l: "Rejected post-interview", n: byStatus.rejected_after_interview || 0 },
     { l: "Withdrew post-interview", n: byStatus.withdrew_after_interview || 0 },
+    { l: "Offers", n: byStatus.offer || 0 },
   ];
   document.getElementById("stats").innerHTML = stats.map(s =>
     `<div class="stat"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`
@@ -1793,8 +1792,8 @@ function toggleBriefing(ev, id) {
 }
 
 const CLOSED_STATUSES = [
-  "didnt_apply", "rejected", "rejected_after_interview",
-  "withdrew_after_interview", "assumed_rejected"
+  "didnt_apply", "rejected", "assumed_rejected",
+  "rejected_after_interview", "withdrew_after_interview"
 ];
 const activityDate = a => a.date_applied || a.date_scored || null;
 const closedDate = a => a.status_date || activityDate(a);

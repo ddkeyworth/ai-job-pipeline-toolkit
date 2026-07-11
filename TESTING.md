@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Eight tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Nine tests, run across sessions between 2026-07-09 and 2026-07-11, documented here as evidence rather than assertion.
 
 **Note on scope:** the two tests below that use a real company ([REDACTED-COMPANY]) are validation exercises only — no application was submitted, no contact was made with anyone, and [REDACTED-COMPANY]'s real data is never written into `examples/`, which stays 100% fictional as documented in the README. This log is the one place in the repo where a real, well-known public company is named, specifically to prove the tool's mechanisms work on real inputs, not just synthetic ones designed to make it look good.
 
@@ -149,6 +149,32 @@ docs/index.html's REACHED_INTERVIEW and NO_INTERVIEW_NEGATIVE match scripts/_sta
 Confirmed in the browser via DOM inspection (screenshots weren't rendering this session): headline stats read Total tracked 32, Interviewed 7, Rejected 17 — the interviewed count matches Test 7's recalibration "positive outcomes" figure exactly, as it should since both derive from the same set. "Total tracked" no longer appears in the per-status grid. Clicked the flow-legend toggle and confirmed all three rows render with the correct transitions and badge colors (scored=purple, applied/interviewing=blue/green, rejected variants=red, didnt_apply/assumed_rejected/withdrew=grey, offer=gold).
 
 **Correction, same session:** the "Rejected" headline label was ambiguous against the granular "Rejected"/"Rejected post-interview" tiles directly below it — a post-interview rejection deliberately counts toward "Interviewed" at the headline level (it validated the scoring prediction) but that's not obvious from the word "Rejected" alone. Considered three options (`Interviewed`/`Not interviewed`, `Reached Interview`/`Didn't Reach Interview`, `Interviewed`/`Rejected before interview`) against length and ambiguity; landed on `Not interviewed`, with the sub-label tightened to "confirmed rejected, interview never reached" to also rule out a "hasn't interviewed yet" misreading against still-active `applied` applications. Rebuilt, re-ran `verify_consistency.py` (unaffected — it checks the underlying status sets, not display text), and re-confirmed in the browser: same counts (32/7/17), new label and CSS class (`not-interviewed`), no console errors.
+
+## Test 9 — Status display order follows the state machine, not active/closed grouping
+
+The prior status-vocabulary work ordered statuses as "active statuses, then closed statuses" (`scored, applied, interviewing, offer, didnt_apply, rejected, ...`), which reads oddly against the actual flow — `offer` sitting in position 4 when it's really the very last thing that can happen, and `assumed_rejected` separated from `rejected` by three unrelated statuses.
+
+Reordered `scripts/_status.py`'s `ALL_STATUSES` to a flow-order read of the state machine instead — each status sits right after wherever it's reached from — with `offer` deliberately pulled to the very end even though structurally it's just one of `interviewing`'s three exits:
+
+```
+scored, didnt_apply, applied, rejected, assumed_rejected,
+interviewing, rejected_after_interview, withdrew_after_interview, offer
+```
+
+`ALL_STATUSES` is no longer derived as `ACTIVE_STATUSES + CLOSED_STATUSES` (that concatenation is exactly what produced the grouped-not-flow order) — it's now the explicit, independent source of truth for display/filter order, while `ACTIVE_STATUSES`/`CLOSED_STATUSES` remain membership-only groups for classification logic where order was never load-bearing.
+
+Propagated to every place order is shown: `docs/index.html`'s `STATUS_ORDER` (drives filter pills), the per-status stats grid array, the status-flow legend's row ordering (Didn't apply before Applied; Offer last in its row), and `SCHEMA.md`'s status table.
+
+Ran live:
+
+```
+$ python scripts/verify_consistency.py
+SCHEMA.md's Briefing pack example round-trips correctly through the parser (10 sections checked).
+docs/index.html's STATUS_ORDER matches scripts/_status.py's ALL_STATUSES (9 statuses).
+docs/index.html's REACHED_INTERVIEW and NO_INTERVIEW_NEGATIVE match scripts/_status.py.
+```
+
+Confirmed in the browser via DOM inspection: filter pills, the per-status stats grid, and the flow legend all read `Scored → Didn't apply → Applied → Rejected → Assumed rejected → Interviewing → Rejected post-interview → Withdrew post-interview → Offer` — the same order in all three places, no drift between them, `Offer` last everywhere it appears.
 
 ## How to reproduce this
 

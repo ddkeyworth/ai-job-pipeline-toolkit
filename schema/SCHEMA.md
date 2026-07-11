@@ -55,17 +55,19 @@ applied      -> rejected | assumed_rejected | interviewing
 interviewing -> offer | rejected_after_interview | withdrew_after_interview
 ```
 
+Listed in flow order below — each status sits right after wherever it's reached from, not grouped by active/closed:
+
 | Status | Meaning | Active / closed |
 |---|---|---|
 | `scored` | JD scored, decision pending | active |
-| `applied` | Submitted, no response yet | active |
-| `interviewing` | In an active interview process | active |
-| `offer` | Offer extended | active |
 | `didnt_apply` | Scored, then a deliberate decision **not** to submit — distinct from `scored`, which means the decision is still pending | closed |
+| `applied` | Submitted, no response yet | active |
 | `rejected` | Rejected **before** ever reaching interview stage | closed |
+| `assumed_rejected` | No response past a configurable silence window (`config/weights.json → pipeline_hygiene`) — inferred, never confirmed | closed |
+| `interviewing` | In an active interview process | active |
 | `rejected_after_interview` | Rejected **after** reaching interview stage | closed |
 | `withdrew_after_interview` | Withdrew **after** reaching interview stage | closed |
-| `assumed_rejected` | No response past a configurable silence window (`config/weights.json → pipeline_hygiene`) — inferred, never confirmed | closed |
+| `offer` | Offer extended | active |
 
 Two earlier candidates for this list — a recruiter-gating status and an externally-closed-role status — were tried and dropped: too messy to track in practice, and not enough signal to justify the extra states. Removed rather than left in unused.
 

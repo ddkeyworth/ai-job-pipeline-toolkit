@@ -20,15 +20,33 @@ dropped as too messy to track in practice / not useful signal — removed
 rather than kept around unused.
 """
 
+# Display/filter order — a logical read of the state machine (each status
+# sits right after wherever it's reached from), not "active statuses then
+# closed statuses." offer is deliberately last: it's the one status that
+# feels wrong buried mid-list even though structurally it's just one of
+# interviewing's three exits.
+ALL_STATUSES = [
+    "scored",
+    "didnt_apply",
+    "applied",
+    "rejected",
+    "assumed_rejected",
+    "interviewing",
+    "rejected_after_interview",
+    "withdrew_after_interview",
+    "offer",
+]
+
+# Classification groups — membership only, order isn't load-bearing here
+# the way it is for ALL_STATUSES above.
 ACTIVE_STATUSES = ["scored", "applied", "interviewing", "offer"]
 CLOSED_STATUSES = [
     "didnt_apply",
     "rejected",
+    "assumed_rejected",
     "rejected_after_interview",
     "withdrew_after_interview",
-    "assumed_rejected",
 ]
-ALL_STATUSES = ACTIVE_STATUSES + CLOSED_STATUSES
 
 # Reaching interview stage validates the scoring rubric's prediction
 # (jd_fit/seniority/competition) regardless of what happens afterward —
