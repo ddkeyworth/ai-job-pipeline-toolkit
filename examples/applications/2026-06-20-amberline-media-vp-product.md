@@ -8,14 +8,14 @@ status_date: 2026-06-20
 source: "Company site"
 
 score:
-  value: 62
-  tier: "Tier 3 – Solid, worth applying"
+  value: 74
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 33
     seniority: 12
     competition: 9
-    comp: 8
+    comp: 10
     blockers: 10
   estimated_fields: []
 
@@ -28,11 +28,11 @@ comp_band: "£108k-120k OTE"
 VP Product at Amberline Media. Mid-size media company, moderately competitive.
 
 ## Score rationale
-- JD fit: 33/45
-- Seniority alignment: 12/15
-- Competition estimate: 9/20
-- Comp alignment: 8/10
-- Blockers: 10/10
+- JD fit (33/45): Reasonable overlap for a mid-size media company's product mandate.
+- Seniority alignment (12/15): VP level matches the candidate's evidenced range.
+- Competition estimate (9/20): Mid-size media company, moderately competitive.
+- Compensation alignment (10/10): £108k-120k OTE confirmed at and above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

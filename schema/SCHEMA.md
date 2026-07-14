@@ -4,7 +4,22 @@ This is the shared contract between every part of this toolkit – the skill, th
 
 There is no database and no server. Every tracked application is one plain-text file. Your data lives wherever you put it – never inside a clone of this repo (see `README.md` → Security).
 
-## 1. Application file
+## 1. Preferences file
+
+One file, `preferences.md`, holding the user's own stable settings – right now just their compensation floor, structured to grow later without a redesign. Collected explicitly (see `SKILL.md` Step 1), never inferred from a CV – most CVs don't state compensation at all, and guessing from one that happens to would silently fail for everyone else.
+
+```markdown
+# Preferences
+
+## Compensation floor
+On-target earnings (base salary + target bonus/variable comp; equity explicitly excluded – see `config/weights.json` → `components.comp.equity_handling`): £110,000
+
+Confirmed: 2026-07-14
+```
+
+Treated exactly like the CV baseline (`SKILL.md` Step 1): a single evolving value, not re-asked every session, updated only when the user explicitly says it's changed, with the update confirmed plainly rather than applied silently. `Confirmed: <date>` is the same "when was this last set" convention `status_date` uses elsewhere in this schema – it's what tells you whether a floor might be stale, not a field anything parses programmatically.
+
+## 2. Application file
 
 One file per tracked application. Markdown with YAML frontmatter. Suggested filename: `YYYY-MM-DD-company-role-slug.md`, but the filename itself is never parsed – only the frontmatter and body matter.
 
@@ -32,7 +47,7 @@ score:
 
 next_interview_date: null   # null, or the next confirmed interview date (YYYY-MM-DD)
 
-comp_band: "£140k-160k OTE"  # or null if unknown – absence is never penalised, see SKILL.md
+comp_band: "£140k-160k OTE"  # stated or estimated on-target earnings (base + bonus, equity excluded); null if not stated and not reasonably estimable – see SKILL.md and config/weights.json -> components.comp
 
 application_materials:       # null while status is "scored" – set once when status moves to "applied", never guessed
   cv: null                   # null = the baseline CV was used as-is; otherwise the filename/description of a role-tailored CV
@@ -44,7 +59,17 @@ application_materials:       # null while status is "scored" – set once when s
 Short paraphrase of the role, not a copy-paste of the listing.
 
 ## Score rationale
-One line per component, matching the breakdown above.
+One line per component, matching the breakdown above – real reasoning, not a restatement of the number:
+
+```markdown
+- JD fit (38/45): Strong overlap on core CS-leadership responsibilities; no direct experience in the stated regulatory domain.
+- Seniority alignment (12/15): Director level matches the candidate's evidenced range.
+- Competition estimate (12/20, estimated): Mid-size, not a widely recognised brand.
+- Compensation alignment (10/10): £140k-160k OTE, confirmed above the £110k floor.
+- Blockers (10/10): No blocker identified.
+```
+
+A line that just repeats the score (`"JD fit: 38/45"`, nothing else) isn't a rationale – it tells the reader nothing the breakdown numbers above it don't already show.
 
 ## Caveats
 Anything estimated rather than confirmed (anonymised listing, unclear comp split, etc.)
@@ -112,7 +137,7 @@ A markdown table, one row per region:
 
 Cultural/business-norm content like this is general pattern knowledge, not a verified fact the way company size or funding stage is – say so plainly rather than presenting it with the same confidence as a live-search result.
 
-### Comp
+### Compensation
 What's known, what's still open. `Currently unknown – not disclosed in the listing; worth asking early.` is valid content, not a gap to hide.
 
 ### Why it progressed / didn't
@@ -161,9 +186,9 @@ A freeform catch-all for anything situational – competitive landscape, warm-in
 - Bullet sections (USPs, Watch-outs): `- **Currently unknown.** Share more about what makes you a strong fit for this specific role and I'll turn it into tailored selling points.`
 - Prep questions: `**Q: Currently unknown**` / `A: Share more about the role or interview format and I can draft targeted prep questions.`
 
-This should be the exception, not the default output – see `SKILL.md` → Step 4 for when a placeholder is appropriate versus when the skill should actually be doing the research or synthesis. An application with only the original three prose fields (Company facts, Comp, Why it progressed/didn't) plus Watch-outs and the stage log is still a complete, valid briefing pack if that's genuinely all there is – the standard sections exist to be filled in over time, through conversation, not generated once and left static.
+This should be the exception, not the default output – see `SKILL.md` → Step 4 for when a placeholder is appropriate versus when the skill should actually be doing the research or synthesis. An application with only the original three prose fields (Company facts, Compensation, Why it progressed/didn't) plus Watch-outs and the stage log is still a complete, valid briefing pack if that's genuinely all there is – the standard sections exist to be filled in over time, through conversation, not generated once and left static.
 
-## 2. Company-fact cache
+## 3. Company-fact cache
 
 One file per company, only created once the live-search verification agent has actually looked a company up. Reused across every application to that company – this is what keeps live-search costs down (see `SKILL.md` → Live-search verification agent).
 
@@ -186,10 +211,10 @@ One file per company, only created once the live-search verification agent has a
 
 Cache entries are considered fresh for 90 days. Past that, the next application to the same company triggers a fresh lookup rather than reusing stale data.
 
-## 3. Weights config
+## 4. Weights config
 
 `config/weights.json` – the only file a user needs to touch to change scoring behaviour, plus the `pipeline_hygiene` block controlling silence-based `assumed_rejected` detection. Documented fully in that file's own comments-equivalent (`_notes` fields) rather than here, so the numbers and their explanation never drift apart.
 
-## 4. Outcome signal (derived, not stored)
+## 5. Outcome signal (derived, not stored)
 
 There is no separate outcomes file, and no separate `outcome` field. The recalibration agent (see `SKILL.md` → Step 6) derives its positive/negative comparison directly from each application's `status` and `score.value`, via `scripts/_status.py`'s `recalibration_signal()` – reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrawn_after_interview`) is treated as positive; a confirmed negative without ever reaching interview (`rejected`, `withdrawn`, `assumed_rejected`) is negative; everything else (`role_closed`, or a status that hasn't resolved yet) is excluded from the comparison entirely. This is why consistent `status` values matter more than anything else in this schema – get this part wrong and the recalibration agent has nothing reliable to work from.

@@ -8,7 +8,7 @@ status_date: 2026-05-27
 source: "Referral"
 
 score:
-  value: 88
+  value: 94
   tier: "Tier 1 – Exceptional callback odds"
   locked: true
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£130k-145k OTE, confirmed above floor"
 Head of Product at Wrenfield Software.
 
 ## Score rationale
-- JD fit: 42/45
-- Seniority alignment: 15/15
-- Competition estimate: 17/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (42/45): Very close mandate match – not an adjacent-domain stretch.
+- Seniority alignment (15/15): Head of Product matches the candidate's evidenced level exactly.
+- Competition estimate (17/20): ~60-person, Series B company – a limited applicant pool expected.
+- Compensation alignment (10/10): £130k-145k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields.
@@ -42,7 +42,7 @@ No estimated fields.
 ### Company facts
 Wrenfield Software – ~60 employees, Series B. See `examples/companies/wrenfield-software.json` for the cached source.
 
-### Comp
+### Compensation
 £130k-145k OTE, confirmed above floor
 
 ### Why it progressed / didn't

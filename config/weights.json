@@ -16,7 +16,13 @@
     },
     "comp": {
       "max": 10,
-      "description": "Alignment against the candidate's stated compensation floor. Unknown comp is never penalised – only a confirmed band below the floor is."
+      "description": "Alignment against the candidate's on-target-earnings (OTE) floor from preferences.md – base salary plus target bonus/variable comp, equity explicitly excluded from the number (see equity_handling below). Scored on a sliding scale, not a step function: at or above floor is max marks; below floor slides down linearly and hits zero only at max_shortfall_pct below, so a role 10% under floor scores meaningfully higher than one 45% under. If the JD doesn't state a figure, attempt a live-search-informed estimate (same discipline as competition) before falling back to unestimable_default.",
+      "shortfall_scoring": {
+        "max_shortfall_pct": 0.5,
+        "unestimable_default": 6,
+        "_notes": "max_shortfall_pct: the shortfall (as a fraction of the floor) at which comp hits 0 - e.g. 0.5 means a role paying 50%+ below floor scores 0, while one 10% below floor scores 8/10 (10 * (1 - 0.10/0.5)). Formula: comp = round(clamp(10 * (1 - shortfall_pct / max_shortfall_pct), 0, 10)), where shortfall_pct = max(0, (floor - offered) / floor). unestimable_default: the score when comp is neither stated nor reasonably estimable even via live search - a deliberate middle value, not the max score, since 'genuinely unknown' should score worse than 'confirmed good' and better than 'confirmed below floor' rather than defaulting to the best possible outcome."
+      },
+      "equity_handling": "Equity, if mentioned, is never folded into the numeric comp score - too unreliable to value consistently across companies and stages. Note it separately as a qualitative factor in the score rationale/caveats instead."
     },
     "blockers": {
       "max": 10,

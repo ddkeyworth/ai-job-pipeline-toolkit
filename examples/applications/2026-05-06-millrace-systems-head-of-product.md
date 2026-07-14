@@ -8,8 +8,8 @@ status_date: 2026-05-06
 source: "Referral"
 
 score:
-  value: 79
-  tier: "Tier 2 – Strong callback odds"
+  value: 89
+  tier: "Tier 1 – Exceptional callback odds"
   locked: true
   breakdown:
     jd_fit: 40
@@ -28,11 +28,11 @@ comp_band: "£112k-128k OTE"
 Head of Product at Millrace Systems. Small private systems company, strong fit.
 
 ## Score rationale
-- JD fit: 40/45
-- Seniority alignment: 13/15
-- Competition estimate: 16/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (40/45): Strong direct fit for the stated product mandate.
+- Seniority alignment (13/15): Matches the candidate's evidenced level well.
+- Competition estimate (16/20): Small private systems company – a limited applicant pool expected.
+- Compensation alignment (10/10): £112k-128k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

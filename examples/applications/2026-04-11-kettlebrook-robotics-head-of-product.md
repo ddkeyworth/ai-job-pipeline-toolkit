@@ -8,7 +8,7 @@ status_date: 2026-04-11
 source: "LinkedIn"
 
 score:
-  value: 74
+  value: 84
   tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£115k-130k OTE"
 Head of Product at Kettlebrook Robotics. Small robotics startup – good fit on paper, rejected anyway; not every high score converts.
 
 ## Score rationale
-- JD fit: 38/45
-- Seniority alignment: 12/15
-- Competition estimate: 14/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (38/45): Strong fit on paper for a small, specialist robotics product mandate.
+- Seniority alignment (12/15): Matches the candidate's evidenced level well.
+- Competition estimate (14/20): Small robotics startup – a limited applicant pool expected.
+- Compensation alignment (10/10): £115k-130k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

@@ -8,8 +8,8 @@ status_date: 2026-04-25
 source: "Referral"
 
 score:
-  value: 77
-  tier: "Tier 2 – Strong callback odds"
+  value: 87
+  tier: "Tier 1 – Exceptional callback odds"
   locked: true
   breakdown:
     jd_fit: 39
@@ -28,11 +28,11 @@ comp_band: "£118k-132k OTE"
 Head of Product at TidePool Labs. Small private labs startup, narrow specialist role.
 
 ## Score rationale
-- JD fit: 39/45
-- Seniority alignment: 13/15
-- Competition estimate: 15/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (39/45): Strong fit for a narrow, specialist product mandate.
+- Seniority alignment (13/15): Matches the candidate's evidenced level closely.
+- Competition estimate (15/20): Small private labs startup with a narrow specialist role – a limited applicant pool expected.
+- Compensation alignment (10/10): £118k-132k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

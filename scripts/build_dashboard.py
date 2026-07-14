@@ -161,7 +161,7 @@ def parse_application(path):
         briefing = {
             "company_facts": bp_section("Company facts"),
             "regional_intelligence": parse_table(bp_section("Regional intelligence")),
-            "comp": bp_section("Comp"),
+            "comp": bp_section("Compensation"),
             "why": bp_section("Why it progressed / didn't"),
             "watch": watch_text if not watch_bullets else "",
             "watch_bullets": watch_bullets,

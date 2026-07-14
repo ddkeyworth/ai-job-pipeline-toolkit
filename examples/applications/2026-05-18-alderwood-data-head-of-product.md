@@ -8,7 +8,7 @@ status_date: 2026-06-04
 source: "Referral"
 
 score:
-  value: 84
+  value: 92
   tier: "Tier 1 – Exceptional callback odds"
   locked: false
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£125k-140k OTE"
 Head of Product at Alderwood Data.
 
 ## Score rationale
-- JD fit: 41/45
-- Seniority alignment: 14/15
-- Competition estimate: 17/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (41/45): Very close fit for a narrow, specialist product mandate – direct 0-to-1 experience at a similarly-staged company.
+- Seniority alignment (14/15): Head of Product matches the candidate's evidenced level closely.
+- Competition estimate (17/20): ~40-person, privately-held seed/Series A company – a limited applicant pool expected.
+- Compensation alignment (10/10): £125k-140k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields.
@@ -42,7 +42,7 @@ No estimated fields.
 ### Company facts
 Alderwood Data – ~40 employees, Seed/Series A, privately held. See `examples/companies/alderwood-data.json` for the cached source.
 
-### Comp
+### Compensation
 £125k-140k OTE
 
 ### Why it progressed / didn't

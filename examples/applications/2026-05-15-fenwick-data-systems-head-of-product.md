@@ -8,7 +8,7 @@ status_date: 2026-06-12
 source: "LinkedIn"
 
 score:
-  value: 75
+  value: 85
   tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£118k-130k OTE"
 Head of Product at Fenwick Data Systems.
 
 ## Score rationale
-- JD fit: 38/45
-- Seniority alignment: 13/15
-- Competition estimate: 14/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (38/45): Direct domain overlap with an almost identical prior product category.
+- Seniority alignment (13/15): Head of Product matches the candidate's evidenced level.
+- Competition estimate (14/20): ~120-employee, Series B company – a moderate applicant pool.
+- Compensation alignment (10/10): £118k-130k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields.
@@ -42,7 +42,7 @@ No estimated fields.
 ### Company facts
 Fenwick Data Systems – ~120 employees, Series B. See `examples/companies/fenwick-data-systems.json` for the cached source.
 
-### Comp
+### Compensation
 £118k-130k OTE
 
 ### Why it progressed / didn't

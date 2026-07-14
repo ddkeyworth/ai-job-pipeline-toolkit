@@ -8,7 +8,7 @@ status_date: 2026-06-14
 source: "Referral"
 
 score:
-  value: 86
+  value: 93
   tier: "Tier 1 – Exceptional callback odds"
   locked: false
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£125k-138k OTE"
 Head of Product at Elmscroft Data. Scored today – strong match, referral in hand. Drafting the application next, not yet submitted.
 
 ## Score rationale
-- JD fit: 42/45
-- Seniority alignment: 14/15
-- Competition estimate: 17/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (42/45): Very close match to the candidate's demonstrated product mandate.
+- Seniority alignment (14/15): Head of Product matches the candidate's evidenced level closely.
+- Competition estimate (17/20): Small, less widely known company with a referral already in hand – a limited applicant pool expected.
+- Compensation alignment (10/10): £125k-138k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

@@ -8,8 +8,8 @@ status_date: 2026-05-24
 source: "LinkedIn"
 
 score:
-  value: 42
-  tier: "Tier 4 – Long shot"
+  value: 74
+  tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
     jd_fit: 36
@@ -28,11 +28,11 @@ comp_band: "£140k-155k OTE"
 VP Product at Palisade Robotics. Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support – a real, confirmed blocker, not a soft preference.
 
 ## Score rationale
-- JD fit: 36/45
-- Seniority alignment: 13/15
-- Competition estimate: 12/20
-- Comp alignment: 10/10
-- Blockers: 3/10
+- JD fit (36/45): Strong fit for the stated robotics product mandate.
+- Seniority alignment (13/15): VP level matches the candidate's evidenced range well.
+- Competition estimate (12/20): Small robotics startup – a limited applicant pool expected.
+- Compensation alignment (10/10): £140k-155k OTE confirmed well above floor.
+- Blockers (3/10): Confirmed hard blocker: the role required US work authorisation the candidate does not hold, onsite in Austin with no relocation support – not a soft preference.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

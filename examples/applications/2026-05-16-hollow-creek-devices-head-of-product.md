@@ -8,7 +8,7 @@ status_date: 2026-05-16
 source: "Company site"
 
 score:
-  value: 72
+  value: 82
   tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£108k-122k OTE"
 Head of Product at Hollow Creek Devices. Small private hardware/devices startup.
 
 ## Score rationale
-- JD fit: 37/45
-- Seniority alignment: 12/15
-- Competition estimate: 13/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (37/45): Strong fit for a small, specialist hardware/devices product mandate.
+- Seniority alignment (12/15): Matches the candidate's evidenced level well.
+- Competition estimate (13/20): Small private hardware/devices startup – a limited applicant pool expected.
+- Compensation alignment (10/10): £108k-122k OTE confirmed at and above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

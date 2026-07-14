@@ -8,31 +8,31 @@ status_date: 2026-06-08
 source: "Company site"
 
 score:
-  value: 82
+  value: 87
   tier: "Tier 1 – Exceptional callback odds"
   locked: false
   breakdown:
     jd_fit: 40
     seniority: 14
     competition: 16
-    comp: 8
+    comp: 7
     blockers: 10
   estimated_fields: ["comp"]
 
 next_interview_date: 2026-06-16
 
-comp_band: null
+comp_band: "£85k-100k OTE (estimated, cash-only; equity offered separately)"
 ---
 
 ## JD summary
 Head of Product at Briarcliff AI.
 
 ## Score rationale
-- JD fit: 40/45
-- Seniority alignment: 14/15
-- Competition estimate: 16/20
-- Comp alignment: 8/10
-- Blockers: 10/10
+- JD fit (40/45): Strong product-led-growth track record maps closely onto the stated self-serve motion.
+- Seniority alignment (14/15): Head of Product matches the candidate's evidenced level.
+- Competition estimate (16/20): ~25-person, Series A startup – a limited applicant pool expected.
+- Compensation alignment (7/10): Not stated in the JD; ~25-person Series A startups typically pay below-market cash in favour of equity – estimated at £85k-100k OTE cash, below floor. Equity mentioned separately by the founder but not counted in this score – too unreliable to value consistently at this stage.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 Comp estimated pending confirmation.
@@ -42,8 +42,8 @@ Comp estimated pending confirmation.
 ### Company facts
 Briarcliff AI – ~25 employees, Series A. See `examples/companies/briarcliff-ai.json` for the cached source.
 
-### Comp
-Not yet confirmed.
+### Compensation
+£85k-100k OTE (estimated, cash-only; equity offered separately)
 
 ### Why it progressed / didn't
 Small, narrow-mandate startup role; strong overlap with prior product-led growth experience.

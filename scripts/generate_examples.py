@@ -20,77 +20,241 @@ COMPANIES_DIR = os.path.join(ROOT, "examples", "companies")
 os.makedirs(APPS_DIR, exist_ok=True)
 os.makedirs(COMPANIES_DIR, exist_ok=True)
 
-# (date, company, role, status, score, tier, jd_fit, seniority, competition, comp, blockers,
-#  estimated_fields, comp_band, source, note)
+# score is deliberately NOT a field here - it's computed as the sum of the
+# breakdown in write_simple()/write_briefing(), so it can never drift from
+# its own breakdown the way a hand-typed number could (and, in the dataset
+# this replaced, did - see TESTING.md).
+#
+# (date, company, role, status, tier, jd_fit, seniority, competition, comp,
+#  blockers, estimated_fields, comp_band, source, note, rationale)
+# rationale = (jd_fit_reason, seniority_reason, competition_reason,
+#              comp_reason, blockers_reason) - real one-line reasoning per
+# component, not a restatement of the number (see SCHEMA.md -> Score rationale).
 APPLICATIONS = [
-    ("2026-05-28", "Meridian Cloud Systems", "Director of Product", "applied", 52, "Tier 4 – Long shot",
-     30, 12, 4, 6, 10, ["competition"], "£95k-110k base + bonus (unconfirmed split)", "LinkedIn",
-     "Large, well-known public cloud platform – huge applicant pool expected."),
-    ("2026-06-02", "Fernbank Analytics", "Head of Product", "applied", 81, "Tier 2 – Strong callback odds",
+    ("2026-05-28", "Meridian Cloud Systems", "Director of Product", "applied", "Tier 3 – Solid, worth applying",
+     30, 12, 4, 9, 10, ["competition", "comp"], "£95k-110k base + bonus (unconfirmed split)", "LinkedIn",
+     "Large, well-known public cloud platform – huge applicant pool expected.",
+     ("Director-level product leadership overlaps well, but limited evidence of experience operating at true public-cloud-platform scale.",
+      "Director level matches the candidate's demonstrated range without a stretch.",
+      "Large, well-known public cloud platform – draws a very large applicant pool regardless of role specifics.",
+      "£95k-110k base + bonus stated, but the base/bonus split is unconfirmed – estimated modestly below floor pending clarity.",
+      "No blocker identified.")),
+    ("2026-06-02", "Fernbank Analytics", "Head of Product", "applied", "Tier 1 – Exceptional callback odds",
      40, 13, 16, 10, 10, [], "£120k-135k OTE", "Referral",
-     "Small, private data-analytics startup, narrow role, strong direct fit."),
-    ("2026-06-05", "Coastal Ledger", "Senior Director, Product", "applied", 68, "Tier 3 – Solid, worth applying",
-     35, 12, 11, 10, 10, [], None, "Company site",
-     "Mid-size fintech, moderately well-known in its niche."),
-    ("2026-06-09", "Union Freight Group", "VP Product", "applied", 45, "Tier 4 – Long shot",
-     28, 8, 5, 4, 10, ["competition", "comp"], None, "LinkedIn",
-     "Large logistics incumbent, broad VP-level role draws a wide pool."),
-    ("2026-06-11", "Harrowgate Systems", "Head of Product", "scored", 73, "Tier 2 – Strong callback odds",
+     "Small, private data-analytics startup, narrow role, strong direct fit.",
+     ("Narrow, specialist mandate maps closely onto direct prior experience.",
+      "Head of Product matches the candidate's evidenced level well.",
+      "Small, private startup with a narrow role – a limited applicant pool expected.",
+      "£120k-135k OTE confirmed comfortably above floor.",
+      "No blocker identified.")),
+    ("2026-06-05", "Coastal Ledger", "Senior Director, Product", "applied", "Tier 2 – Strong callback odds",
+     35, 12, 11, 10, 10, ["comp"], "£115k-130k OTE (estimated)", "Company site",
+     "Mid-size fintech, moderately well-known in its niche.",
+     ("Reasonable domain fit, with some gaps against a fintech-specific product mandate.",
+      "Senior Director level within the candidate's evidenced range.",
+      "Mid-size company, moderately well-known in its niche – a moderate applicant pool.",
+      "Not stated in the JD; estimated at £115k-130k OTE for a Senior Director role at a mid-size fintech, comfortably above floor.",
+      "No blocker identified.")),
+    ("2026-06-09", "Union Freight Group", "VP Product", "applied", "Tier 3 – Solid, worth applying",
+     28, 8, 5, 10, 10, ["competition", "comp"], "£115k-135k OTE (estimated)", "LinkedIn",
+     "Large logistics incumbent, broad VP-level role draws a wide pool.",
+     ("Real gaps against a broad, incumbent-scale VP mandate versus the candidate's more focused prior scope.",
+      "A genuine stretch upward against the candidate's demonstrated team-leadership scale.",
+      "Large logistics incumbent with a broad VP-level role – a wide applicant pool expected.",
+      "Not stated in the JD; estimated at £115k-135k OTE for a VP role at a large incumbent, above floor.",
+      "No blocker identified.")),
+    ("2026-06-11", "Harrowgate Systems", "Head of Product", "scored", "Tier 2 – Strong callback odds",
      37, 12, 14, 10, 10, [], "£115k-128k OTE", "LinkedIn",
-     "Scored, not yet applied – still deciding whether to prioritise this over other open processes."),
-    ("2026-06-13", "Vireo Networks", "Director of Product", "scored", 44, "Tier 4 – Long shot",
-     29, 9, 4, 6, 10, ["competition"], None, "LinkedIn",
-     "Scored, not applied – large, well-known network infrastructure company; score alone made this a low priority."),
-    ("2026-06-14", "Elmscroft Data", "Head of Product", "scored", 86, "Tier 1 – Exceptional callback odds",
+     "Scored, not yet applied – still deciding whether to prioritise this over other open processes.",
+     ("Strong overlap on core Head of Product responsibilities.",
+      "Matches the candidate's evidenced level without a stretch.",
+      "Mid-size, not a widely recognised brand – a moderate-to-favourable applicant pool.",
+      "£115k-128k OTE confirmed above floor.",
+      "No blocker identified.")),
+    ("2026-06-13", "Vireo Networks", "Director of Product", "scored", "Tier 3 – Solid, worth applying",
+     29, 9, 4, 10, 10, ["competition", "comp"], "£110k-125k OTE (estimated)", "LinkedIn",
+     "Scored, not applied – large, well-known network infrastructure company; score alone made this a low priority.",
+     ("Moderate overlap; network-infrastructure domain depth is a real, if not disqualifying, gap.",
+      "Director title matches on paper, but infrastructure product organisations at this scale often expect broader cross-product ownership than evidenced.",
+      "Large, well-known network infrastructure company – a large applicant pool expected.",
+      "Not stated in the JD; estimated at £110k-125k OTE for this level at a large infrastructure company, above floor.",
+      "No blocker identified.")),
+    ("2026-06-14", "Elmscroft Data", "Head of Product", "scored", "Tier 1 – Exceptional callback odds",
      42, 14, 17, 10, 10, [], "£125k-138k OTE", "Referral",
-     "Scored today – strong match, referral in hand. Drafting the application next, not yet submitted."),
-    ("2026-04-02", "Northwind Retail Technologies", "Head of Product, Platform", "rejected", 58, "Tier 3 – Solid, worth applying",
-     32, 12, 6, 8, 10, ["competition"], "£110k-125k OTE", "LinkedIn", "Large, recognisable retail-tech brand."),
-    ("2026-04-05", "Ashgrove Financial", "Director of Product Strategy", "rejected", 61, "Tier 3 – Solid, worth applying",
-     33, 11, 9, 8, 10, [], "£100k-115k base", "Company site", "Large regulated financial services firm."),
-    ("2026-04-08", "Larkspur Health", "VP Product", "rejected", 70, "Tier 3 – Solid, worth applying",
-     36, 13, 13, 8, 10, [], None, "Referral", "Mid-size health-tech, moderately known."),
-    ("2026-04-11", "Kettlebrook Robotics", "Head of Product", "rejected", 74, "Tier 2 – Strong callback odds",
+     "Scored today – strong match, referral in hand. Drafting the application next, not yet submitted.",
+     ("Very close match to the candidate's demonstrated product mandate.",
+      "Head of Product matches the candidate's evidenced level closely.",
+      "Small, less widely known company with a referral already in hand – a limited applicant pool expected.",
+      "£125k-138k OTE confirmed above floor.",
+      "No blocker identified.")),
+    ("2026-04-02", "Northwind Retail Technologies", "Head of Product, Platform", "rejected", "Tier 2 – Strong callback odds",
+     32, 12, 6, 10, 10, ["competition"], "£110k-125k OTE", "LinkedIn",
+     "Large, recognisable retail-tech brand.",
+     ("Reasonable platform-product overlap, with a real gap against retail-specific domain depth.",
+      "Matches the candidate's evidenced level.",
+      "Large, recognisable retail-tech brand – a large applicant pool expected.",
+      "£110k-125k OTE confirmed at and above floor.",
+      "No blocker identified.")),
+    ("2026-04-05", "Ashgrove Financial", "Director of Product Strategy", "rejected", "Tier 2 – Strong callback odds",
+     33, 11, 9, 10, 10, [], "£100k-115k base", "Company site",
+     "Large regulated financial services firm.",
+     ("Reasonable strategic-product overlap, with a real gap against regulated financial-services domain depth.",
+      "Director level within range, modestly below the role's strategy-level framing.",
+      "Large, regulated financial services firm – a sizeable applicant pool expected.",
+      "£100k-115k base, just within range of floor.",
+      "No blocker identified.")),
+    ("2026-04-08", "Larkspur Health", "VP Product", "rejected", "Tier 2 – Strong callback odds",
+     36, 13, 13, 9, 10, ["comp"], "£95k-110k OTE (estimated)", "Referral",
+     "Mid-size health-tech, moderately known.",
+     ("Strong general product-leadership overlap, with a partial health-tech domain gap.",
+      "VP level matches the candidate's evidenced range well.",
+      "Mid-size, moderately known health-tech company – a moderate applicant pool.",
+      "Not stated in the JD; estimated at £95k-110k OTE for this level at a mid-size health-tech company, modestly below floor.",
+      "No blocker identified.")),
+    ("2026-04-11", "Kettlebrook Robotics", "Head of Product", "rejected", "Tier 2 – Strong callback odds",
      38, 12, 14, 10, 10, [], "£115k-130k OTE", "LinkedIn",
-     "Small robotics startup – good fit on paper, rejected anyway; not every high score converts."),
-    ("2026-04-15", "Solari Energy Corp", "Senior Director Product", "rejected", 55, "Tier 4 – Long shot",
-     31, 10, 6, 8, 10, ["competition"], None, "LinkedIn", "Large, well-funded energy technology company."),
-    ("2026-04-18", "Ferrous Metals Digital", "Head of Product", "rejected", 66, "Tier 3 – Solid, worth applying",
-     34, 12, 12, 8, 10, [], "£105k-120k base", "Company site", "Mid-size industrial-tech firm."),
-    ("2026-04-22", "Bramwell Media Group", "VP Product", "rejected", 48, "Tier 4 – Long shot",
-     29, 9, 4, 6, 10, ["competition", "comp"], None, "LinkedIn", "Large, famous media brand – very high competition."),
-    ("2026-04-25", "TidePool Labs", "Head of Product", "rejected", 77, "Tier 2 – Strong callback odds",
-     39, 13, 15, 10, 10, [], "£118k-132k OTE", "Referral", "Small private labs startup, narrow specialist role."),
-    ("2026-04-29", "Granite Peak Software", "Director of Product", "rejected", 63, "Tier 3 – Solid, worth applying",
-     34, 11, 10, 8, 10, [], None, "LinkedIn", "Mid-size, moderately known enterprise software vendor."),
-    ("2026-05-02", "Ovalcrest Insurance", "VP Product Management", "rejected", 52, "Tier 4 – Long shot",
-     30, 10, 6, 6, 10, ["competition", "comp"], None, "Company site", "Large regulated insurer, broad pool."),
-    ("2026-05-06", "Millrace Systems", "Head of Product", "rejected", 79, "Tier 2 – Strong callback odds",
-     40, 13, 16, 10, 10, [], "£112k-128k OTE", "Referral", "Small private systems company, strong fit."),
-    ("2026-05-09", "Copperfield Logistics", "Senior Director Product", "rejected", 65, "Tier 3 – Solid, worth applying",
-     35, 12, 10, 8, 10, [], None, "LinkedIn", "Mid-size logistics tech firm."),
-    ("2026-05-13", "Vantage Point Telecom", "VP Product", "rejected", 50, "Tier 4 – Long shot",
-     30, 9, 5, 6, 10, ["competition", "comp"], None, "LinkedIn", "Large, recognisable telecom operator."),
-    ("2026-05-16", "Hollow Creek Devices", "Head of Product", "rejected", 72, "Tier 2 – Strong callback odds",
-     37, 12, 13, 10, 10, [], "£108k-122k OTE", "Company site", "Small private hardware/devices startup."),
-    ("2026-05-20", "Marlow Continental", "Director of Product", "rejected", 59, "Tier 3 – Solid, worth applying",
-     33, 11, 7, 8, 10, ["competition"], None, "LinkedIn", "Large multinational, broad applicant pool."),
-    ("2026-05-24", "Palisade Robotics", "VP Product", "rejected", 42, "Tier 4 – Long shot",
+     "Small robotics startup – good fit on paper, rejected anyway; not every high score converts.",
+     ("Strong fit on paper for a small, specialist robotics product mandate.",
+      "Matches the candidate's evidenced level well.",
+      "Small robotics startup – a limited applicant pool expected.",
+      "£115k-130k OTE confirmed above floor.",
+      "No blocker identified.")),
+    ("2026-04-15", "Solari Energy Corp", "Senior Director Product", "rejected", "Tier 3 – Solid, worth applying",
+     31, 10, 6, 10, 10, ["competition", "comp"], "£115k-130k OTE (estimated)", "LinkedIn",
+     "Large, well-funded energy technology company.",
+     ("Moderate overlap; energy-sector domain depth is a real gap against the stated mandate.",
+      "Senior Director level modestly below the candidate's typical scope for a company this size.",
+      "Large, well-funded energy technology company – a large applicant pool expected.",
+      "Not stated in the JD; estimated at £115k-130k OTE for this level at a large, well-funded company, above floor.",
+      "No blocker identified.")),
+    ("2026-04-18", "Ferrous Metals Digital", "Head of Product", "rejected", "Tier 2 – Strong callback odds",
+     34, 12, 12, 10, 10, [], "£105k-120k base", "Company site",
+     "Mid-size industrial-tech firm.",
+     ("Reasonable digital-product overlap, with a moderate gap against industrial-sector domain depth.",
+      "Matches the candidate's evidenced level.",
+      "Mid-size, moderately known industrial-tech firm – a moderate applicant pool.",
+      "£105k-120k base, just at and above floor.",
+      "No blocker identified.")),
+    ("2026-04-22", "Bramwell Media Group", "VP Product", "rejected", "Tier 3 – Solid, worth applying",
+     29, 9, 4, 8, 10, ["competition", "comp"], "£90k-105k OTE (estimated)", "LinkedIn",
+     "Large, famous media brand – very high competition.",
+     ("Real gaps against a broad, brand-scale VP mandate versus the candidate's more focused prior scope.",
+      "A meaningful stretch upward against the candidate's demonstrated team-leadership scale.",
+      "Large, famous media brand – a very high applicant pool expected.",
+      "Not stated in the JD; large media brands often run modest cash comp for VP roles relative to tech – estimated at £90k-105k OTE, below floor.",
+      "No blocker identified.")),
+    ("2026-04-25", "TidePool Labs", "Head of Product", "rejected", "Tier 1 – Exceptional callback odds",
+     39, 13, 15, 10, 10, [], "£118k-132k OTE", "Referral",
+     "Small private labs startup, narrow specialist role.",
+     ("Strong fit for a narrow, specialist product mandate.",
+      "Matches the candidate's evidenced level closely.",
+      "Small private labs startup with a narrow specialist role – a limited applicant pool expected.",
+      "£118k-132k OTE confirmed above floor.",
+      "No blocker identified.")),
+    ("2026-04-29", "Granite Peak Software", "Director of Product", "rejected", "Tier 2 – Strong callback odds",
+     34, 11, 10, 6, 10, ["comp"], None, "LinkedIn",
+     "Mid-size, moderately known enterprise software vendor.",
+     ("Reasonable general product-leadership overlap for an enterprise software mandate.",
+      "Director level within the candidate's evidenced range.",
+      "Mid-size, moderately known enterprise software vendor – a moderate applicant pool.",
+      "Not stated in the JD, and no reliable signal (company size, sector norms) to form a defensible estimate – scored at the neutral default rather than assumed favourable.",
+      "No blocker identified.")),
+    ("2026-05-02", "Ovalcrest Insurance", "VP Product Management", "rejected", "Tier 3 – Solid, worth applying",
+     30, 10, 6, 10, 10, ["competition", "comp"], "£100k-115k OTE (estimated)", "Company site",
+     "Large regulated insurer, broad pool.",
+     ("Real gaps against a broad, regulated-insurer VP mandate versus the candidate's more focused prior scope.",
+      "A meaningful stretch upward against the candidate's demonstrated team-leadership scale.",
+      "Large, regulated insurer – a large, broad applicant pool expected.",
+      "Not stated in the JD; estimated at £100k-115k OTE for this level at a large regulated insurer, around floor.",
+      "No blocker identified.")),
+    ("2026-05-06", "Millrace Systems", "Head of Product", "rejected", "Tier 1 – Exceptional callback odds",
+     40, 13, 16, 10, 10, [], "£112k-128k OTE", "Referral",
+     "Small private systems company, strong fit.",
+     ("Strong direct fit for the stated product mandate.",
+      "Matches the candidate's evidenced level well.",
+      "Small private systems company – a limited applicant pool expected.",
+      "£112k-128k OTE confirmed above floor.",
+      "No blocker identified.")),
+    ("2026-05-09", "Copperfield Logistics", "Senior Director Product", "rejected", "Tier 2 – Strong callback odds",
+     35, 12, 10, 6, 10, ["comp"], None, "LinkedIn",
+     "Mid-size logistics tech firm.",
+     ("Reasonable product-leadership overlap for a mid-size logistics-tech mandate.",
+      "Senior Director level within the candidate's evidenced range.",
+      "Mid-size logistics tech firm – a moderate applicant pool.",
+      "Not stated in the JD, and no reliable signal to form a defensible estimate – scored at the neutral default rather than assumed favourable.",
+      "No blocker identified.")),
+    ("2026-05-13", "Vantage Point Telecom", "VP Product", "rejected", "Tier 3 – Solid, worth applying",
+     30, 9, 5, 9, 10, ["competition", "comp"], "£95k-110k OTE (estimated)", "LinkedIn",
+     "Large, recognisable telecom operator.",
+     ("Real gaps against a broad, incumbent-scale VP mandate versus the candidate's more focused prior scope.",
+      "A meaningful stretch upward against the candidate's demonstrated team-leadership scale.",
+      "Large, recognisable telecom operator – a large applicant pool expected.",
+      "Not stated in the JD; estimated at £95k-110k OTE for this level at a large telecom incumbent, modestly below floor.",
+      "No blocker identified.")),
+    ("2026-05-16", "Hollow Creek Devices", "Head of Product", "rejected", "Tier 2 – Strong callback odds",
+     37, 12, 13, 10, 10, [], "£108k-122k OTE", "Company site",
+     "Small private hardware/devices startup.",
+     ("Strong fit for a small, specialist hardware/devices product mandate.",
+      "Matches the candidate's evidenced level well.",
+      "Small private hardware/devices startup – a limited applicant pool expected.",
+      "£108k-122k OTE confirmed at and above floor.",
+      "No blocker identified.")),
+    ("2026-05-20", "Marlow Continental", "Director of Product", "rejected", "Tier 2 – Strong callback odds",
+     33, 11, 7, 10, 10, ["competition", "comp"], "£105k-120k OTE (estimated)", "LinkedIn",
+     "Large multinational, broad applicant pool.",
+     ("Reasonable overlap for a large-multinational product-leadership mandate.",
+      "Director level within the candidate's evidenced range.",
+      "Large multinational – a broad applicant pool expected.",
+      "Not stated in the JD; estimated at £105k-120k OTE for this level at a large multinational, at and above floor.",
+      "No blocker identified.")),
+    ("2026-05-24", "Palisade Robotics", "VP Product", "rejected", "Tier 2 – Strong callback odds",
      36, 13, 12, 10, 3, [], "£140k-155k OTE", "LinkedIn",
-     "Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support – a real, confirmed blocker, not a soft preference."),
-    ("2026-05-11", "Redshank Payments", "Director of Product", "didnt_apply", 71, "Tier 2 – Strong callback odds",
-     36, 12, 11, 2, 10, [], "£95k-105k base, confirmed below floor", "LinkedIn",
-     "Scored well on fit, but the comp band came back confirmed below floor before applying – decided not to submit rather than pursue a role that couldn't clear the floor regardless of interview performance."),
-    ("2026-05-30", "Oakridge Ventures", "Director of Product", "assumed_rejected", 64, "Tier 3 – Solid, worth applying",
-     34, 11, 10, 9, 10, [], "£105k-118k OTE", "LinkedIn",
-     "Applied and heard nothing since – no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection."),
-    ("2026-06-16", "Thistlewood Capital", "Director of Product", "rejected", 56, "Tier 3 – Solid, worth applying",
-     31, 11, 8, 6, 10, [], "£100k-112k base", "LinkedIn",
-     "Mid-size asset manager, moderate applicant pool – added to give the recalibration agent's joint model enough data points to clear its higher threshold."),
-    ("2026-06-18", "Fenwick Outdoors", "Head of Product", "rejected", 49, "Tier 4 – Long shot",
-     29, 10, 5, 5, 10, ["competition"], None, "LinkedIn", "Large, well-known consumer outdoor brand – broad applicant pool."),
-    ("2026-06-20", "Amberline Media", "VP Product", "rejected", 62, "Tier 3 – Solid, worth applying",
-     33, 12, 9, 8, 10, [], "£108k-120k OTE", "Company site", "Mid-size media company, moderately competitive."),
+     "Strong fit on paper, but the role required confirmed US work authorisation the candidate does not hold, and was onsite in Austin with no relocation support – a real, confirmed blocker, not a soft preference.",
+     ("Strong fit for the stated robotics product mandate.",
+      "VP level matches the candidate's evidenced range well.",
+      "Small robotics startup – a limited applicant pool expected.",
+      "£140k-155k OTE confirmed well above floor.",
+      "Confirmed hard blocker: the role required US work authorisation the candidate does not hold, onsite in Austin with no relocation support – not a soft preference.")),
+    ("2026-05-11", "Redshank Payments", "Director of Product", "didnt_apply", "Tier 2 – Strong callback odds",
+     36, 12, 11, 3, 10, [], "£65k-75k base, confirmed well below floor (early-stage, equity-heavy package)", "LinkedIn",
+     "Scored well on fit, but the comp band came back confirmed well below floor before applying – decided not to submit rather than pursue a role that couldn't clear the floor regardless of interview performance.",
+     ("Strong overlap on the core product mandate.",
+      "Director level matches the candidate's evidenced range.",
+      "Mid-size fintech, moderate applicant pool expected.",
+      "£65k-75k base confirmed well below floor even before applying – an early-stage, equity-heavy package that couldn't clear the floor regardless of interview performance.",
+      "No blocker identified.")),
+    ("2026-05-30", "Oakridge Ventures", "Director of Product", "assumed_rejected", "Tier 2 – Strong callback odds",
+     34, 11, 10, 10, 10, [], "£105k-118k OTE", "LinkedIn",
+     "Applied and heard nothing since – no rejection, no further contact. Marked assumed_rejected after the configured silence window (see config/weights.json), not a confirmed rejection.",
+     ("Reasonable overlap for the stated product mandate.",
+      "Director level within the candidate's evidenced range.",
+      "Mid-size company – a moderate applicant pool.",
+      "£105k-118k OTE confirmed at and above floor.",
+      "No blocker identified.")),
+    ("2026-06-16", "Thistlewood Capital", "Director of Product", "rejected", "Tier 3 – Solid, worth applying",
+     31, 11, 8, 9, 10, [], "£100k-112k base", "LinkedIn",
+     "Mid-size asset manager, moderate applicant pool – added to give the recalibration agent's joint model enough data points to clear its higher threshold.",
+     ("Reasonable overlap for a mid-size asset manager's product mandate.",
+      "Director level within the candidate's evidenced range.",
+      "Mid-size asset manager – a moderate applicant pool.",
+      "£100k-112k base, modestly below floor.",
+      "No blocker identified.")),
+    ("2026-06-18", "Fenwick Outdoors", "Head of Product", "rejected", "Tier 3 – Solid, worth applying",
+     29, 10, 5, 6, 10, ["competition", "comp"], None, "LinkedIn",
+     "Large, well-known consumer outdoor brand – broad applicant pool.",
+     ("Moderate overlap; consumer-outdoor domain depth is a real gap against the candidate's B2B SaaS background.",
+      "Head of Product level within range, modestly below the role's apparent scope.",
+      "Large, well-known consumer outdoor brand – a broad applicant pool expected.",
+      "Not stated in the JD, and no reliable signal to form a defensible estimate – scored at the neutral default rather than assumed favourable.",
+      "No blocker identified.")),
+    ("2026-06-20", "Amberline Media", "VP Product", "rejected", "Tier 2 – Strong callback odds",
+     33, 12, 9, 10, 10, [], "£108k-120k OTE", "Company site",
+     "Mid-size media company, moderately competitive.",
+     ("Reasonable overlap for a mid-size media company's product mandate.",
+      "VP level matches the candidate's evidenced range.",
+      "Mid-size media company, moderately competitive.",
+      "£108k-120k OTE confirmed at and above floor.",
+      "No blocker identified.")),
 ]
 
 # Fully fleshed briefing-pack applications – interviewing / offer / and the
@@ -107,9 +271,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-18", status_date="2026-06-04",
         company="Alderwood Data", role="Head of Product", status="interviewing",
-        score=84, tier="Tier 1 – Exceptional callback odds", jd_fit=41, seniority=14, competition=17, comp=10, blockers=10,
+        tier="Tier 1 – Exceptional callback odds", jd_fit=41, seniority=14, competition=17, comp=10, blockers=10,
         estimated_fields=[], comp_band="£125k-140k OTE", source="Referral",
         company_size="~40 employees", funding="Seed/Series A, privately held", competition_tier="low",
+        rationale=dict(
+            jd_fit="Very close fit for a narrow, specialist product mandate – direct 0-to-1 experience at a similarly-staged company.",
+            seniority="Head of Product matches the candidate's evidenced level closely.",
+            competition="~40-person, privately-held seed/Series A company – a limited applicant pool expected.",
+            comp="£125k-140k OTE confirmed above floor.",
+            blockers="No blocker identified.",
+        ),
         why="Direct fit on a narrow, specialist product mandate; referral likely helped surface the application quickly.",
         usps=[
             {"title": "Direct data-platform PM experience",
@@ -156,9 +327,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-22", status_date="2026-05-29",
         company="Pemberton Health Tech", role="VP Product", status="interviewing",
-        score=76, tier="Tier 2 – Strong callback odds", jd_fit=36, seniority=13, competition=11, comp=8, blockers=10,
-        estimated_fields=["comp"], comp_band=None, source="LinkedIn",
+        tier="Tier 2 – Strong callback odds", jd_fit=36, seniority=13, competition=11, comp=9, blockers=10,
+        estimated_fields=["comp"], comp_band="£100k-112k OTE (estimated)", source="LinkedIn",
         company_size="~600 employees", funding="Series C", competition_tier="moderate",
+        rationale=dict(
+            jd_fit="Solid domain adjacency to prior regulated-sector product experience.",
+            seniority="VP level matches the candidate's evidenced range, with team-management scope already demonstrated.",
+            competition="~600-employee, Series C company – a moderate applicant pool given its mid-market profile.",
+            comp="Not stated in the JD; estimated at £100k-112k OTE for a VP role at a Series C health-tech company, modestly below floor.",
+            blockers="No blocker identified.",
+        ),
         why="Solid domain adjacency; moderate competition given the company's mid-market profile.",
         usps=[
             {"title": "Regulated-sector product experience",
@@ -183,7 +361,7 @@ BRIEFING_APPS = [
             "What does the compliance/product relationship actually look like day to day – a blocking gate, or an embedded partner?",
             "What's driving the VP Product hire specifically now, versus six months ago?",
         ],
-        watch="Comp band still unconfirmed – worth raising directly before a later stage.",
+        watch="Comp is an estimate, not yet confirmed by the company – worth raising directly before a later stage.",
         notes="Currently unknown – nothing situational to flag yet; will add if something comes up in later stages.",
         next_interview_date=None,
         stages=["Stage 1 – 2026-05-29 – Recruiter screen – positive, moved forward"],
@@ -191,9 +369,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-26", status_date="2026-06-08",
         company="Briarcliff AI", role="Head of Product", status="interviewing",
-        score=82, tier="Tier 1 – Exceptional callback odds", jd_fit=40, seniority=14, competition=16, comp=8, blockers=10,
-        estimated_fields=["comp"], comp_band=None, source="Company site",
+        tier="Tier 1 – Exceptional callback odds", jd_fit=40, seniority=14, competition=16, comp=7, blockers=10,
+        estimated_fields=["comp"], comp_band="£85k-100k OTE (estimated, cash-only; equity offered separately)", source="Company site",
         company_size="~25 employees", funding="Series A", competition_tier="low",
+        rationale=dict(
+            jd_fit="Strong product-led-growth track record maps closely onto the stated self-serve motion.",
+            seniority="Head of Product matches the candidate's evidenced level.",
+            competition="~25-person, Series A startup – a limited applicant pool expected.",
+            comp="Not stated in the JD; ~25-person Series A startups typically pay below-market cash in favour of equity – estimated at £85k-100k OTE cash, below floor. Equity mentioned separately by the founder but not counted in this score – too unreliable to value consistently at this stage.",
+            blockers="No blocker identified.",
+        ),
         why="Small, narrow-mandate startup role; strong overlap with prior product-led growth experience.",
         usps=[
             {"title": "Product-led growth track record",
@@ -227,9 +412,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-04-30", status_date="2026-05-27",
         company="Wrenfield Software", role="Head of Product", status="offer",
-        score=88, tier="Tier 1 – Exceptional callback odds", jd_fit=42, seniority=15, competition=17, comp=10, blockers=10,
+        tier="Tier 1 – Exceptional callback odds", jd_fit=42, seniority=15, competition=17, comp=10, blockers=10,
         estimated_fields=[], comp_band="£130k-145k OTE, confirmed above floor", source="Referral",
         company_size="~60 employees", funding="Series B", competition_tier="low",
+        rationale=dict(
+            jd_fit="Very close mandate match – not an adjacent-domain stretch.",
+            seniority="Head of Product matches the candidate's evidenced level exactly.",
+            competition="~60-person, Series B company – a limited applicant pool expected.",
+            comp="£130k-145k OTE confirmed above floor.",
+            blockers="No blocker identified.",
+        ),
         why="Very close mandate match plus a warm referral; comp confirmed early and above floor.",
         usps=[
             {"title": "Direct mandate match",
@@ -266,9 +458,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-04", status_date="2026-06-02",
         company="Stonebridge Analytics", role="VP Product", status="offer",
-        score=80, tier="Tier 2 – Strong callback odds", jd_fit=38, seniority=13, competition=13, comp=10, blockers=10,
+        tier="Tier 2 – Strong callback odds", jd_fit=38, seniority=13, competition=13, comp=10, blockers=10,
         estimated_fields=[], comp_band="£122k-135k OTE, confirmed above floor", source="LinkedIn",
         company_size="~300 employees", funding="Series C", competition_tier="moderate",
+        rationale=dict(
+            jd_fit="Strong domain fit for the stated product mandate.",
+            seniority="VP level matches the candidate's evidenced range.",
+            competition="~300-employee, Series C company – a moderate applicant pool given its mid-market scale.",
+            comp="£122k-135k OTE confirmed above floor.",
+            blockers="No blocker identified.",
+        ),
         why="Strong domain fit; moderate competition given company's mid-market scale.",
         regional_intelligence=[
             {"region": "UK", "relationship_style": "Direct, commercial", "decision_style": "Moderate speed",
@@ -304,9 +503,16 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-15", status_date="2026-06-12",
         company="Fenwick Data Systems", role="Head of Product", status="rejected_after_interview",
-        score=75, tier="Tier 2 – Strong callback odds", jd_fit=38, seniority=13, competition=14, comp=10, blockers=10,
+        tier="Tier 2 – Strong callback odds", jd_fit=38, seniority=13, competition=14, comp=10, blockers=10,
         estimated_fields=[], comp_band="£118k-130k OTE", source="LinkedIn",
         company_size="~120 employees", funding="Series B", competition_tier="moderate",
+        rationale=dict(
+            jd_fit="Direct domain overlap with an almost identical prior product category.",
+            seniority="Head of Product matches the candidate's evidenced level.",
+            competition="~120-employee, Series B company – a moderate applicant pool.",
+            comp="£118k-130k OTE confirmed above floor.",
+            blockers="No blocker identified.",
+        ),
         why="Progressed through two positive interview stages; ultimately lost out to an internal candidate at the final round – the scoring rubric correctly predicted engagement (jd_fit, seniority, competition all landed within range) even though the outcome wasn't a hire. A useful real example of why rejected_after_interview is tracked separately from a flat rejection.",
         usps=[
             {"title": "Direct domain overlap", "body": "Prior role covered an almost identical product category, which is likely why the process moved quickly through the first two stages."},
@@ -340,10 +546,17 @@ BRIEFING_APPS = [
     dict(
         date="2026-05-19", status_date="2026-06-10",
         company="Silverlake Systems", role="VP Product", status="withdrew_after_interview",
-        score=71, tier="Tier 3 – Solid, worth applying", jd_fit=36, seniority=13, competition=12, comp=8, blockers=10,
-        estimated_fields=["comp"], comp_band=None, source="Referral",
+        tier="Tier 2 – Strong callback odds", jd_fit=36, seniority=13, competition=12, comp=5, blockers=10,
+        estimated_fields=[], comp_band="£75k-85k base, confirmed ~27% below floor after Stage 2", source="Referral",
         company_size="~180 employees", funding="Series B", competition_tier="moderate",
-        why="Withdrew after Stage 2 once the comp band was finally confirmed – well below floor, despite an earlier verbal indication from the recruiter that it would be competitive.",
+        rationale=dict(
+            jd_fit="Solid overlap for the stated VP product mandate.",
+            seniority="VP level matches the candidate's evidenced range.",
+            competition="~180-employee, Series B company – a moderate applicant pool.",
+            comp="£75k-85k base confirmed after Stage 2, meaningfully below floor – the recruiter's earlier verbal indication ('should be competitive') didn't hold up once pressed for specifics.",
+            blockers="No blocker identified.",
+        ),
+        why="Withdrew after Stage 2 once the comp band was finally confirmed – meaningfully below floor, despite an earlier verbal indication from the recruiter that it would be competitive.",
         usps=[
             {"title": "Referral-backed credibility", "body": "Referral from a current Silverlake employee helped the process move quickly through Stage 1."},
         ],
@@ -360,7 +573,7 @@ BRIEFING_APPS = [
             "What's the actual confirmed comp band, in writing, before the next stage?",
         ],
         watch="Get the comp band confirmed in writing before Stage 1, not verbally after Stage 2 – this is the second process this floor issue has surfaced late in.",
-        notes=[{"heading": "Why withdrew", "body": "The recruiter's Stage 1 verbal indication ('should be competitive') didn't match the actual confirmed band once pressed for specifics after Stage 2 – around 15% below floor. Withdrew rather than continue a process that couldn't clear the floor regardless of interview performance."}],
+        notes=[{"heading": "Why withdrew", "body": "The recruiter's Stage 1 verbal indication ('should be competitive') didn't match the actual confirmed band once pressed for specifics after Stage 2 – roughly 27% below floor. Withdrew rather than continue a process that couldn't clear the floor regardless of interview performance."}],
         next_interview_date=None,
         stages=["Stage 1 – 2026-05-26 – Recruiter screen – positive, moved forward",
                 "Stage 2 – 2026-06-10 – Hiring manager interview – positive, but comp band confirmed below floor immediately after; withdrew same week"],
@@ -374,14 +587,16 @@ def slugify(name):
 
 
 def write_simple(app):
-    (date, company, role, status, score, tier, jd_fit, seniority, competition, comp, blockers,
-     estimated, comp_band, source, note) = app
+    (date, company, role, status, tier, jd_fit, seniority, competition, comp, blockers,
+     estimated, comp_band, source, note, rationale) = app
+    score = jd_fit + seniority + competition + comp + blockers
     slug = slugify(company)
     fname = f"{date}-{slug}-{slugify(role)}.md"
     est = json.dumps(estimated)
     comp_band_yaml = f'"{comp_band}"' if comp_band else "null"
     date_applied = "null" if status in ("scored", "didnt_apply") else date
     locked = "true" if should_lock(status) else "false"
+    r_jd_fit, r_seniority, r_competition, r_comp, r_blockers = rationale
     fm = f"""---
 company: "{company}"
 role: "{role}"
@@ -412,11 +627,11 @@ comp_band: {comp_band_yaml}
 {role} at {company}. {note}
 
 ## Score rationale
-- JD fit: {jd_fit}/45
-- Seniority alignment: {seniority}/15
-- Competition estimate: {competition}/20
-- Comp alignment: {comp}/10
-- Blockers: {blockers}/10
+- JD fit ({jd_fit}/45): {r_jd_fit}
+- Seniority alignment ({seniority}/15): {r_seniority}
+- Competition estimate ({competition}/20): {r_competition}
+- Compensation alignment ({comp}/10): {r_comp}
+- Blockers ({blockers}/10): {r_blockers}
 
 ## Caveats
 {"Competition and/or comp estimated – see estimated_fields above." if estimated else "No estimated fields; all components scored against confirmed information."}
@@ -486,6 +701,8 @@ def write_briefing(app):
     next_interview_yaml = app["next_interview_date"] if app["next_interview_date"] else "null"
     stages_md = "\n".join(f"- {s}" for s in app["stages"])
     locked = "true" if should_lock(app["status"]) else "false"
+    score = app["jd_fit"] + app["seniority"] + app["competition"] + app["comp"] + app["blockers"]
+    r = app["rationale"]
 
     watch_section = (
         usps_md(app["watch_bullets"]) if app.get("watch_bullets") else app.get("watch", "")
@@ -503,7 +720,7 @@ status_date: {app['status_date']}
 source: "{app['source']}"
 
 score:
-  value: {app['score']}
+  value: {score}
   tier: "{app['tier']}"
   locked: {locked}
   breakdown:
@@ -523,11 +740,11 @@ comp_band: {comp_band_yaml}
 {app['role']} at {app['company']}.
 
 ## Score rationale
-- JD fit: {app['jd_fit']}/45
-- Seniority alignment: {app['seniority']}/15
-- Competition estimate: {app['competition']}/20
-- Comp alignment: {app['comp']}/10
-- Blockers: {app['blockers']}/10
+- JD fit ({app['jd_fit']}/45): {r['jd_fit']}
+- Seniority alignment ({app['seniority']}/15): {r['seniority']}
+- Competition estimate ({app['competition']}/20): {r['competition']}
+- Compensation alignment ({app['comp']}/10): {r['comp']}
+- Blockers ({app['blockers']}/10): {r['blockers']}
 
 ## Caveats
 {"Comp estimated pending confirmation." if "comp" in app["estimated_fields"] else "No estimated fields."}
@@ -537,7 +754,7 @@ comp_band: {comp_band_yaml}
 ### Company facts
 {app['company']} – {app['company_size']}, {app['funding']}. See `examples/companies/{slug}.json` for the cached source.
 {region_section}
-### Comp
+### Compensation
 {app['comp_band'] if app['comp_band'] else "Not yet confirmed."}
 
 ### Why it progressed / didn't

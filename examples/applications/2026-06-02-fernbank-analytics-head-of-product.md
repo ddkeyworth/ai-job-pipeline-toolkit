@@ -8,8 +8,8 @@ status_date: 2026-06-02
 source: "Referral"
 
 score:
-  value: 81
-  tier: "Tier 2 – Strong callback odds"
+  value: 89
+  tier: "Tier 1 – Exceptional callback odds"
   locked: false
   breakdown:
     jd_fit: 40
@@ -28,11 +28,11 @@ comp_band: "£120k-135k OTE"
 Head of Product at Fernbank Analytics. Small, private data-analytics startup, narrow role, strong direct fit.
 
 ## Score rationale
-- JD fit: 40/45
-- Seniority alignment: 13/15
-- Competition estimate: 16/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (40/45): Narrow, specialist mandate maps closely onto direct prior experience.
+- Seniority alignment (13/15): Head of Product matches the candidate's evidenced level well.
+- Competition estimate (16/20): Small, private startup with a narrow role – a limited applicant pool expected.
+- Compensation alignment (10/10): £120k-135k OTE confirmed comfortably above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields; all components scored against confirmed information.

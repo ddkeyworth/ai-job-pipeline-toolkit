@@ -11,6 +11,10 @@ name: Verify example dashboard is in sync
 #    docs/index.html's STATUS_ORDER matches scripts/_status.py – catches
 #    documentation/parser and Python/JS drift (see
 #    scripts/verify_consistency.py; this exact class of bug shipped once).
+#    Same script also checks every example's score.value equals the sum of
+#    its own breakdown, and that every Score rationale line has real
+#    reasoning rather than just restating the number – both were real,
+#    silent gaps found and fixed in the same dataset (see TESTING.md).
 # 4. The most recently committed eval/results/*.json run still falls
 #    within eval/expected_bands.json – catches someone loosening or
 #    tightening a band without re-running the scoring eval against it
@@ -30,6 +34,7 @@ on:
       - "schema/SCHEMA.md"
       - "scripts/_status.py"
       - "scripts/build_dashboard.py"
+      - "scripts/generate_examples.py"
       - "scripts/verify_recalibration.py"
       - "scripts/verify_consistency.py"
       - "scripts/verify_eval_results.py"

@@ -8,7 +8,7 @@ status_date: 2026-06-02
 source: "LinkedIn"
 
 score:
-  value: 80
+  value: 84
   tier: "Tier 2 – Strong callback odds"
   locked: true
   breakdown:
@@ -28,11 +28,11 @@ comp_band: "£122k-135k OTE, confirmed above floor"
 VP Product at Stonebridge Analytics.
 
 ## Score rationale
-- JD fit: 38/45
-- Seniority alignment: 13/15
-- Competition estimate: 13/20
-- Comp alignment: 10/10
-- Blockers: 10/10
+- JD fit (38/45): Strong domain fit for the stated product mandate.
+- Seniority alignment (13/15): VP level matches the candidate's evidenced range.
+- Competition estimate (13/20): ~300-employee, Series C company – a moderate applicant pool given its mid-market scale.
+- Compensation alignment (10/10): £122k-135k OTE confirmed above floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 No estimated fields.
@@ -48,7 +48,7 @@ Stonebridge Analytics – ~300 employees, Series C. See `examples/companies/ston
 | UK | Direct, commercial | Moderate speed | Existing customer base concentrated here – role likely leans on this market's playbook as the template for expansion elsewhere. |
 | US | Results-first | Fast at SME, slower at enterprise | Stated growth target for the year – worth asking directly how much of the VP mandate is US-expansion-specific versus global product ownership. |
 
-### Comp
+### Compensation
 £122k-135k OTE, confirmed above floor
 
 ### Why it progressed / didn't

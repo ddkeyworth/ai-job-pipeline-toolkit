@@ -29,7 +29,7 @@ If you're not sure which context you're in, ask once rather than guessing.
 
 ---
 
-## Step 1: Find the CV baseline
+## Step 1: Find the CV baseline and confirm the compensation floor
 
 Locate the user's current CV/resume among their files (Project knowledge or local folder). Treat it as a single, evolving baseline, not a series of dated snapshots.
 
@@ -38,6 +38,10 @@ Locate the user's current CV/resume among their files (Project knowledge or loca
 - **Updating it:** when the user provides a new version – a fresh upload, a pasted revision, an edited file – confirm plainly which file you're now treating as the baseline and that it replaces the old one for all scoring from that point forward. Don't silently start using a new file without saying so.
 - **Effect on past scores:** a CV update only changes scoring done from that point on. Never re-score an already-scored application against the new baseline unless the user explicitly asks – and never touch a `score.locked: true` application under any circumstance, per Step 4.
 - **Role-tailored CVs are a Step 4 concern, not a Step 1 one.** A user may later submit a role-tailored CV for a specific application instead of the baseline as-is. That doesn't change anything here: scoring at this stage always uses the current baseline, full stop – a tailored version doesn't exist yet for a role that hasn't been applied to. See Step 4's `application_materials` handling for what happens once an application actually goes out.
+
+**Compensation floor – ask explicitly, don't infer.** Look for `preferences.md` (see `schema/SCHEMA.md`). If it doesn't exist, ask directly for the user's on-target-earnings floor (base salary plus target bonus/variable comp – explicitly not equity, see `config/weights.json` → `components.comp.equity_handling`) before scoring anything against compensation. **Never read this off the CV**, even if a figure happens to be there – most CVs don't state compensation at all, and a mechanism that only works when the CV happens to include it silently fails for everyone else. Write the answer to `preferences.md` and confirm plainly that this is now the floor used for all compensation scoring.
+
+- **Updating it:** same treatment as the CV – when the user says their floor has changed, confirm plainly, update `preferences.md`, and use the new figure from that point forward. Never re-score a past application against the new floor unless explicitly asked, and never touch a `score.locked: true` application, same rule as CV updates.
 
 ## Step 2: Score a job description (100 points)
 
@@ -54,8 +58,19 @@ The component most sensitive to getting company facts right. Base this on compan
 
 **Never use a platform's own "N people applied" counter as evidence** – it's a snapshot with no reliable relationship to the eventual total.
 
-### Comp alignment
-Score against the user's stated comp floor (ask if not yet known). Unknown comp is never penalised – only a confirmed band below the floor is.
+### Compensation alignment
+Score against the user's OTE floor from `preferences.md` (Step 1) – base salary plus target bonus/variable comp. **Equity is never folded into this number** – note it separately in the rationale as a qualitative factor if the JD mentions it, since it's too unreliable to value consistently across companies and stages.
+
+**Sliding scale, not a step function.** At or above floor scores full marks. Below floor, the score slides down linearly rather than dropping to a flat low number – a role 10% under floor should score meaningfully higher than one 45% under. Compute per `config/weights.json` → `components.comp.shortfall_scoring`:
+
+```
+shortfall_pct = max(0, (floor - offered) / floor)
+comp = round(clamp(10 * (1 - shortfall_pct / max_shortfall_pct), 0, 10))
+```
+
+Zero only happens at `max_shortfall_pct` (default 0.5, i.e. 50%+) below floor – genuinely extreme, not just "under."
+
+**If the JD doesn't state a figure:** don't default straight to a placeholder. Attempt a live-search-informed estimate first, the same discipline Step 3 already applies to `competition` – role level, seniority, company size/sector/stage are usually enough to form a defensible band (e.g. "an early-stage, ~25-person startup at this level typically pays below-market cash in favour of equity"). Score that estimate on the same sliding scale and mark it `estimated`. Only fall back to `unestimable_default` (a deliberate middle value, not the max score) when even a reasonable estimate isn't possible – genuinely unknown should score worse than confirmed-good and better than confirmed-below-floor, not tie with the best possible outcome.
 
 ### Blockers
 Right to work, geography, visa, or other confirmed hard requirements. Test carefully before scoring low here – a soft inconvenience is not a blocker.

@@ -21,12 +21,26 @@ Consistency checks that nothing else in CI catches:
    risk as (2), for the headline stats added alongside the status vocabulary
    simplification.
 
+4. Every example application's score.value equals the sum of its own
+   score.breakdown. These were hand-typed independently of each other once
+   and drifted apart on a large fraction of the dataset before this check
+   existed (see TESTING.md) - now impossible to reintroduce silently, since
+   generate_examples.py itself computes score.value from the breakdown
+   rather than accepting it as a separate input.
+
+5. Every example application's Score rationale has exactly five lines (one
+   per component) and none of them is a bare restatement of the score
+   (e.g. "JD fit: 38/45" with nothing else) - the exact gap that made this
+   section invisible-but-also-empty-of-content before it was fixed.
+
 Run from the repo root: python scripts/verify_consistency.py
 Exits 1 on any mismatch.
 """
 import os
 import re
 import sys
+
+import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _status import ALL_STATUSES, REACHED_INTERVIEW, NO_INTERVIEW_NEGATIVE
@@ -43,12 +57,18 @@ from build_dashboard import (
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCHEMA_PATH = os.path.join(ROOT, "schema", "SCHEMA.md")
 DASHBOARD_PATH = os.path.join(ROOT, "docs", "index.html")
+APPS_DIR = os.path.join(ROOT, "examples", "applications")
+COMPONENTS = ["jd_fit", "seniority", "competition", "comp", "blockers"]
+# A rationale line that's just "Label (N/45):" or "Label: N/45" with nothing
+# after the score - i.e. it tells the reader nothing the breakdown numbers
+# above it don't already show.
+THIN_RATIONALE_RE = re.compile(r"^-\s+.+?\(?\d+\s*/\s*\d+\)?:?\s*$", re.MULTILINE)
 
 # heading -> a function that should return truthy content for SCHEMA.md's example
 CHECKS = {
     "Company facts": lambda bp: extract_bp_section(bp, "Company facts"),
     "Regional intelligence": lambda bp: parse_table(extract_bp_section(bp, "Regional intelligence")),
-    "Comp": lambda bp: extract_bp_section(bp, "Comp"),
+    "Compensation": lambda bp: extract_bp_section(bp, "Compensation"),
     "Why it progressed / didn't": lambda bp: extract_bp_section(bp, "Why it progressed / didn't"),
     "Unique selling points": lambda bp: parse_bullet_pairs(extract_bp_section(bp, "Unique selling points")),
     "Interviewer profiles": lambda bp: parse_interviewer_profiles(extract_bp_section(bp, "Interviewer profiles")),
@@ -125,8 +145,58 @@ def check_recalibration_sets():
     return ok
 
 
+def load_example_applications():
+    apps = []
+    for fname in sorted(os.listdir(APPS_DIR)):
+        if not fname.endswith(".md"):
+            continue
+        text = open(os.path.join(APPS_DIR, fname), encoding="utf-8").read()
+        m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.DOTALL)
+        fm = yaml.safe_load(m.group(1))
+        apps.append((fname, fm, m.group(2)))
+    return apps
+
+
+def check_example_score_sums():
+    apps = load_example_applications()
+    ok = True
+    for fname, fm, body in apps:
+        breakdown = fm["score"]["breakdown"]
+        total = sum(breakdown[c] for c in COMPONENTS)
+        if total != fm["score"]["value"]:
+            print(f"FAIL: {fname} - score.value ({fm['score']['value']}) doesn't equal the sum of its own breakdown ({total}).")
+            ok = False
+    if ok:
+        print(f"All {len(apps)} example applications' score.value matches the sum of their own breakdown.")
+    return ok
+
+
+def check_example_rationale_not_thin():
+    apps = load_example_applications()
+    ok = True
+    for fname, fm, body in apps:
+        m = re.search(r"##\s+Score rationale\s*\n(.*?)(?=\n##\s|\Z)", body, re.DOTALL)
+        rationale_text = m.group(1) if m else ""
+        lines = [l for l in rationale_text.splitlines() if l.strip().startswith("-")]
+        if len(lines) != len(COMPONENTS):
+            print(f"FAIL: {fname} - Score rationale should have exactly {len(COMPONENTS)} lines (one per component), found {len(lines)}.")
+            ok = False
+        if THIN_RATIONALE_RE.search(rationale_text):
+            print(f"FAIL: {fname} - Score rationale has a line that only restates the score, no real reasoning.")
+            ok = False
+    if ok:
+        print(f"All {len(apps)} example applications' Score rationale has {len(COMPONENTS)} real, non-thin lines.")
+    return ok
+
+
 def main():
-    ok = check_schema_docs() and check_status_order() and check_recalibration_sets()
+    ok = (
+        check_schema_docs()
+        and check_status_order()
+        and check_recalibration_sets()
+        and check_example_score_sums()
+        and check_example_rationale_not_thin()
+    )
     if not ok:
         sys.exit(1)
 

@@ -8,31 +8,31 @@ status_date: 2026-05-29
 source: "LinkedIn"
 
 score:
-  value: 76
+  value: 79
   tier: "Tier 2 – Strong callback odds"
   locked: false
   breakdown:
     jd_fit: 36
     seniority: 13
     competition: 11
-    comp: 8
+    comp: 9
     blockers: 10
   estimated_fields: ["comp"]
 
 next_interview_date: null
 
-comp_band: null
+comp_band: "£100k-112k OTE (estimated)"
 ---
 
 ## JD summary
 VP Product at Pemberton Health Tech.
 
 ## Score rationale
-- JD fit: 36/45
-- Seniority alignment: 13/15
-- Competition estimate: 11/20
-- Comp alignment: 8/10
-- Blockers: 10/10
+- JD fit (36/45): Solid domain adjacency to prior regulated-sector product experience.
+- Seniority alignment (13/15): VP level matches the candidate's evidenced range, with team-management scope already demonstrated.
+- Competition estimate (11/20): ~600-employee, Series C company – a moderate applicant pool given its mid-market profile.
+- Compensation alignment (9/10): Not stated in the JD; estimated at £100k-112k OTE for a VP role at a Series C health-tech company, modestly below floor.
+- Blockers (10/10): No blocker identified.
 
 ## Caveats
 Comp estimated pending confirmation.
@@ -42,8 +42,8 @@ Comp estimated pending confirmation.
 ### Company facts
 Pemberton Health Tech – ~600 employees, Series C. See `examples/companies/pemberton-health-tech.json` for the cached source.
 
-### Comp
-Not yet confirmed.
+### Compensation
+£100k-112k OTE (estimated)
 
 ### Why it progressed / didn't
 Solid domain adjacency; moderate competition given the company's mid-market profile.
@@ -72,7 +72,7 @@ A: Lead with what doesn't change (existing workflows, compliance posture) before
 - What's driving the VP Product hire specifically now, versus six months ago?
 
 ### Watch-outs
-Comp band still unconfirmed – worth raising directly before a later stage.
+Comp is an estimate, not yet confirmed by the company – worth raising directly before a later stage.
 
 ### Notes
 Currently unknown – nothing situational to flag yet; will add if something comes up in later stages.
