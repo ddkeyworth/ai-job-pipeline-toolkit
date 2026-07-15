@@ -67,14 +67,18 @@ No git or terminal needed – this is entirely mouse-and-Explorer/Finder work.
 6. In your Project, go to Settings → Customize → Skills → Add → **Upload a skill**, and upload `job-pipeline.zip`. This brings in `SKILL.md` together with `schema/`, `config/`, and everything else it refers to by relative path – uploading `SKILL.md` on its own would leave those references unreachable.
 7. Upload your CV and start adding applications as Project files, following `schema/SCHEMA.md`.
 8. Ask Claude to score a JD, log an application, or regenerate your dashboard.
-9. When you want to see the dashboard, ask Claude to produce it as an Artifact.
+9. When you want to see the dashboard, ask Claude to produce it as an Artifact – it will render correctly, but read the limitation directly below before relying on it as your record.
 
 **A real, ongoing cost of this option: Project files are read-only to Claude.** It can score, log, and update everything correctly within a conversation, but it can only hand you back a downloadable file – it cannot write to your Project's knowledge directly. Every single logged application and status update needs you to download the file and add/replace it in the Project yourself, or the change isn't actually saved anywhere and won't be there next time. Fine for occasional use; worth knowing about before committing to tracking dozens of applications this way – see Option B below if that matters to you.
 
-### Option B – Claude Cowork (recommended if you have it)
+**A second, separate cost of this option: the dashboard Artifact itself doesn't persist either.** Producing the dashboard as an Artifact in a plain Claude.ai Project chat gives you a real, correctly-working, interactive dashboard – but it only exists inside that one chat conversation. It will not appear in your Artifacts library at claude.ai/artifacts, and there's no way to find it again except scrolling back to that exact chat. Close it, lose track of it, or come back next week expecting to find it in your library, and it's gone – ask Claude to regenerate it and you'll get a new, equally-real, equally-temporary one. **A dashboard that actually persists and stays findable in your Artifacts library requires Claude Cowork – see Option B below. This is not a convenience upgrade for this specific capability, it's the only way to get it.**
+
+### Option B – Claude Cowork (the only option that produces a dashboard that actually persists)
+If you want a dashboard you can find again later in your Artifacts library (claude.ai/artifacts), without re-asking Claude to dig up an old chat and regenerate it, this isn't optional: Option A's dashboard Artifact is real but ephemeral (see above). Only a dashboard produced via Cowork is saved to your Artifacts library and stays there.
+
 1. Point Cowork at a local folder – your CV, and an `applications/` and `companies/` subfolder following `schema/SCHEMA.md`.
 2. Install `SKILL.md` the same way you'd install any Cowork skill, from the same local folder – Cowork already has direct access to the rest of the repo (`schema/`, `config/`) alongside it, so there's no separate bundling step like Option A's.
-3. Ask Claude to score a JD, log an application, or regenerate the dashboard – it reads and writes the local folder directly, so there's no separate upload step, and no download/re-upload step for every subsequent update either.
+3. Ask Claude to score a JD, log an application, or regenerate the dashboard – it reads and writes the local folder directly, so there's no separate upload step, and no download/re-upload step for every subsequent update either. **Dashboards produced this way are saved to your Artifacts library and stay there** – this is the one capability Option A cannot replicate at all, not just less conveniently.
 
 Either way: **delete or ignore `examples/`** – it's a self-contained demo, not a template to build on top of. Your own data goes in your own folder or Project, never inside a clone of this repo (see Security below).
 
