@@ -197,23 +197,61 @@ def parse_application(path):
     }
 
 
+def inject_data(html, apps, subtitle):
+    """Splice apps (a list of application dicts) into html's /*__DATA__*/.../*__END_DATA__*/
+    markers, and set the banner subtitle via its <!--__SUBTITLE__-->...<!--__END_SUBTITLE__-->
+    markers. Shared by main() and scripts/verify_consistency.py's regression test, so the
+    exact code path that ships is the one that's tested - not a second reimplementation.
+
+    subtitle is a required argument, not a default, on purpose: docs/index.html's committed
+    banner text ("Fictional companies... No real job search data") is only true for the
+    public GitHub Pages demo built from examples/. When a live Claude.ai/Cowork session
+    builds this same template for a real user's own real data, that sentence becomes false -
+    and relying on whoever's generating it to remember to edit a sentence buried in a
+    700-line HTML file is exactly the kind of memory-based fix this repo has moved away from
+    elsewhere (see score.value, check_example_score_sums). Making subtitle a required
+    parameter forces the caller to decide, rather than silently inheriting the demo's text.
+
+    Replacement passed as a function, not a string - re.sub() reinterprets backslash
+    sequences (e.g. \\n) in a plain-string replacement as backreferences/escapes, silently
+    corrupting any JSON string value that contains an embedded newline into a raw newline
+    (which breaks the embedded JSON). A lambda sidesteps that reinterpretation entirely.
+    This was previously diagnosed and worked around live in a Claude.ai session (see
+    TESTING.md) but never actually fixed here - dormant only because no example field
+    happened to contain a literal newline; real user data very plausibly would.
+    """
+    data_json = json.dumps(apps, ensure_ascii=False, indent=2)
+    html = re.sub(
+        r"/\*__DATA__\*/.*?/\*__END_DATA__\*/",
+        lambda m: f"/*__DATA__*/{data_json}/*__END_DATA__*/",
+        html,
+        flags=re.DOTALL,
+    )
+    html = re.sub(
+        r"<!--__SUBTITLE__-->.*?<!--__END_SUBTITLE__-->",
+        lambda m: f"<!--__SUBTITLE__-->{subtitle}<!--__END_SUBTITLE__-->",
+        html,
+        flags=re.DOTALL,
+    )
+    return html
+
+
+DEMO_SUBTITLE = (
+    'Fictional companies and applications, built to demonstrate the tool. '
+    'No real job search data. See <code>README.md</code> to use your own.'
+)
+
+
 def main():
     apps = []
     for fname in sorted(os.listdir(APPS_DIR)):
         if fname.endswith(".md"):
             apps.append(parse_application(os.path.join(APPS_DIR, fname)))
 
-    data_json = json.dumps(apps, ensure_ascii=False, indent=2)
-
     with open(DASHBOARD, "r", encoding="utf-8") as f:
         html = f.read()
 
-    new_html = re.sub(
-        r"/\*__DATA__\*/.*?/\*__END_DATA__\*/",
-        f"/*__DATA__*/{data_json}/*__END_DATA__*/",
-        html,
-        flags=re.DOTALL,
-    )
+    new_html = inject_data(html, apps, DEMO_SUBTITLE)
 
     with open(DASHBOARD, "w", encoding="utf-8") as f:
         f.write(new_html)

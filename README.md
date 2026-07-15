@@ -78,6 +78,9 @@ No git or terminal needed – this is entirely mouse-and-Explorer/Finder work.
 
 Either way: **delete or ignore `examples/`** – it's a self-contained demo, not a template to build on top of. Your own data goes in your own folder or Project, never inside a clone of this repo (see Security below).
 
+### Making it yours
+Nothing here is a fixed app – the dashboard, the scoring rubric, the schema are all just files your own Claude reads and regenerates. Once installed, ask Claude to change anything about it: add a column, track an extra field, change the dashboard's colours or layout, adjust how a component scores. It's your own instance, working directly with you – there's no separate build step or release to wait for.
+
 ### Replacing the example data with your own
 The `examples/` folder is only ever read by this repo's own build script (`scripts/build_dashboard.py`) to produce the public demo page. It has no other function. Your real tracked applications should live somewhere private – a Claude.ai Project's own files, or a local folder you choose – following the same schema, but never committed to a public fork of this repo.
 

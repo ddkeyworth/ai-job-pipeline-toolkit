@@ -33,9 +33,23 @@ Consistency checks that nothing else in CI catches:
    (e.g. "JD fit: 38/45" with nothing else) - the exact gap that made this
    section invisible-but-also-empty-of-content before it was fixed.
 
+6. build_dashboard.py's inject_data() survives a value with an embedded
+   newline without corrupting the surrounding JSON, and correctly swaps the
+   banner subtitle. The newline bug (re.sub() reinterpreting \n in a
+   plain-string replacement as an escape, turning a valid JSON string into a
+   raw, syntax-breaking newline) was diagnosed once already, live, in a
+   Claude.ai session - but the fix was only ever applied in that session's
+   own inline reimplementation, never committed to this script. It stayed
+   dormant because no example field happened to contain a literal newline; a
+   real user's data plausibly would. The subtitle is a required argument to
+   inject_data() precisely so a real user's dashboard can't silently inherit
+   the demo's "no real job search data" disclaimer - this check confirms the
+   swap actually happens rather than just asserting the parameter exists.
+
 Run from the repo root: python scripts/verify_consistency.py
 Exits 1 on any mismatch.
 """
+import json
 import os
 import re
 import sys
@@ -46,6 +60,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _status import ALL_STATUSES, REACHED_INTERVIEW, NO_INTERVIEW_NEGATIVE
 from build_dashboard import (
     extract_bp_section,
+    inject_data,
     parse_bullet_pairs,
     parse_interviewer_profiles,
     parse_notes,
@@ -189,6 +204,32 @@ def check_example_rationale_not_thin():
     return ok
 
 
+def check_dashboard_injection_survives_embedded_newline():
+    html = (
+        "PREFIX /*__DATA__*/OLD/*__END_DATA__*/ "
+        "<!--__SUBTITLE__-->OLD SUBTITLE<!--__END_SUBTITLE__--> SUFFIX"
+    )
+    apps = [{"id": "test", "notes": "Line one.\nLine two."}]
+    new_html = inject_data(html, apps, "Your real tracked applications.")
+
+    m = re.search(r"/\*__DATA__\*/(.*?)/\*__END_DATA__\*/", new_html, re.DOTALL)
+    try:
+        parsed = json.loads(m.group(1))
+    except Exception as e:
+        print(f"FAIL: inject_data() corrupted a value containing an embedded newline - {e}")
+        return False
+    if parsed != apps:
+        print(f"FAIL: inject_data() round-tripped the data incorrectly - got {parsed!r}, expected {apps!r}")
+        return False
+
+    if "Your real tracked applications." not in new_html or "OLD SUBTITLE" in new_html:
+        print("FAIL: inject_data() did not correctly swap the banner subtitle.")
+        return False
+
+    print("build_dashboard.py's inject_data() survives an embedded newline and swaps the subtitle correctly.")
+    return True
+
+
 def main():
     ok = (
         check_schema_docs()
@@ -196,6 +237,7 @@ def main():
         and check_recalibration_sets()
         and check_example_score_sums()
         and check_example_rationale_not_thin()
+        and check_dashboard_injection_survives_embedded_newline()
     )
     if not ok:
         sys.exit(1)

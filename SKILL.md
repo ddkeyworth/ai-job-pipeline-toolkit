@@ -126,7 +126,22 @@ interviewing -> offer | rejected_after_interview | withdrew_after_interview
 
 Read every application file, build the three-level view (Pipeline → Interview stage → Briefing pack) per the dashboard template, and output/write it. Do this whenever asked, or after logging a new application/outcome if the user seems to be working through their pipeline in one sitting – but don't regenerate proactively on every single small edit if it wasn't asked for; that's unnecessary cost for no benefit.
 
-**In a Claude.ai Project, build the `/*__DATA__*/` array with `json.dumps` in a code-execution step, never by hand-typing the JSON text.** But serializing correctly isn't the whole fix – **when splicing that JSON string into the HTML template at the marker, use a `re.sub` replacement *function*, never a replacement *string*.** `re.sub(pattern, replacement_string, text)` reinterprets backslash sequences in `replacement_string` (it treats them as backreference syntax), which silently turns `json.dumps`'s correctly-escaped `\n` inside long fields like `jd_summary`/`caveats` back into literal raw newlines – invalid syntax inside a JS string literal, even though the JSON itself was valid a step earlier. The failure mode is a fully-rendered header/footer with a completely blank pipeline list and nothing visible to the user beyond a browser-console `SyntaxError`. Use `re.sub(pattern, lambda m: replacement_string, text)` (or `str.replace`, which doesn't have this problem) instead. Cowork can still write the file directly, so this applies specifically to the Claude.ai Project case, where there's no `build_dashboard.py` run doing this for you.
+**Call `inject_data()` from `scripts/build_dashboard.py` directly – never hand-splice the `/*__DATA__*/` marker or reimplement the injection logic freehand.** The skill's own scripts are reachable via code execution on both platforms (Cowork has direct local access; on Claude.ai the skill's files are mounted at `/mnt/skills/user/job-pipeline/`, confirmed working – see `scripts/check_duplicate.py`'s usage above). Import it and call it:
+
+```python
+import sys, json
+sys.path.insert(0, "/mnt/skills/user/job-pipeline/scripts")  # local path for Cowork instead
+from build_dashboard import inject_data
+
+with open("/mnt/skills/user/job-pipeline/docs/index.html") as f:  # local path for Cowork instead
+    html = f.read()
+new_html = inject_data(html, apps, subtitle="Your tracked applications – N scored so far.")
+```
+
+Reusing the real, tested function (rather than reimplementing it inline each time) is what actually prevents two real bugs that have both shipped before:
+
+- **A `re.sub` corruption bug.** A plain-string replacement to `re.sub` reinterprets backslash sequences (it treats them as backreference syntax), silently turning `json.dumps`'s correctly-escaped `\n` inside long fields like `jd_summary`/`caveats` back into literal raw newlines – invalid syntax inside a JS string literal. The failure mode is a fully-rendered header/footer with a completely blank pipeline list and nothing visible to the user beyond a browser-console `SyntaxError`. `inject_data()` already handles this correctly internally – that's exactly why it should be called, not re-derived from memory.
+- **A stale "fictional data" disclaimer.** The template's banner subtitle says "Fictional companies... No real job search data" – true only for the public demo. `inject_data()` requires a `subtitle` argument for this reason: write something accurate for the user's own real data (e.g. `"Your tracked applications – N scored so far."`), never leave or copy the demo's disclaimer text into a real user's dashboard.
 
 **Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date`. For each one past the threshold, **propose** marking it `assumed_rejected` – state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once. `assumed_rejected` is only reachable from `applied`, per the state machine in Step 4 – an `interviewing` application that goes quiet stays `interviewing` until the user reports an actual outcome, not silently reclassified.
 
