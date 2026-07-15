@@ -197,20 +197,24 @@ def parse_application(path):
     }
 
 
-def inject_data(html, apps, subtitle):
+def inject_data(html, apps, subtitle, title):
     """Splice apps (a list of application dicts) into html's /*__DATA__*/.../*__END_DATA__*/
-    markers, and set the banner subtitle via its <!--__SUBTITLE__-->...<!--__END_SUBTITLE__-->
-    markers. Shared by main() and scripts/verify_consistency.py's regression test, so the
-    exact code path that ships is the one that's tested - not a second reimplementation.
+    markers, and set the banner subtitle and browser-tab title via their own
+    <!--__SUBTITLE__-->/<!--__TITLE__--> marker pairs. Shared by main() and
+    scripts/verify_consistency.py's regression test, so the exact code path that ships is
+    the one that's tested - not a second reimplementation.
 
-    subtitle is a required argument, not a default, on purpose: docs/index.html's committed
-    banner text ("Fictional companies... No real job search data") is only true for the
-    public GitHub Pages demo built from examples/. When a live Claude.ai/Cowork session
-    builds this same template for a real user's own real data, that sentence becomes false -
-    and relying on whoever's generating it to remember to edit a sentence buried in a
-    700-line HTML file is exactly the kind of memory-based fix this repo has moved away from
-    elsewhere (see score.value, check_example_score_sums). Making subtitle a required
-    parameter forces the caller to decide, rather than silently inheriting the demo's text.
+    subtitle and title are required arguments, not defaults, on purpose: docs/index.html's
+    committed text ("Fictional companies... No real job search data", "...example dashboard")
+    is only true for the public GitHub Pages demo built from examples/. When a live
+    Claude.ai/Cowork session builds this same template for a real user's own real data, both
+    become false - and relying on whoever's generating it to remember to edit text buried in
+    a 700-line HTML file is exactly the kind of memory-based fix this repo has moved away
+    from elsewhere (see score.value, check_example_score_sums). Making both required
+    parameters forces the caller to decide, rather than silently inheriting the demo's text -
+    the title tag specifically was missed once already (fixed live only after being pointed
+    out, not caught proactively), which is exactly the failure mode requiring it here guards
+    against.
 
     Replacement passed as a function, not a string - re.sub() reinterprets backslash
     sequences (e.g. \\n) in a plain-string replacement as backreferences/escapes, silently
@@ -233,6 +237,12 @@ def inject_data(html, apps, subtitle):
         html,
         flags=re.DOTALL,
     )
+    html = re.sub(
+        r"<!--__TITLE__-->.*?<!--__END_TITLE__-->",
+        lambda m: f"<!--__TITLE__-->{title}<!--__END_TITLE__-->",
+        html,
+        flags=re.DOTALL,
+    )
     return html
 
 
@@ -240,6 +250,7 @@ DEMO_SUBTITLE = (
     'Fictional companies and applications, built to demonstrate the tool. '
     'No real job search data. See <code>README.md</code> to use your own.'
 )
+DEMO_TITLE = "Job Pipeline Toolkit – example dashboard"
 
 
 def main():
@@ -251,7 +262,7 @@ def main():
     with open(DASHBOARD, "r", encoding="utf-8") as f:
         html = f.read()
 
-    new_html = inject_data(html, apps, DEMO_SUBTITLE)
+    new_html = inject_data(html, apps, DEMO_SUBTITLE, DEMO_TITLE)
 
     with open(DASHBOARD, "w", encoding="utf-8") as f:
         f.write(new_html)

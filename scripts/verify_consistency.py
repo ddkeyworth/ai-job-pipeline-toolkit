@@ -34,17 +34,22 @@ Consistency checks that nothing else in CI catches:
    section invisible-but-also-empty-of-content before it was fixed.
 
 6. build_dashboard.py's inject_data() survives a value with an embedded
-   newline without corrupting the surrounding JSON, and correctly swaps the
-   banner subtitle. The newline bug (re.sub() reinterpreting \n in a
-   plain-string replacement as an escape, turning a valid JSON string into a
-   raw, syntax-breaking newline) was diagnosed once already, live, in a
-   Claude.ai session - but the fix was only ever applied in that session's
-   own inline reimplementation, never committed to this script. It stayed
-   dormant because no example field happened to contain a literal newline; a
-   real user's data plausibly would. The subtitle is a required argument to
-   inject_data() precisely so a real user's dashboard can't silently inherit
-   the demo's "no real job search data" disclaimer - this check confirms the
-   swap actually happens rather than just asserting the parameter exists.
+   newline without corrupting the surrounding JSON, and correctly swaps both
+   the banner subtitle and the page title. The newline bug (re.sub()
+   reinterpreting \n in a plain-string replacement as an escape, turning a
+   valid JSON string into a raw, syntax-breaking newline) was diagnosed once
+   already, live, in a Claude.ai session - but the fix was only ever applied
+   in that session's own inline reimplementation, never committed to this
+   script. It stayed dormant because no example field happened to contain a
+   literal newline; a real user's data plausibly would. The subtitle and
+   title are required arguments to inject_data() precisely so a real user's
+   dashboard can't silently inherit the demo's "no real job search data"
+   disclaimer or "example dashboard" tab title - this check confirms both
+   swaps actually happen rather than just asserting the parameters exist.
+   The title tag specifically was missed once already even after the
+   subtitle fix shipped - caught only when pointed out, not proactively -
+   which is exactly why it's a required parameter now rather than a second
+   reminder sentence to remember.
 
 Run from the repo root: python scripts/verify_consistency.py
 Exits 1 on any mismatch.
@@ -207,10 +212,11 @@ def check_example_rationale_not_thin():
 def check_dashboard_injection_survives_embedded_newline():
     html = (
         "PREFIX /*__DATA__*/OLD/*__END_DATA__*/ "
-        "<!--__SUBTITLE__-->OLD SUBTITLE<!--__END_SUBTITLE__--> SUFFIX"
+        "<!--__SUBTITLE__-->OLD SUBTITLE<!--__END_SUBTITLE__--> "
+        "<title><!--__TITLE__-->OLD TITLE<!--__END_TITLE__--></title> SUFFIX"
     )
     apps = [{"id": "test", "notes": "Line one.\nLine two."}]
-    new_html = inject_data(html, apps, "Your real tracked applications.")
+    new_html = inject_data(html, apps, "Your real tracked applications.", "Your Job Pipeline")
 
     m = re.search(r"/\*__DATA__\*/(.*?)/\*__END_DATA__\*/", new_html, re.DOTALL)
     try:
@@ -226,7 +232,11 @@ def check_dashboard_injection_survives_embedded_newline():
         print("FAIL: inject_data() did not correctly swap the banner subtitle.")
         return False
 
-    print("build_dashboard.py's inject_data() survives an embedded newline and swaps the subtitle correctly.")
+    if "Your Job Pipeline" not in new_html or "OLD TITLE" in new_html:
+        print("FAIL: inject_data() did not correctly swap the page title.")
+        return False
+
+    print("build_dashboard.py's inject_data() survives an embedded newline and swaps the subtitle and title correctly.")
     return True
 
 

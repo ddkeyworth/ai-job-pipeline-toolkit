@@ -135,13 +135,18 @@ from build_dashboard import inject_data
 
 with open("/mnt/skills/user/job-pipeline/docs/index.html") as f:  # local path for Cowork instead
     html = f.read()
-new_html = inject_data(html, apps, subtitle="Your tracked applications – N scored so far.")
+new_html = inject_data(
+    html, apps,
+    subtitle="Your tracked applications – N scored so far.",
+    title="Your Job Pipeline",
+)
 ```
 
-Reusing the real, tested function (rather than reimplementing it inline each time) is what actually prevents two real bugs that have both shipped before:
+Reusing the real, tested function (rather than reimplementing it inline each time) is what actually prevents three real bugs that have all shipped before:
 
 - **A `re.sub` corruption bug.** A plain-string replacement to `re.sub` reinterprets backslash sequences (it treats them as backreference syntax), silently turning `json.dumps`'s correctly-escaped `\n` inside long fields like `jd_summary`/`caveats` back into literal raw newlines – invalid syntax inside a JS string literal. The failure mode is a fully-rendered header/footer with a completely blank pipeline list and nothing visible to the user beyond a browser-console `SyntaxError`. `inject_data()` already handles this correctly internally – that's exactly why it should be called, not re-derived from memory.
 - **A stale "fictional data" disclaimer.** The template's banner subtitle says "Fictional companies... No real job search data" – true only for the public demo. `inject_data()` requires a `subtitle` argument for this reason: write something accurate for the user's own real data (e.g. `"Your tracked applications – N scored so far."`), never leave or copy the demo's disclaimer text into a real user's dashboard.
+- **A stale "example dashboard" browser-tab title.** Same root cause as the subtitle, one level less visible – easy to miss even right after fixing the subtitle, which is exactly what happened once already. `title` is required for the same reason: write something accurate (e.g. `"Your Job Pipeline"`), never leave the demo's title in a real user's dashboard.
 
 **Silence check.** As part of regenerating (or whenever asked to review the pipeline), scan `applied` applications for silence past `config/weights.json → pipeline_hygiene.assumed_rejected_after_days`, measured from `status_date`. For each one past the threshold, **propose** marking it `assumed_rejected` – state which application, how long it's been silent, and let the user confirm or dismiss each one. Never set it silently, and never propose it again for an application the user has already dismissed once. `assumed_rejected` is only reachable from `applied`, per the state machine in Step 4 – an `interviewing` application that goes quiet stays `interviewing` until the user reports an actual outcome, not silently reclassified.
 
