@@ -1,0 +1,12 @@
+{
+  "run_date": "2026-07-16",
+  "run_notes": "Full re-run of all six golden-set cases against SKILL.md's Step 2 rubric as updated for the competency-cluster JD-fit mechanism, the recency modifier, and the comp-flexibility guardrail. The five pre-existing cases were re-derived from scratch under the new instructions (not copied from eval/results/2026-07-14.json) specifically to check for regressions - see TESTING.md Test 27 for the case-by-case reasoning. None of the five triggered the recency modifier (no case names a currency-sensitive requirement) or the career-break guardrail (the example CV has no gap), and all five landed on the identical component values as the prior run. Case 6 (Wrenfield Civic Trust) is new, added specifically to exercise the competency-cluster mechanism on a JD whose title shares no keyword overlap with the candidate's evidenced titles.",
+  "results": [
+    { "case": "Verdant Analytics", "jd_fit": 42, "seniority": 15, "competition": 18, "comp": 10, "blockers": 10 },
+    { "case": "Helios Systems Corp", "jd_fit": 30, "seniority": 14, "competition": 3, "comp": 10, "blockers": 10 },
+    { "case": "Titan Aerospace Group", "jd_fit": 18, "seniority": 2, "competition": 2, "comp": 10, "blockers": 8 },
+    { "case": "Bramston Retail Holdings", "jd_fit": 40, "seniority": 14, "competition": 14, "comp": 2, "blockers": 10 },
+    { "case": "Meridian Financial Services", "jd_fit": 38, "seniority": 15, "competition": 15, "comp": 10, "blockers": 2 },
+    { "case": "Wrenfield Civic Trust", "jd_fit": 30, "seniority": 14, "competition": 17, "comp": 6, "blockers": 10 }
+  ]
+}

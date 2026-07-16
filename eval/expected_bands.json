@@ -25,6 +25,11 @@
       "case": "Meridian Financial Services",
       "bands": { "jd_fit": [34, 42], "seniority": [12, 15], "competition": [10, 17], "comp": [10, 10], "blockers": [0, 3] },
       "total_band": [66, 87]
+    },
+    {
+      "case": "Wrenfield Civic Trust",
+      "bands": { "jd_fit": [26, 35], "seniority": [12, 15], "competition": [13, 20], "comp": [4, 7], "blockers": [10, 10] },
+      "total_band": [65, 87]
     }
   ]
 }

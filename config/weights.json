@@ -4,7 +4,11 @@
   "components": {
     "jd_fit": {
       "max": 45,
-      "description": "How precisely the candidate's credentials map to the stated requirements: seniority level, years of experience, specific must-have skills, domain/sector fit."
+      "description": "How precisely the candidate's credentials map to the stated requirements: seniority level, years of experience, specific must-have skills, domain/sector fit. Scored by deriving the candidate's own competency clusters from their CV, then matching the JD's primary function against them - not a title-keyword match - so a genuine but non-obviously-titled fit isn't structurally undervalued.",
+      "recency_modifier": {
+        "range": [-3, 0],
+        "_notes": "A discount only, never a bonus - fresh evidence isn't a reason to add points beyond the base fit judgement. Applied only when the JD names something explicitly currency-sensitive (a specific tool, current market dynamics, a platform's present capabilities) and the candidate's best evidence for it is old and unreinforced by anything recent. Never applied to durable leadership/institutional credentials, and never triggered by a planned, explained career break on its own - self-directed work during a break counts as recent evidence wherever it's relevant."
+      }
     },
     "seniority": {
       "max": 15,

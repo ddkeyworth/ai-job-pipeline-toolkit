@@ -67,3 +67,21 @@ Reference persona: Jordan Ainsley — Product leader, ~9 years, Head of Product 
 - `comp`: 10 (confirmed above floor)
 - `blockers`: 0–3 (confirmed hard requirement not evidenced in the CV)
 - **Total band: 66–87 (regulatory requirement, not aviation-level severity — should still land meaningfully lower than case 1's ideal fit due to the confirmed blocker, but not catastrophically low)**
+
+## 6. Wrenfield Civic Trust — Head of Programme Operations
+
+**JD:** Wrenfield Civic Trust is a growing (~30-person) UK charitable foundation building a new national mentoring programme from the ground up. We're hiring a Head of Programme Operations to own the programme's operating model end-to-end — reporting structures, budget, partner onboarding, impact measurement — and lead a small cross-functional team (7 people across operations, partnerships, and data/impact) as the programme moves from a 3-region pilot (400 participants) toward national rollout. You'll report directly to the Executive Director. We're looking for someone with a proven track record building something from scratch, leading small senior teams without heavy process overhead, and comfortable owning ambiguous, fast-moving scope. Prior nonprofit/charity-sector experience is a plus but not required — we care more about the operating pattern than the sector label. Comp: £85,000–£95,000 base, plus a limited additional pension contribution, negotiable. UK-based, hybrid, no visa sponsorship required for right-to-work holders (not applicable here).
+
+**Why this case exists:** every other case in this set uses a "Product"-titled JD against Jordan's product-titled CV — none of them would catch a regression in the competency-cluster mechanism specifically, since a title-keyword match would already produce the right answer for all five. This case is designed so a naive title/keyword read and the competency-cluster mechanism disagree: "Programme Operations" shares no keyword overlap with "Product," so a title-match read would likely score `jd_fit` in the low-to-mid teens. The JD's actual primary function — own an operating model 0-to-1, lead a similarly-sized cross-functional team, report directly to the top executive, own ambiguous fast-moving scope — is structurally close to Jordan's evidenced pattern (see case 1), and the JD's own text explicitly signals it cares about operating pattern over sector label.
+
+**Expected band:** Meaningfully higher than a title-match read would produce, but genuinely short of an ideal-fit score — there's a real, acknowledged gap: nothing in Jordan's CV evidences nonprofit/charity-sector specifics, only the underlying operating pattern. `jd_fit` should land in a middle band reflecting real credit for the structural match without pretending the sector gap doesn't exist.
+- `jd_fit`: 26–35 (real credit for the 0-to-1/cross-functional/direct-to-top-exec operating-pattern match; held back from case 1's range by the complete absence of sector-specific evidence)
+- `seniority`: 12–15 (a small-organization exec-adjacent mandate, roughly lateral to Jordan's evidenced level)
+- `competition`: 13–20 (small, not a famous brand)
+- `comp`: 4–7 (confirmed base range below Jordan's £110,000 floor — sliding-scale shortfall, not extreme)
+- `blockers`: 10 (no confirmed hard requirement)
+- **Total band: 65–87 (the real test is `jd_fit` specifically — the total band is wide because this case isn't about seniority/competition/comp, which are unaffected by this change)**
+
+---
+
+**Not yet covered by this set:** no case here exercises the recency modifier or the career-break guardrail (`SKILL.md` → Step 2 → JD fit → Recency) — none of the six JDs name a currency-sensitive requirement, and the reference persona has no employment gap. A seventh case pairing a currency-sensitive requirement with a stale-but-reinforced or genuinely-stale piece of evidence, and/or a version of the reference persona with an explained gap, would close that coverage. Flagged, not added yet — see `TESTING.md` Test 27.
