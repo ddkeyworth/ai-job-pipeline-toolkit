@@ -1,6 +1,6 @@
 # Job Pipeline Toolkit
 
-An open-source job-application tracker and JD-fit scorer, built as a Claude skill. It runs entirely inside your own [Claude.ai](https://claude.ai) Project or [Claude Cowork](https://claude.ai/discover/cowork) session – no separate app, no account with anyone but Anthropic, no data collected by anyone.
+An open-source job-application tracker and JD-fit scorer, built as a Claude skill. It runs entirely inside your own [Claude Cowork](https://claude.ai/discover/cowork) session or [Claude.ai](https://claude.ai) Project – no separate app, no account with anyone but Anthropic, no data collected by anyone.
 
 **[View the example dashboard →](https://ddkeyworth.github.io/ai-job-pipeline-toolkit/)**
 
@@ -8,6 +8,8 @@ An open-source job-application tracker and JD-fit scorer, built as a Claude skil
   <img src="docs/assets/dashboard-pipeline.png" alt="Pipeline view – a filterable list of tracked applications with company, role, status, and score" width="49%">
   <img src="docs/assets/dashboard-briefing-pack.png" alt="An expanded application card showing its score breakdown and full interview briefing pack" width="49%">
 </p>
+
+**This dashboard only stays live and current with Cowork.** A Claude.ai Project alone can score and log applications, but nothing about it functions as an ongoing tracker – see "Getting started" below.
 
 The example above is entirely synthetic – fictional companies, fictional applications, generated to show what the tool produces. See "Getting started" to point it at your own data.
 
@@ -56,8 +58,18 @@ Every status is reached from exactly one place – no other transitions exist. T
 
 None of this is enforced by the skill – it's a suggestion based on what tends to cause friction, not a required structure.
 
-### Option A – Claude.ai Project
-No git or terminal needed – this is entirely mouse-and-Explorer/Finder work.
+### Claude Cowork – the tracker (recommended)
+Cowork's dashboards are **Live Artifacts** – Anthropic's own persistent, pinnable, auto-updating dashboard mechanism, saved to your Artifacts library independent of any one chat. This is what makes the screenshots above true over time: a dashboard that stays current for as long as your search runs, not something you manually rebuild and republish every time something changes.
+
+1. Create a Claude.ai Project first, and start your Cowork chat inside it – rather than a loose Cowork chat with no Project at all. Cowork itself doesn't require this, but it keeps the chat history, memory, and files scoped together the same way a real ongoing tracker needs to be.
+2. When starting the chat, point Cowork at your data – Cowork's own start-of-chat setup lets you choose either your Project's own files or a local folder. Either way: your CV, and an `applications/` and `companies/` subfolder following `schema/SCHEMA.md`.
+3. Install `SKILL.md` the same way you'd install any Cowork skill, from the same source – Cowork already has direct access to the rest of the repo (`schema/`, `config/`) alongside it, so there's no separate bundling step like the Claude.ai Project path below needs.
+4. Ask Claude to score a JD, log an application, or regenerate the dashboard – it reads and writes your data directly, so there's no separate upload step, and no download/re-upload step for every subsequent update either. **Dashboards produced this way are Live Artifacts** – pinnable and current.
+
+**Only run one Cowork chat against your data at a time.** Each Cowork chat works from its own snapshot taken when that chat started – a second chat (even in the same Project) pointed at the same data can't see edits the first one makes, and vice versa. Whichever one saves last silently overwrites the other's changes, with no merge and no warning – the same underlying cause as the skill-update behaviour described below (a chat keeps using whatever it loaded when it started), just applied to your actual data instead of just the skill file. Stick to a single active Cowork chat per Project; close one before starting another against the same data.
+
+### Claude.ai Project – scoring only, not a tracker
+No git or terminal needed – this is entirely mouse-and-Explorer/Finder work. **Read this first: this path does not produce an ongoing tracker.** Every score, log, or status update comes back as a file you re-upload by hand, and the dashboard itself is a one-off render – even published, it's a snapshot from that moment, not something that reflects a search running for months. Fine for scoring a handful of roles or checking fit without commitment; not a substitute for Cowork above if what you actually want is a tracker.
 
 1. Create a Claude.ai Project.
 2. In Settings → Capabilities, make sure **Code execution and file creation** is turned on – skills won't work without it (Claude.ai says so directly on that toggle).
@@ -67,21 +79,7 @@ No git or terminal needed – this is entirely mouse-and-Explorer/Finder work.
 6. In your Project, go to Settings → Customize → Skills → Add → **Upload a skill**, and upload `job-pipeline.zip`. This brings in `SKILL.md` together with `schema/`, `config/`, and everything else it refers to by relative path – uploading `SKILL.md` on its own would leave those references unreachable.
 7. Upload your CV and start adding applications as Project files, following `schema/SCHEMA.md`.
 8. Ask Claude to score a JD, log an application, or regenerate your dashboard.
-9. When you want to see the dashboard, ask Claude to produce it as an Artifact – it will render correctly, but read the limitation directly below before relying on it as your record.
-
-**A real, ongoing cost of this option: Project files are read-only to Claude.** It can score, log, and update everything correctly within a conversation, but it can only hand you back a downloadable file – it cannot write to your Project's knowledge directly. Every single logged application and status update needs you to download the file and add/replace it in the Project yourself, or the change isn't actually saved anywhere and won't be there next time. Fine for occasional use; worth knowing about before committing to tracking dozens of applications this way – see Option B below if that matters to you.
-
-**A second, separate cost of this option: the dashboard Artifact needs a manual step to persist at all, and even then it's a snapshot.** Producing the dashboard as an Artifact in a plain Claude.ai Project chat gives you a real, correctly-working, interactive dashboard – but it only shows up in your Artifacts library (claude.ai/artifacts) if you open it and click **Publish** yourself; Claude can't do that step for you. Skip it, and the dashboard only exists inside that one chat conversation – close it or lose track of the chat, and it's effectively gone. Publish it, and it does become a real, findable, shareable item in your library – but it's a static copy of that moment, not a live view: score a new role or update a status afterward, and the published copy won't reflect it until you regenerate and publish again by hand.
-
-### Option B – Claude Cowork (the only option with an always-current dashboard)
-Cowork's dashboards are **Live Artifacts** – Anthropic's own persistent, pinnable, auto-updating dashboard mechanism, saved to your Artifacts library independent of any one chat. This is the actual match for a real ongoing tracker; Option A's Publish route (above) gets you a listed, shareable snapshot, not a live one.
-
-1. Create a Claude.ai Project first, and start your Cowork chat inside it – rather than a loose Cowork chat with no Project at all. Cowork itself doesn't require this, but it keeps the chat history, memory, and files scoped together the same way a real ongoing tracker needs to be, and it's how this pattern actually gets used in practice.
-2. Point Cowork at a local folder – your CV, and an `applications/` and `companies/` subfolder following `schema/SCHEMA.md`.
-3. Install `SKILL.md` the same way you'd install any Cowork skill, from the same local folder – Cowork already has direct access to the rest of the repo (`schema/`, `config/`) alongside it, so there's no separate bundling step like Option A's.
-4. Ask Claude to score a JD, log an application, or regenerate the dashboard – it reads and writes the local folder directly, so there's no separate upload step, and no download/re-upload step for every subsequent update either. **Dashboards produced this way are Live Artifacts** – pinnable and current – which is the one thing Option A's Publish route can't replicate, however often you re-publish.
-
-**Only run one Cowork chat against your data at a time.** Each Cowork chat works from its own snapshot of your local folder taken when that chat started – a second chat (even in the same Project) pointed at the same folder can't see edits the first one makes, and vice versa. Whichever one saves last silently overwrites the other's changes, with no merge and no warning – the same underlying cause as the skill-update behaviour described below (a chat keeps using whatever it loaded when it started), just applied to your actual data instead of just the skill file. Stick to a single active Cowork chat per Project; close one before starting another against the same data.
+9. When you want to see the dashboard, ask Claude to produce it as an Artifact – it renders correctly, but stays a one-off snapshot unless you manually publish it (Copy dropdown → Publish artifact), and even published it never auto-updates.
 
 Either way: **delete or ignore `examples/`** – it's a self-contained demo, not a template to build on top of. Your own data goes in your own folder or Project, never inside a clone of this repo (see Security below).
 
@@ -92,7 +90,7 @@ Nothing here is a fixed app – the dashboard, the scoring rubric, the schema ar
 The `examples/` folder is only ever read by this repo's own build script (`scripts/build_dashboard.py`) to produce the public demo page. It has no other function. Your real tracked applications should live somewhere private – a Claude.ai Project's own files, or a local folder you choose – following the same schema, but never committed to a public fork of this repo.
 
 ### Updating the skill later
-If you pull a newer version of this repo and want to update your Claude.ai skill, go to Settings → Customize → Skills → job-pipeline → the **⋮** menu → **Replace**, and select the new zip (same rename-and-rezip steps as Option A above). One thing worth knowing: replacing a skill's content doesn't affect any chat that was already open before the replace – it keeps using whatever version was loaded when that chat started. Start a **new chat** to pick up the update.
+If you pull a newer version of this repo and want to update your Claude.ai skill, go to Settings → Customize → Skills → job-pipeline → the **⋮** menu → **Replace**, and select the new zip (same rename-and-rezip steps as the Claude.ai Project section above). One thing worth knowing: replacing a skill's content doesn't affect any chat that was already open before the replace – it keeps using whatever version was loaded when that chat started. Start a **new chat** to pick up the update.
 
 ### Keeping your CV baseline current
 Your CV drives every score, so keep it current as your experience changes. There's no separate process – just give Claude an updated version when you have one (re-upload the file in a Claude.ai Project, or edit/replace the file in your local folder for Cowork) and say so. Claude confirms which file it's now using and applies it to all scoring from that point on. Past scores are never silently rewritten – see `score.locked` in `schema/SCHEMA.md`.
