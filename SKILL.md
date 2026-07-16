@@ -145,7 +145,11 @@ new_html = inject_data(
     subtitle="Your tracked applications – N scored so far.",
     title="Your Job Pipeline",
 )
+with open("/mnt/skills/user/job-pipeline/docs/index.html", "w") as f:  # local path for Cowork instead
+    f.write(new_html)
 ```
+
+**Write the result back this way – one direct, complete write – never through an incremental/patch-based file-editing tool.** A real dashboard is not small: this repo's own 35-example demo is already 100KB+, and a genuine multi-month pipeline will grow well past that. Large edits to a file this size have been reported to silently truncate when written via incremental editing tools rather than a single full write, with no error surfaced – the file just ends up shorter than intended. Read the whole file, build the whole new string, write the whole thing back in one call, exactly as above.
 
 Reusing the real, tested function (rather than reimplementing it inline each time) is what actually prevents three real bugs that have all shipped before:
 

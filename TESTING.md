@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Twenty-five tests, run across sessions between 2026-07-09 and 2026-07-16, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Twenty-six tests, run across sessions between 2026-07-09 and 2026-07-16, documented here as evidence rather than assertion.
 
 **Note on scope:** every test in this log uses fictional company names, even where the underlying test was run against a real job description – the pipeline this repo replaces is the author's real, active job search, and no real employer name or real application detail belongs in a public repo. Where a test needed real-world grounding (a live search actually returning current facts, a scoring run against real market data), the company name and any identifying specifics are fictionalised while the mechanism being tested – live search working, the scoring rubric producing a defensible number – is described honestly.
 
@@ -452,6 +452,16 @@ Distinct from the tests above: this finding came directly from the user's own re
 **Root cause, consistent with Cowork's own documented behaviour rather than a bug specific to this skill:** each Cowork chat works from its own snapshot of the local folder, taken when that chat started, the same way a Claude.ai skill replace doesn't affect an already-open chat (Test 13's skill-replace finding). Two chats open against the same folder have no way to see each other's writes – whichever saves last wins, silently, with no merge and no warning.
 
 **Not independently reproduced by this log, honestly stated:** Claude Code cannot drive a Cowork session itself (see Test 23's tooling-limitation note), so this is recorded as a confirmed real-world report, not a controlled test with before/after evidence the way the rest of this log documents things. Fixed the only way available given that constraint – documentation, not code, since there's no mechanism here that can detect or prevent a second concurrent chat: `README.md`'s Cowork section and `SKILL.md`'s Platform detection section both now state plainly that only one Cowork chat should run against the same data at a time, and `SKILL.md` instructs the skill to mention this risk proactively when a Cowork session starts working with local files.
+
+## Test 26 – Large-file write truncation on dashboard regeneration (user-reported, not independently reproduced)
+
+Also from the user's own real, ongoing use of a real Cowork tracker, not a session run for this log: writing a large update back to a dashboard file silently truncated at roughly 155KB when done via an incremental/patch-based file-editing tool, with no error surfaced – the file simply ended up shorter than intended. Switching to a single direct full-file write resolved it.
+
+**Directly relevant, not a hypothetical edge case:** this repo's own public demo dashboard, `docs/index.html`, is already 100KB+ with only the 35 fictional example applications. A real multi-month pipeline – more applications, several with full Briefing Packs – will plausibly cross the reported threshold within normal use, not as a rare extreme.
+
+**A real, separate gap this exposed in `SKILL.md` itself:** Step 5's own code example for regenerating the dashboard read the file, called `inject_data()`, and built the new HTML string – but never actually showed the write-back step. Without an explicit instruction, a live session has nothing telling it *how* to write the result back, leaving it free to reach for whatever file-editing tool it defaults to – exactly where the reported truncation happens. Fixed by completing the example with an explicit single-write `open(path, "w").write(new_html)` call and adding a direct instruction against incremental/patch-based writes for this specific operation.
+
+**Not independently reproduced by this log, honestly stated, same as Test 25:** Claude Code cannot drive a Cowork session, so the truncation itself hasn't been triggered and confirmed end-to-end here – only the fix (complete the example, write the full file in one call) has been applied, on the reasoning that it's correct and costless regardless of the exact mechanism or threshold involved.
 
 ## How to reproduce this
 
