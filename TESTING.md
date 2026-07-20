@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Thirty-five tests, run across sessions between 2026-07-09 and 2026-07-20, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Thirty-six tests, run across sessions between 2026-07-09 and 2026-07-21, documented here as evidence rather than assertion.
 
 **Note on scope:** every test in this log uses fictional company names, even where the underlying test was run against a real job description – the pipeline this repo replaces is the author's real, active job search, and no real employer name or real application detail belongs in a public repo. Where a test needed real-world grounding (a live search actually returning current facts, a scoring run against real market data), the company name and any identifying specifics are fictionalised while the mechanism being tested – live search working, the scoring rubric producing a defensible number – is described honestly.
 
@@ -586,6 +586,16 @@ Asked directly, before deleting the Test 1 chat: could this same session also co
 This resolves a real, previously-unanswered design question: Test 1 (Project-only) and Test 2 (local-folder-only) were run as if those were the only two options, but a combined setup – Project for organisation, local folder as the actual write target – was never tested because it was never known to be possible. `README.md` updated to recommend it directly, since it keeps the benefits of both: a Project's own file organisation for source material, and a local folder's genuine write access for the data that actually needs to persist.
 
 **Not yet exercised end-to-end** – confirmed as a valid configuration, not yet run through an actual score-and-track cycle with both connected at once. That's a natural next check, not required before this finding is documented, since the configuration question and the "does it work in practice" question are separable.
+
+## Test 36 – Clean final pass: pin and cross-link both confirmed by a stronger method than any prior test
+
+One more live run before retiring the Test 1 Project-files setup, using the explicit-first-prompt pattern and the current, fully up-to-date skill (verified line-ending-normalized byte-identical against the actual downloadable ZIP beforehand, not assumed). Scored a real JD (Tier 2, 74/100) with real, specific reasoning, correctly flagged CV ambiguity across roughly 15 tailored variants rather than guessing, and correctly identified two pre-existing, differently-formatted pinned Artifacts before creating a third rather than silently overwriting or merging into either.
+
+**The pin itself was confirmed by a genuinely stronger method this time: `list_artifacts`, a real tool call returning the actual pinned path (`C:\Users\<user>\Claude\Artifacts\job-pipeline-dashboard\index.html`), not a screenshot interpreted after the fact.** This closes the exact gap that caused the Test 32/33 confusion – a screenshot can be misread; a direct query against the artifact registry can't. Worth treating as the standard verification method going forward, not just for testing.
+
+The cross-link banner (Test 34) appeared correctly on the pinned copy, linking to the outputs-folder copy, exactly as designed – confirmed working, with the same "functional but visually plain, file:// path, about as good as it gets" character already documented, not a new limitation.
+
+**What this proves / doesn't prove:** proves the full chain – explicit first prompt, pin, cross-link, duplicate/ambiguity handling – works together cleanly in one real run, verified by the strongest method used in this log so far. Doesn't prove the pin-offer is now reliable without the explicit prompt – this run used the recommended pattern throughout, consistent with every other confirmed success in this thread.
 
 ## How to reproduce this
 
