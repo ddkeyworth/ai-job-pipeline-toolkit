@@ -1,6 +1,6 @@
 # Testing log
 
-This repo's skill logic was actually executed, not just written and left unverified. Thirty-six tests, run across sessions between 2026-07-09 and 2026-07-21, documented here as evidence rather than assertion.
+This repo's skill logic was actually executed, not just written and left unverified. Thirty-seven tests, run across sessions between 2026-07-09 and 2026-07-21, documented here as evidence rather than assertion.
 
 **Note on scope:** every test in this log uses fictional company names, even where the underlying test was run against a real job description – the pipeline this repo replaces is the author's real, active job search, and no real employer name or real application detail belongs in a public repo. Where a test needed real-world grounding (a live search actually returning current facts, a scoring run against real market data), the company name and any identifying specifics are fictionalised while the mechanism being tested – live search working, the scoring rubric producing a defensible number – is described honestly.
 
@@ -596,6 +596,14 @@ One more live run before retiring the Test 1 Project-files setup, using the expl
 The cross-link banner (Test 34) appeared correctly on the pinned copy, linking to the outputs-folder copy, exactly as designed – confirmed working, with the same "functional but visually plain, file:// path, about as good as it gets" character already documented, not a new limitation.
 
 **What this proves / doesn't prove:** proves the full chain – explicit first prompt, pin, cross-link, duplicate/ambiguity handling – works together cleanly in one real run, verified by the strongest method used in this log so far. Doesn't prove the pin-offer is now reliable without the explicit prompt – this run used the recommended pattern throughout, consistent with every other confirmed success in this thread.
+
+## Test 37 – Correction: connecting a data source is a chat request, not a pre-chat setup screen
+
+A real, concrete observation from Test 1: Cowork created its own scratch working folder without being asked to, when no Project or local folder was specified. This directly contradicted `README.md`'s existing framing of data-source selection as "Cowork's own start-of-chat setup" – wording that implied a screen shown before the first message, rather than something requested within it.
+
+**Corrected, and the two Cowork/Claude.ai prompt patterns unified into one shape rather than left as separate examples:** the recommended first message now explicitly states what to connect to (`[my Project's files / my local folder at <path>] (delete whichever doesn't apply)`) and where the skill lives, in the same message that asks for the actual scoring/tracking work and the pinned Artifact – all as one request, since none of it happens unless stated. Left unspecified, confirmed directly, Cowork doesn't ask first – it silently falls back to its own scratch folder, which is real but not somewhere a user will easily find again.
+
+**What this proves / doesn't prove:** proves the previous documentation's implied mechanism (a pre-chat setup screen) was wrong, corrected from a direct, real observation rather than assumed. Doesn't prove every Cowork session behaves identically – this is one user's repeated real experience across many sessions in this log, not a claim verified against Cowork's own documentation.
 
 ## How to reproduce this
 
