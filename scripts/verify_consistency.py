@@ -63,6 +63,7 @@ Exits 1 on any mismatch.
 """
 import json
 import os
+import pathlib
 import re
 import sys
 
@@ -220,6 +221,7 @@ def check_dashboard_injection_survives_embedded_newline():
     html = (
         "PREFIX /*__DATA__*/OLD/*__END_DATA__*/ "
         "<!--__SUBTITLE__-->OLD SUBTITLE<!--__END_SUBTITLE__--> "
+        "<!--__CROSSLINK__--><!--__END_CROSSLINK__--> "
         "<title>OLD TITLE</title> SUFFIX"
     )
     apps = [{"id": "test", "notes": "Line one.\nLine two."}]
@@ -249,7 +251,26 @@ def check_dashboard_injection_survives_embedded_newline():
               "parsed as a comment. This exact bug shipped once already (see TESTING.md).")
         return False
 
-    print("build_dashboard.py's inject_data() survives an embedded newline and swaps the subtitle and title correctly.")
+    if "<a href=" in new_html:
+        print("FAIL: inject_data() rendered a cross-link with no cross_link_path given - should be empty.")
+        return False
+
+    # Absolute path valid on whatever OS is actually running this (Windows locally, Ubuntu in CI) -
+    # this exists specifically so the test doesn't assume one platform's path conventions.
+    test_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "other-copy", "index.html")
+    expected_href = pathlib.Path(test_path).as_uri()
+    linked_html = inject_data(
+        html, apps, "Your real tracked applications.", "Your Job Pipeline",
+        cross_link_path=test_path, cross_link_label="Other copy",
+    )
+    if f'href="{expected_href}"' not in linked_html:
+        print("FAIL: inject_data() did not build a correct file:// URI from cross_link_path.")
+        return False
+    if "Other copy" not in linked_html:
+        print("FAIL: inject_data() did not use the given cross_link_label.")
+        return False
+
+    print("build_dashboard.py's inject_data() survives an embedded newline, swaps the subtitle and title correctly, and builds a correct cross-link when given a path.")
     return True
 
 

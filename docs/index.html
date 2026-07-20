@@ -40,6 +40,15 @@
     font-size: 13px;
     color: var(--text-dim);
   }
+  .crosslink {
+    max-width: 1100px;
+    margin: 0 auto 16px;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .crosslink:empty { display: none; margin: 0; }
+  .crosslink a { color: inherit; }
   .headline-stats {
     max-width: 1100px;
     margin: 0 auto 14px;
@@ -248,6 +257,7 @@
 </header>
 
 <div class="banner"><!--__SUBTITLE__-->Fictional companies and applications, built to demonstrate the tool. No real job search data. See <code>README.md</code> to use your own.<!--__END_SUBTITLE__--></div>
+<div class="crosslink"><!--__CROSSLINK__--><!--__END_CROSSLINK__--></div>
 
 <div class="flow-toggle-wrap">
   <button class="briefing-toggle" onclick="document.getElementById('status-flow').classList.toggle('open')">Show status flow</button>

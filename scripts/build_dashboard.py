@@ -13,6 +13,7 @@ Run from the repo root: python scripts/build_dashboard.py
 """
 import json
 import os
+import pathlib
 import re
 import sys
 import yaml
@@ -197,7 +198,7 @@ def parse_application(path):
     }
 
 
-def inject_data(html, apps, subtitle, title):
+def inject_data(html, apps, subtitle, title, cross_link_path=None, cross_link_label=None):
     """Splice apps (a list of application dicts) into html's /*__DATA__*/.../*__END_DATA__*/
     markers, set the banner subtitle via its own <!--__SUBTITLE__--> marker pair, and set the
     browser-tab title by replacing <title>...</title> directly - not via a marker pair like
@@ -229,6 +230,17 @@ def inject_data(html, apps, subtitle, title):
     This was previously diagnosed and worked around live in a Claude.ai session (see
     TESTING.md) but never actually fixed here - dormant only because no example field
     happened to contain a literal newline; real user data very plausibly would.
+
+    cross_link_path is optional (unlike subtitle/title) - when a Cowork session maintains
+    two local copies of the dashboard with the same content (a durably-pinned Artifact and
+    a plain outputs-folder file, confirmed to happen in real use - see TESTING.md), this
+    renders a small banner in each linking to the other's file path, so it's obvious which
+    one is which. Takes a plain OS path, not a URL - pathlib builds the file:// URI here so
+    the caller never has to hand-construct one (Windows paths need backslash-to-slash
+    conversion and a specific number of leading slashes to be valid; getting that wrong by
+    hand is exactly the class of bug this repo has moved away from elsewhere). Left empty
+    (the default) when there's only one copy - the marker then renders nothing and the
+    :empty CSS rule collapses the banner entirely.
     """
     data_json = json.dumps(apps, ensure_ascii=False, indent=2)
     html = re.sub(
@@ -246,6 +258,18 @@ def inject_data(html, apps, subtitle, title):
     html = re.sub(
         r"<title>.*?</title>",
         lambda m: f"<title>{title}</title>",
+        html,
+        flags=re.DOTALL,
+    )
+    if cross_link_path:
+        link_href = pathlib.Path(cross_link_path).as_uri()
+        link_label = cross_link_label or "View the other local copy of this dashboard"
+        cross_link_html = f'Also viewable at another local copy: <a href="{link_href}">{link_label}</a>.'
+    else:
+        cross_link_html = ""
+    html = re.sub(
+        r"<!--__CROSSLINK__-->.*?<!--__END_CROSSLINK__-->",
+        lambda m: f"<!--__CROSSLINK__-->{cross_link_html}<!--__END_CROSSLINK__-->",
         html,
         flags=re.DOTALL,
     )
