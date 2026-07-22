@@ -117,6 +117,9 @@ def parse_notes(text):
 
 
 def parse_application(path):
+    """Returns None for a file with `_duplicate_note` set (see schema/SCHEMA.md) - a
+    confirmed-after-the-fact duplicate, kept on disk as an audit trail but never shown
+    on the dashboard. Callers must filter out None results (see main() below)."""
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -125,6 +128,9 @@ def parse_application(path):
         raise ValueError(f"No frontmatter found in {path}")
     frontmatter_raw, body = m.group(1), m.group(2)
     fm = yaml.safe_load(frontmatter_raw)
+
+    if fm.get("_duplicate_note"):
+        return None
 
     status = fm["status"]
     if status not in ALL_STATUSES:
@@ -291,7 +297,9 @@ def main():
     apps = []
     for fname in sorted(os.listdir(APPS_DIR)):
         if fname.endswith(".md"):
-            apps.append(parse_application(os.path.join(APPS_DIR, fname)))
+            app = parse_application(os.path.join(APPS_DIR, fname))
+            if app is not None:  # None = a confirmed duplicate, excluded - see parse_application()
+                apps.append(app)
 
     with open(DASHBOARD, "r", encoding="utf-8") as f:
         html = f.read()

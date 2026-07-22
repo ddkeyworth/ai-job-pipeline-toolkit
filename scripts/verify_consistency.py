@@ -84,6 +84,7 @@ from _status import ALL_STATUSES, REACHED_INTERVIEW, NO_INTERVIEW_NEGATIVE, HAS_
 from build_dashboard import (
     extract_bp_section,
     inject_data,
+    parse_application,
     parse_bullet_pairs,
     parse_interviewer_profiles,
     parse_notes,
@@ -254,6 +255,57 @@ def check_at_application_score():
     return ok
 
 
+def check_duplicate_note_excluded():
+    """A file with `_duplicate_note` set (see schema/SCHEMA.md) must be excluded from
+    the dashboard build - parse_application() returns None for it, main() filters
+    those out. Written to a temp file outside APPS_DIR so it can't be picked up by
+    the other checks above, which scan APPS_DIR directly."""
+    import tempfile
+    content = (
+        "---\n"
+        'company: "Acme Corp"\n'
+        'role: "VP, Customer Success"\n'
+        "date_scored: 2026-01-01\n"
+        "date_applied: null\n"
+        "status: scored\n"
+        "status_date: 2026-01-01\n"
+        'source: "LinkedIn"\n'
+        '_duplicate_note: "Duplicate of some-other-file.md"\n'
+        "\n"
+        "score:\n"
+        "  value: 50\n"
+        '  tier: "Tier 3 – Solid, worth applying"\n'
+        "  locked: false\n"
+        "  breakdown:\n"
+        "    jd_fit: 20\n"
+        "    seniority: 10\n"
+        "    competition: 10\n"
+        "    comp: 5\n"
+        "    blockers: 5\n"
+        "  estimated_fields: []\n"
+        "\n"
+        "next_interview_date: null\n"
+        "comp_band: null\n"
+        "---\n"
+        "\n"
+        "## JD summary\nTest.\n"
+    )
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        temp_path = f.name
+    try:
+        result = parse_application(temp_path)
+    finally:
+        os.remove(temp_path)
+
+    if result is not None:
+        print(f"FAIL: parse_application() returned a value for a file with _duplicate_note set - should return None so it's excluded from the dashboard. Got: {result!r}")
+        return False
+
+    print("parse_application() correctly excludes a file with _duplicate_note set (returns None).")
+    return True
+
+
 def check_dashboard_injection_survives_embedded_newline():
     html = (
         "PREFIX /*__DATA__*/OLD/*__END_DATA__*/ "
@@ -319,6 +371,7 @@ def main():
         and check_example_score_sums()
         and check_example_rationale_not_thin()
         and check_at_application_score()
+        and check_duplicate_note_excluded()
         and check_dashboard_injection_survives_embedded_newline()
     )
     if not ok:
