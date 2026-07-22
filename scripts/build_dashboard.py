@@ -188,6 +188,7 @@ def parse_application(path):
         "status": status,
         "status_date": date_str(fm.get("status_date")),
         "score": fm["score"],
+        "at_application_score": fm.get("at_application_score"),
         "next_interview_date": date_str(fm.get("next_interview_date")),
         "comp_band": fm.get("comp_band"),
         "application_materials": fm.get("application_materials"),
@@ -234,13 +235,16 @@ def inject_data(html, apps, subtitle, title, cross_link_path=None, cross_link_la
     cross_link_path is optional (unlike subtitle/title) - when a Cowork session maintains
     two local copies of the dashboard with the same content (a durably-pinned Artifact and
     a plain outputs-folder file, confirmed to happen in real use - see TESTING.md), this
-    renders a small banner in each linking to the other's file path, so it's obvious which
-    one is which. Takes a plain OS path, not a URL - pathlib builds the file:// URI here so
-    the caller never has to hand-construct one (Windows paths need backslash-to-slash
+    renders the smallest possible link to the other's file path, fixed in the page's
+    top-right corner - no explanatory sentence, not even a word by default (just an arrow
+    glyph; the full explanation lives in the link's title tooltip, shown on hover). Meant
+    to sit below normal reading attention - it's a useful aid, not something that needs
+    to be noticed. Takes a plain OS path, not a URL - pathlib builds the file:// URI here
+    so the caller never has to hand-construct one (Windows paths need backslash-to-slash
     conversion and a specific number of leading slashes to be valid; getting that wrong by
     hand is exactly the class of bug this repo has moved away from elsewhere). Left empty
     (the default) when there's only one copy - the marker then renders nothing and the
-    :empty CSS rule collapses the banner entirely.
+    :empty CSS rule collapses it entirely.
     """
     data_json = json.dumps(apps, ensure_ascii=False, indent=2)
     html = re.sub(
@@ -263,8 +267,8 @@ def inject_data(html, apps, subtitle, title, cross_link_path=None, cross_link_la
     )
     if cross_link_path:
         link_href = pathlib.Path(cross_link_path).as_uri()
-        link_label = cross_link_label or "View the other local copy of this dashboard"
-        cross_link_html = f'Also viewable at another local copy: <a href="{link_href}">{link_label}</a>.'
+        link_label = cross_link_label if cross_link_label is not None else "&#8599;"
+        cross_link_html = f'<a href="{link_href}" title="Also viewable at another local copy of this dashboard">{link_label}</a>'
     else:
         cross_link_html = ""
     html = re.sub(

@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: "£122k-135k OTE, confirmed above floor"
+
+at_application_score:
+  value: 84
+  tier: "Tier 2 – Strong callback odds"
+  breakdown:
+    jd_fit: 38
+    seniority: 13
+    competition: 13
+    comp: 10
+    blockers: 10
 ---
 
 ## JD summary

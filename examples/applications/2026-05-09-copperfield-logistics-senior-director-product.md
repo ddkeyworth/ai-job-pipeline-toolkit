@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: null
+
+at_application_score:
+  value: 73
+  tier: "Tier 2 – Strong callback odds"
+  breakdown:
+    jd_fit: 35
+    seniority: 12
+    competition: 10
+    comp: 6
+    blockers: 10
 ---
 
 ## JD summary

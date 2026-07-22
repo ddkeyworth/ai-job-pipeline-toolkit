@@ -53,6 +53,16 @@ application_materials:       # null while status is "scored" – set once when s
   cv: null                   # null = the baseline CV was used as-is; otherwise the filename/description of a role-tailored CV
   cover_letter: null         # null, or the filename/description of the cover letter actually submitted
   supplementary: []          # any other submitted documents (supplementary responses, portfolio, etc.) – empty list if none
+
+at_application_score:        # null while status is "scored"/"didnt_apply" – set once, alongside application_materials, when status moves to "applied". Same shape as score, minus locked - see note below.
+  value: 82
+  tier: "Tier 1 – Exceptional callback odds"
+  breakdown:
+    jd_fit: 41
+    seniority: 13
+    competition: 12          # carried over unchanged from score.breakdown
+    comp: 10                 # carried over unchanged from score.breakdown
+    blockers: 10             # carried over unchanged from score.breakdown
 ---
 
 ## JD summary
@@ -114,6 +124,10 @@ There is deliberately no status for withdrawing after applying but before interv
 **`next_interview_date`** only matters once `status` is `interviewing` – it's what lets the dashboard surface "what's coming up" instead of just a flat list. Set it to the next confirmed date whenever one is booked. Once that interview happens, set it back to `null` immediately if the next stage isn't scheduled yet – don't leave a past date sitting in the field. That's what makes a card fall to the back of the active group until a new date is actually known, rather than staying stuck at the top on a stale date.
 
 **`application_materials`** exists because the CV baseline isn't the whole story: some applications go out with a role-tailored CV, cover letter, or supplementary responses instead of (or alongside) the baseline, and some don't. This is deliberately **not** asked at scoring time (`status: scored`) – a JD gets scored against the current baseline, full stop, since tailored materials for a role you haven't even applied to yet don't exist. The question belongs at the `scored` → `applied` transition instead: what actually went out the door for this specific application? A `cv` of `null` means the baseline was used unmodified – that's the common case and not something to flag as missing. Once set, this is what interview-prep content (see Briefing pack below) should be grounded in, not necessarily whatever the baseline CV says by the time an interview happens – the interviewer read what was actually submitted, not today's baseline.
+
+**`score` is a frozen prediction – never edited to reflect `at_application_score`, never edited at all outside Step 2, regardless of what's learned later.** It's the "pre-application" read: how well the role fit the baseline CV at the moment the JD was scored, before any tailored materials existed. This is what `score.locked` and Step 6's recalibration agent both depend on – recalibration only means something if it's checking the rubric's original prediction against the real outcome, not a version quietly touched up with hindsight.
+
+**`at_application_score`** is a separate "at-application" read, populated once, alongside `application_materials`, at the `scored` → `applied` transition – deliberately **always** set at that point, not only when materials happen to differ from the baseline, so it's never blank for an applied application and the dashboard can sort on it cleanly. Same shape as `score` – `value`, `tier`, `breakdown` – but no `locked` flag, since it isn't part of the recalibration signal and there's no later checkpoint that revises it further. `jd_fit` and `seniority` are recomputed against what was actually submitted (they measure the candidate's evidence against the role, so they should reflect what went out the door); `competition`, `comp`, and `blockers` are carried over from `score.breakdown` unchanged, since they're properties of the role, the company, and fixed candidate circumstances that don't depend on which CV version was sent. When `application_materials` matches the baseline exactly, this recompute reproduces the same `jd_fit`/`seniority` already in `score` – `at_application_score` ends up an exact duplicate of `score`, which is correct, not redundant: it keeps every applied application sortable on this field with nothing missing. **Step 6 recalibration always reads `score`, never `at_application_score`** – see Step 6 in `SKILL.md`.
 
 ### Briefing pack
 
@@ -217,4 +231,4 @@ Cache entries are considered fresh for 90 days. Past that, the next application 
 
 ## 5. Outcome signal (derived, not stored)
 
-There is no separate outcomes file, and no separate `outcome` field. The recalibration agent (see `SKILL.md` → Step 6) derives its positive/negative comparison directly from each application's `status` and `score.value`, via `scripts/_status.py`'s `recalibration_signal()` – reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrawn_after_interview`) is treated as positive; a confirmed negative without ever reaching interview (`rejected`, `withdrawn`, `assumed_rejected`) is negative; everything else (`role_closed`, or a status that hasn't resolved yet) is excluded from the comparison entirely. This is why consistent `status` values matter more than anything else in this schema – get this part wrong and the recalibration agent has nothing reliable to work from.
+There is no separate outcomes file, and no separate `outcome` field. The recalibration agent (see `SKILL.md` → Step 6) derives its positive/negative comparison directly from each application's `status` and `score.value`, via `scripts/_status.py`'s `recalibration_signal()` – reaching interview stage (`interviewing`, `offer`, `rejected_after_interview`, `withdrew_after_interview`) is treated as positive; a confirmed negative without ever reaching interview (`rejected`, `assumed_rejected`) is negative; everything else (`scored`, `applied`, `didnt_apply` – a deliberate pass, or a status that hasn't resolved yet) is excluded from the comparison entirely. This is why consistent `status` values matter more than anything else in this schema – get this part wrong and the recalibration agent has nothing reliable to work from.

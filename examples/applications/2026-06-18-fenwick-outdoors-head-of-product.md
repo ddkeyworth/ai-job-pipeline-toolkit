@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: null
+
+at_application_score:
+  value: 60
+  tier: "Tier 3 – Solid, worth applying"
+  breakdown:
+    jd_fit: 29
+    seniority: 10
+    competition: 5
+    comp: 6
+    blockers: 10
 ---
 
 ## JD summary

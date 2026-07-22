@@ -58,6 +58,16 @@ Consistency checks that nothing else in CI catches:
    marker needed since the tag itself is unique. This check now also asserts
    no "__TITLE__" string ever appears in the output, closing that bug class.
 
+7. Every example past "scored"/"didnt_apply" (see _status.py's HAS_APPLIED)
+   has at_application_score set - SCHEMA.md requires it never be left blank
+   once an application actually went out, so the dashboard's at-application
+   sort has no gaps. And for every example with at_application_score,
+   competition/comp/blockers exactly match score.breakdown - they're carried
+   over unchanged by design (only jd_fit/seniority are ever recomputed), so a
+   mismatch here would mean either a scoring bug or a value that quietly
+   drifted from its source, the same class of bug check 4 above guards
+   against for score.value/score.breakdown.
+
 Run from the repo root: python scripts/verify_consistency.py
 Exits 1 on any mismatch.
 """
@@ -70,7 +80,7 @@ import sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _status import ALL_STATUSES, REACHED_INTERVIEW, NO_INTERVIEW_NEGATIVE
+from _status import ALL_STATUSES, REACHED_INTERVIEW, NO_INTERVIEW_NEGATIVE, HAS_APPLIED
 from build_dashboard import (
     extract_bp_section,
     inject_data,
@@ -217,6 +227,33 @@ def check_example_rationale_not_thin():
     return ok
 
 
+def check_at_application_score():
+    apps = load_example_applications()
+    ok = True
+    for fname, fm, body in apps:
+        status = fm["status"]
+        at_score = fm.get("at_application_score")
+        if status in HAS_APPLIED and at_score is None:
+            print(f"FAIL: {fname} - status {status!r} means an application went out, but at_application_score is unset.")
+            ok = False
+            continue
+        if at_score is None:
+            continue
+        breakdown = at_score["breakdown"]
+        total = sum(breakdown[c] for c in COMPONENTS)
+        if total != at_score["value"]:
+            print(f"FAIL: {fname} - at_application_score.value ({at_score['value']}) doesn't equal the sum of its own breakdown ({total}).")
+            ok = False
+        score_breakdown = fm["score"]["breakdown"]
+        for c in ("competition", "comp", "blockers"):
+            if breakdown[c] != score_breakdown[c]:
+                print(f"FAIL: {fname} - at_application_score.breakdown.{c} ({breakdown[c]}) should be carried over unchanged from score.breakdown.{c} ({score_breakdown[c]}).")
+                ok = False
+    if ok:
+        print(f"All {len(apps)} example applications' at_application_score is present wherever required and internally consistent.")
+    return ok
+
+
 def check_dashboard_injection_survives_embedded_newline():
     html = (
         "PREFIX /*__DATA__*/OLD/*__END_DATA__*/ "
@@ -281,6 +318,7 @@ def main():
         and check_recalibration_sets()
         and check_example_score_sums()
         and check_example_rationale_not_thin()
+        and check_at_application_score()
         and check_dashboard_injection_survives_embedded_newline()
     )
     if not ok:

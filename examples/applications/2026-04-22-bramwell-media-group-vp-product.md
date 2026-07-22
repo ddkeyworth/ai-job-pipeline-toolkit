@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: "£90k-105k OTE (estimated)"
+
+at_application_score:
+  value: 60
+  tier: "Tier 3 – Solid, worth applying"
+  breakdown:
+    jd_fit: 29
+    seniority: 9
+    competition: 4
+    comp: 8
+    blockers: 10
 ---
 
 ## JD summary

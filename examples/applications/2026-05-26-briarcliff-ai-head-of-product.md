@@ -22,6 +22,16 @@ score:
 next_interview_date: 2026-06-16
 
 comp_band: "£85k-100k OTE (estimated, cash-only; equity offered separately)"
+
+at_application_score:
+  value: 87
+  tier: "Tier 1 – Exceptional callback odds"
+  breakdown:
+    jd_fit: 40
+    seniority: 14
+    competition: 16
+    comp: 7
+    blockers: 10
 ---
 
 ## JD summary

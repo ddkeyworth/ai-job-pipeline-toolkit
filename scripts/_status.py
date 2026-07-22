@@ -58,6 +58,14 @@ NO_INTERVIEW_NEGATIVE = {"rejected", "assumed_rejected"}
 # deliberate pass or an unresolved application says nothing about whether
 # the scoring rubric's prediction was right.
 
+# Every status past "scored"/"didnt_apply" means an application actually went
+# out – schema/SCHEMA.md requires at_application_score to be set at that
+# point (never left blank, so the dashboard's at-application sort has no
+# gaps), defaulting to an exact duplicate of score when materials matched the
+# baseline. Single source of truth for both generate_examples.py (which
+# fields to write) and verify_consistency.py (which files to check).
+HAS_APPLIED = set(ALL_STATUSES) - {"scored", "didnt_apply"}
+
 
 # Score-locking is a distinct concept from the active/closed dashboard
 # grouping: `offer` stays in the *active* group (exciting, sorts to the top,

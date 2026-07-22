@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: "£100k-115k base"
+
+at_application_score:
+  value: 73
+  tier: "Tier 2 – Strong callback odds"
+  breakdown:
+    jd_fit: 33
+    seniority: 11
+    competition: 9
+    comp: 10
+    blockers: 10
 ---
 
 ## JD summary

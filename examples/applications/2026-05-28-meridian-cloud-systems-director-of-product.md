@@ -22,6 +22,16 @@ score:
 next_interview_date: null
 
 comp_band: "£95k-110k base + bonus (unconfirmed split)"
+
+at_application_score:
+  value: 65
+  tier: "Tier 3 – Solid, worth applying"
+  breakdown:
+    jd_fit: 30
+    seniority: 12
+    competition: 4
+    comp: 9
+    blockers: 10
 ---
 
 ## JD summary

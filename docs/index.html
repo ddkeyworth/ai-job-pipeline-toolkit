@@ -27,12 +27,11 @@
     line-height: 1.45;
   }
   header {
-    padding: 28px 24px 16px;
     max-width: 1100px;
     margin: 0 auto;
+    padding: 28px 24px 16px;
   }
-  header h1 { margin: 0 0 4px; font-size: 22px; }
-  header p { margin: 0; color: var(--text-dim); font-size: 14px; }
+  header h1 { margin: 0; font-size: 22px; }
   .banner {
     max-width: 1100px;
     margin: 0 auto 16px;
@@ -41,14 +40,17 @@
     color: var(--text-dim);
   }
   .crosslink {
-    max-width: 1100px;
-    margin: 0 auto 16px;
-    padding: 0 24px;
-    font-size: 12px;
-    color: var(--text-dim);
+    position: fixed;
+    top: 14px;
+    right: 20px;
+    font-size: 15px;
+    opacity: .45;
+    z-index: 10;
   }
-  .crosslink:empty { display: none; margin: 0; }
-  .crosslink a { color: inherit; }
+  .crosslink:empty { display: none; }
+  .crosslink a { color: var(--text-dim); text-decoration: none; }
+  .crosslink:hover { opacity: 1; }
+  .crosslink a:hover { color: var(--text); }
   .headline-stats {
     max-width: 1100px;
     margin: 0 auto 14px;
@@ -187,9 +189,12 @@
   .badge.assumed_rejected { background: #2b2b2b; color: var(--neutral); border: 1px dashed var(--neutral); }
   .badge.error { background: #4a2e1f; color: #e0954f; }
   .card.error-card { border-color: #6b4423; }
+  .scores { display: flex; gap: 10px; }
   .score { text-align: right; }
   .score .v { font-size: 18px; font-weight: 700; }
   .score .t { font-size: 11px; color: var(--text-dim); }
+  .score .slabel { font-size: 9px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-dim); margin-bottom: 1px; }
+  .score.at-application .v { color: var(--accent); }
   .chevron { color: var(--text-dim); transition: transform .15s; }
   .card.open .chevron { transform: rotate(90deg); }
   .card-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
@@ -252,12 +257,13 @@
 </head>
 <body>
 
+<div class="crosslink"><!--__CROSSLINK__--><!--__END_CROSSLINK__--></div>
+
 <header>
   <h1>Job Pipeline Toolkit</h1>
 </header>
 
 <div class="banner"><!--__SUBTITLE__-->Fictional companies and applications, built to demonstrate the tool. No real job search data. See <code>README.md</code> to use your own.<!--__END_SUBTITLE__--></div>
-<div class="crosslink"><!--__CROSSLINK__--><!--__END_CROSSLINK__--></div>
 
 <div class="flow-toggle-wrap">
   <button class="briefing-toggle" onclick="document.getElementById('status-flow').classList.toggle('open')">Show status flow</button>
@@ -295,7 +301,8 @@
   <label for="sort-select">Sort</label>
   <select id="sort-select">
     <option value="prep">Prep priority – soonest interview first</option>
-    <option value="score">Score – highest first</option>
+    <option value="score">Pre-application score – highest first</option>
+    <option value="at_application">At-application score – highest first</option>
     <option value="recent">Most recent activity</option>
   </select>
 </div>
@@ -331,6 +338,17 @@ const APPLICATIONS = /*__DATA__*/[
         "competition"
       ]
     },
+    "at_application_score": {
+      "value": 70,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 32,
+        "seniority": 12,
+        "competition": 6,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£110k-125k OTE",
     "application_materials": null,
@@ -365,6 +383,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 73,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 33,
+        "seniority": 11,
+        "competition": 9,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£100k-115k base",
@@ -403,6 +432,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 81,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 36,
+        "seniority": 13,
+        "competition": 13,
+        "comp": 9,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£95k-110k OTE (estimated)",
     "application_materials": null,
@@ -437,6 +477,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 84,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 38,
+        "seniority": 12,
+        "competition": 14,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£115k-130k OTE",
@@ -476,6 +527,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 67,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 31,
+        "seniority": 10,
+        "competition": 6,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£115k-130k OTE (estimated)",
     "application_materials": null,
@@ -510,6 +572,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 78,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 34,
+        "seniority": 12,
+        "competition": 12,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£105k-120k base",
@@ -549,6 +622,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 60,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 29,
+        "seniority": 9,
+        "competition": 4,
+        "comp": 8,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£90k-105k OTE (estimated)",
     "application_materials": null,
@@ -583,6 +667,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 87,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 39,
+        "seniority": 13,
+        "competition": 15,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£118k-132k OTE",
@@ -621,6 +716,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 71,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 34,
+        "seniority": 11,
+        "competition": 10,
+        "comp": 6,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": null,
     "application_materials": null,
@@ -655,6 +761,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 94,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 42,
+        "seniority": 15,
+        "competition": 17,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£130k-145k OTE, confirmed above floor",
@@ -751,6 +868,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 66,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 30,
+        "seniority": 10,
+        "competition": 6,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£100k-115k OTE (estimated)",
     "application_materials": null,
@@ -785,6 +913,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 84,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 38,
+        "seniority": 13,
+        "competition": 13,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£122k-135k OTE, confirmed above floor",
@@ -885,6 +1024,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 89,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 40,
+        "seniority": 13,
+        "competition": 16,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£112k-128k OTE",
     "application_materials": null,
@@ -922,6 +1072,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 73,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 35,
+        "seniority": 12,
+        "competition": 10,
+        "comp": 6,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": null,
     "application_materials": null,
@@ -957,6 +1118,7 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": null,
     "next_interview_date": null,
     "comp_band": "£65k-75k base, confirmed well below floor (early-stage, equity-heavy package)",
     "application_materials": null,
@@ -995,6 +1157,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 63,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 30,
+        "seniority": 9,
+        "competition": 5,
+        "comp": 9,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£95k-110k OTE (estimated)",
     "application_materials": null,
@@ -1029,6 +1202,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 85,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 38,
+        "seniority": 13,
+        "competition": 14,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£118k-130k OTE",
@@ -1121,6 +1305,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 82,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 37,
+        "seniority": 12,
+        "competition": 13,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£108k-122k OTE",
     "application_materials": null,
@@ -1155,6 +1350,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 92,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 41,
+        "seniority": 14,
+        "competition": 17,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": "2026-06-19",
     "comp_band": "£125k-140k OTE",
@@ -1270,6 +1476,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 76,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 36,
+        "seniority": 13,
+        "competition": 12,
+        "comp": 5,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£75k-85k base, confirmed ~27% below floor after Stage 2",
     "application_materials": null,
@@ -1349,6 +1566,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 71,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 33,
+        "seniority": 11,
+        "competition": 7,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£105k-120k OTE (estimated)",
     "application_materials": null,
@@ -1385,6 +1613,17 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": [
         "comp"
       ]
+    },
+    "at_application_score": {
+      "value": 79,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 36,
+        "seniority": 13,
+        "competition": 11,
+        "comp": 9,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£100k-112k OTE (estimated)",
@@ -1474,6 +1713,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 74,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 36,
+        "seniority": 13,
+        "competition": 12,
+        "comp": 10,
+        "blockers": 3
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£140k-155k OTE",
     "application_materials": null,
@@ -1510,6 +1760,17 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": [
         "comp"
       ]
+    },
+    "at_application_score": {
+      "value": 87,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 40,
+        "seniority": 14,
+        "competition": 16,
+        "comp": 7,
+        "blockers": 10
+      }
     },
     "next_interview_date": "2026-06-16",
     "comp_band": "£85k-100k OTE (estimated, cash-only; equity offered separately)",
@@ -1603,6 +1864,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 65,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 30,
+        "seniority": 12,
+        "competition": 4,
+        "comp": 9,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£95k-110k base + bonus (unconfirmed split)",
     "application_materials": null,
@@ -1638,6 +1910,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 75,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 34,
+        "seniority": 11,
+        "competition": 10,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£105k-118k OTE",
     "application_materials": null,
@@ -1672,6 +1955,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 89,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 40,
+        "seniority": 13,
+        "competition": 16,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£120k-135k OTE",
@@ -1709,6 +2003,17 @@ const APPLICATIONS = /*__DATA__*/[
       "estimated_fields": [
         "comp"
       ]
+    },
+    "at_application_score": {
+      "value": 78,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 35,
+        "seniority": 12,
+        "competition": 11,
+        "comp": 10,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£115k-130k OTE (estimated)",
@@ -1748,6 +2053,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 61,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 28,
+        "seniority": 8,
+        "competition": 5,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£115k-135k OTE (estimated)",
     "application_materials": null,
@@ -1783,6 +2099,7 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": null,
     "next_interview_date": null,
     "comp_band": "£115k-128k OTE",
     "application_materials": null,
@@ -1821,6 +2138,7 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": null,
     "next_interview_date": null,
     "comp_band": "£110k-125k OTE (estimated)",
     "application_materials": null,
@@ -1856,6 +2174,7 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": null,
     "next_interview_date": null,
     "comp_band": "£125k-138k OTE",
     "application_materials": null,
@@ -1890,6 +2209,17 @@ const APPLICATIONS = /*__DATA__*/[
         "blockers": 10
       },
       "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 69,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 31,
+        "seniority": 11,
+        "competition": 8,
+        "comp": 9,
+        "blockers": 10
+      }
     },
     "next_interview_date": null,
     "comp_band": "£100k-112k base",
@@ -1929,6 +2259,17 @@ const APPLICATIONS = /*__DATA__*/[
         "comp"
       ]
     },
+    "at_application_score": {
+      "value": 60,
+      "tier": "Tier 3 – Solid, worth applying",
+      "breakdown": {
+        "jd_fit": 29,
+        "seniority": 10,
+        "competition": 5,
+        "comp": 6,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": null,
     "application_materials": null,
@@ -1964,6 +2305,17 @@ const APPLICATIONS = /*__DATA__*/[
       },
       "estimated_fields": []
     },
+    "at_application_score": {
+      "value": 74,
+      "tier": "Tier 2 – Strong callback odds",
+      "breakdown": {
+        "jd_fit": 33,
+        "seniority": 12,
+        "competition": 9,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
     "next_interview_date": null,
     "comp_band": "£108k-120k OTE",
     "application_materials": null,
@@ -1976,6 +2328,56 @@ const APPLICATIONS = /*__DATA__*/[
       "Blockers (10/10): No blocker identified."
     ],
     "caveats": "No estimated fields; all components scored against confirmed information.",
+    "briefing": null
+  },
+  {
+    "id": "2026-06-22-larchmont-studios-director-of-product",
+    "company": "Larchmont Studios",
+    "role": "Director of Product",
+    "date_scored": "2026-06-22",
+    "date_applied": "2026-06-22",
+    "status": "applied",
+    "status_date": "2026-06-22",
+    "score": {
+      "value": 73,
+      "tier": "Tier 2 – Strong callback odds",
+      "locked": false,
+      "breakdown": {
+        "jd_fit": 30,
+        "seniority": 11,
+        "competition": 12,
+        "comp": 10,
+        "blockers": 10
+      },
+      "estimated_fields": []
+    },
+    "at_application_score": {
+      "value": 86,
+      "tier": "Tier 1 – Exceptional callback odds",
+      "breakdown": {
+        "jd_fit": 40,
+        "seniority": 14,
+        "competition": 12,
+        "comp": 10,
+        "blockers": 10
+      }
+    },
+    "next_interview_date": null,
+    "comp_band": "£112k-125k OTE",
+    "application_materials": {
+      "cv": "Design-systems-tailored CV, reordered to foreground component-library and cross-team design-ops ownership",
+      "cover_letter": null,
+      "supplementary": []
+    },
+    "jd_summary": "Director of Product at Larchmont Studios. Mid-size design/product studio – applied with a CV tailored specifically to their design-systems-heavy mandate, rather than the generic baseline.",
+    "score_rationale": [
+      "JD fit (30/45): Reasonable overlap on the core product mandate against the baseline CV; the JD's specific emphasis on design-systems ownership wasn't well represented in the generic baseline.",
+      "Seniority alignment (11/15): Director level within the candidate's evidenced range.",
+      "Competition estimate (12/20): Mid-size, moderately known design/product studio – a moderate applicant pool.",
+      "Compensation alignment (10/10): £112k-125k OTE confirmed above floor.",
+      "Blockers (10/10): No blocker identified."
+    ],
+    "caveats": "No estimated fields; all components scored against confirmed information. A role-tailored CV was submitted, differing from the baseline this JD was originally scored against – see at_application_score for JD fit/seniority recomputed against what actually went out.",
     "briefing": null
   }
 ]/*__END_DATA__*/;
@@ -2149,6 +2551,7 @@ function renderCard(app) {
     const id = app.id || `unknown-${Math.random().toString(36).slice(2)}`;
     const score = app.score || {};
     const breakdown = score.breakdown || {};
+    const atScore = app.at_application_score && typeof app.at_application_score === "object" ? app.at_application_score : null;
     const est = Array.isArray(score.estimated_fields) ? score.estimated_fields : [];
     const status = app.status || "applied";
 
@@ -2159,6 +2562,15 @@ function renderCard(app) {
       scoreBar("Compensation", breakdown.comp, 10, est.includes("comp")),
       scoreBar("Blockers", breakdown.blockers, 10, est.includes("blockers")),
     ].join("");
+
+    // Only JD fit / Seniority are recomputed for at_application_score - Competition,
+    // Compensation, and Blockers are carried over unchanged from score.breakdown, so
+    // repeating all five bars here would just duplicate three of them for no reason.
+    const atBreakdown = (atScore && atScore.breakdown) || {};
+    const atBars = atScore ? [
+      scoreBar("JD fit", atBreakdown.jd_fit, 45, false),
+      scoreBar("Seniority", atBreakdown.seniority, 15, false),
+    ].join("") : "";
 
     const briefing = app.briefing && typeof app.briefing === "object" ? app.briefing : null;
     const stages = briefing && Array.isArray(briefing.stages) ? briefing.stages : [];
@@ -2199,14 +2611,18 @@ function renderCard(app) {
           <div class="role">${esc(app.role || "Untitled role")} &middot; ${app.date_applied ? `applied ${esc(fmtDate(app.date_applied))}` : `scored ${esc(fmtDate(app.date_scored)) || "unknown date"}`}${app.next_interview_date ? ` &middot; <span class="next-interview">next interview ${esc(fmtDate(app.next_interview_date))}</span>` : ""}${briefing ? ` &middot; <span class="briefing-link" onclick="openBriefing(event, '${esc(id)}')">briefing pack</span>` : ""}</div>
         </div>
         <div class="badge ${esc(status)}">${esc(statusLabel(status))}</div>
-        <div class="score"><div class="v">${Number.isFinite(score.value) ? score.value : "–"}</div><div class="t">${esc(score.tier || "")}</div></div>
+        <div class="scores">
+          <div class="score">${atScore ? `<div class="slabel">Pre-application</div>` : ""}<div class="v">${Number.isFinite(score.value) ? score.value : "–"}</div><div class="t">${esc(score.tier || "")}</div></div>
+          ${atScore ? `<div class="score at-application"><div class="slabel">At application</div><div class="v">${Number.isFinite(atScore.value) ? atScore.value : "–"}</div><div class="t">${esc(atScore.tier || "")}</div></div>` : ""}
+        </div>
         <div class="chevron">&#9656;</div>
       </div>
       <div class="card-body">
-        <div class="section-title">Score breakdown</div>
+        <div class="section-title">Score breakdown${atScore ? " (pre-application)" : ""}</div>
         <div class="bars">${bars}</div>
         <div class="section-title">Score rationale</div>
         ${renderRationale(app.score_rationale)}
+        ${atScore ? `<div class="section-title">At-application breakdown</div><div class="bars">${atBars}</div><div class="prose"><p>Recomputed against the materials actually submitted for this application, not the baseline CV. Competition, Compensation, and Blockers carry over unchanged from the pre-application score above.</p></div>` : ""}
         <div class="section-title">JD summary</div>
         <div class="prose"><p>${esc(app.jd_summary || "No summary available.")}</p></div>
         ${app.caveats ? `<div class="section-title">Caveats</div><div class="prose"><p>${esc(app.caveats)}</p></div>` : ""}
@@ -2279,6 +2695,14 @@ function sortByScore(list) {
   return [...list].sort((a, b) => ((b.score && b.score.value) || 0) - ((a.score && a.score.value) || 0));
 }
 
+// Falls back to the pre-application score for scored/didnt_apply rows, which
+// never get an at_application_score (see schema/SCHEMA.md) - keeps the sort
+// fully populated instead of dumping every not-yet-applied row at the bottom.
+function sortByAtApplication(list) {
+  const val = a => (a.at_application_score && a.at_application_score.value) ?? (a.score && a.score.value) ?? 0;
+  return [...list].sort((a, b) => val(b) - val(a));
+}
+
 function sortByRecent(list) {
   return [...list].sort((a, b) => new Date(activityDate(b) || 0) - new Date(activityDate(a) || 0));
 }
@@ -2292,6 +2716,7 @@ function render() {
   const data = (Array.isArray(APPLICATIONS) ? APPLICATIONS : []).filter(Boolean);
   const filtered = currentFilter === "all" ? data : data.filter(a => a.status === currentFilter);
   const sorted = currentSort === "score" ? sortByScore(filtered)
+    : currentSort === "at_application" ? sortByAtApplication(filtered)
     : currentSort === "recent" ? sortByRecent(filtered)
     : sortPrepPriority(filtered);
   const cardsHtml = sorted.map(renderCard).join("");

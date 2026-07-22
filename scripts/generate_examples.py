@@ -12,7 +12,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _status import should_lock
+from _status import should_lock, HAS_APPLIED
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPS_DIR = os.path.join(ROOT, "examples", "applications")
@@ -255,6 +255,21 @@ APPLICATIONS = [
       "Mid-size media company, moderately competitive.",
       "£108k-120k OTE confirmed at and above floor.",
       "No blocker identified.")),
+    # The one example with a bespoke at_application_score that genuinely
+    # differs from score (see schema/SCHEMA.md): applied with a role-tailored
+    # CV, so jd_fit/seniority are recomputed against what actually went out.
+    # Every other example above defaults to an exact at_application_score
+    # duplicate of score (baseline CV used as-is) - this is the contrast case.
+    ("2026-06-22", "Larchmont Studios", "Director of Product", "applied", "Tier 2 – Strong callback odds",
+     30, 11, 12, 10, 10, [], "£112k-125k OTE", "LinkedIn",
+     "Mid-size design/product studio – applied with a CV tailored specifically to their design-systems-heavy mandate, rather than the generic baseline.",
+     ("Reasonable overlap on the core product mandate against the baseline CV; the JD's specific emphasis on design-systems ownership wasn't well represented in the generic baseline.",
+      "Director level within the candidate's evidenced range.",
+      "Mid-size, moderately known design/product studio – a moderate applicant pool.",
+      "£112k-125k OTE confirmed above floor.",
+      "No blocker identified."),
+     {"cv": "Design-systems-tailored CV, reordered to foreground component-library and cross-team design-ops ownership",
+      "jd_fit": 40, "seniority": 14, "tier": "Tier 1 – Exceptional callback odds"}),
 ]
 
 # Fully fleshed briefing-pack applications – interviewing / offer / and the
@@ -588,7 +603,10 @@ def slugify(name):
 
 def write_simple(app):
     (date, company, role, status, tier, jd_fit, seniority, competition, comp, blockers,
-     estimated, comp_band, source, note, rationale) = app
+     estimated, comp_band, source, note, rationale) = app[:15]
+    # Optional 16th element - only the one example demonstrating at_application_score
+    # uses this; every other tuple stays untouched at its original length.
+    at_app = app[15] if len(app) > 15 else None
     score = jd_fit + seniority + competition + comp + blockers
     slug = slugify(company)
     fname = f"{date}-{slug}-{slugify(role)}.md"
@@ -597,6 +615,39 @@ def write_simple(app):
     date_applied = "null" if status in ("scored", "didnt_apply") else date
     locked = "true" if should_lock(status) else "false"
     r_jd_fit, r_seniority, r_competition, r_comp, r_blockers = rationale
+
+    application_materials_yaml = ""
+    at_application_score_yaml = ""
+    if at_app:
+        application_materials_yaml = f"""
+application_materials:
+  cv: "{at_app['cv']}"
+  cover_letter: null
+  supplementary: []
+"""
+        at_jd_fit, at_seniority, at_tier = at_app["jd_fit"], at_app["seniority"], at_app["tier"]
+    elif status in HAS_APPLIED:
+        # No bespoke override - baseline CV used as-is, so the recompute
+        # reproduces the same jd_fit/seniority already in score. Still
+        # written out (not left null), per schema/SCHEMA.md.
+        at_jd_fit, at_seniority, at_tier = jd_fit, seniority, tier
+    else:
+        at_jd_fit = at_seniority = at_tier = None
+
+    if at_jd_fit is not None:
+        at_score = at_jd_fit + at_seniority + competition + comp + blockers
+        at_application_score_yaml = f"""
+at_application_score:
+  value: {at_score}
+  tier: "{at_tier}"
+  breakdown:
+    jd_fit: {at_jd_fit}
+    seniority: {at_seniority}
+    competition: {competition}
+    comp: {comp}
+    blockers: {blockers}
+"""
+
     fm = f"""---
 company: "{company}"
 role: "{role}"
@@ -621,7 +672,7 @@ score:
 next_interview_date: null
 
 comp_band: {comp_band_yaml}
----
+{application_materials_yaml}{at_application_score_yaml}---
 
 ## JD summary
 {role} at {company}. {note}
@@ -634,7 +685,7 @@ comp_band: {comp_band_yaml}
 - Blockers ({blockers}/10): {r_blockers}
 
 ## Caveats
-{"Competition and/or comp estimated – see estimated_fields above." if estimated else "No estimated fields; all components scored against confirmed information."}
+{"Competition and/or comp estimated – see estimated_fields above." if estimated else "No estimated fields; all components scored against confirmed information."}{f" A role-tailored CV was submitted, differing from the baseline this JD was originally scored against – see at_application_score for JD fit/seniority recomputed against what actually went out." if at_app else ""}
 """
     with open(os.path.join(APPS_DIR, fname), "w", encoding="utf-8") as f:
         f.write(fm)
@@ -734,6 +785,16 @@ score:
 next_interview_date: {next_interview_yaml}
 
 comp_band: {comp_band_yaml}
+
+at_application_score:
+  value: {score}
+  tier: "{app['tier']}"
+  breakdown:
+    jd_fit: {app['jd_fit']}
+    seniority: {app['seniority']}
+    competition: {app['competition']}
+    comp: {app['comp']}
+    blockers: {app['blockers']}
 ---
 
 ## JD summary
