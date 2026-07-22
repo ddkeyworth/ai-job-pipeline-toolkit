@@ -1,6 +1,6 @@
 # Golden set – scoring eval
 
-Five fictional job descriptions, each scored against `examples/CV-example.md` (Jordan Ainsley), chosen to exercise a distinct failure/success mode in the rubric – not just five similar "good fit" roles. Expected bands are defined here, in writing, **before** any actual scoring run against them – see `eval/results/` for what an actual run produced, and `scripts/verify_eval_results.py` for how the two get compared.
+Six fictional job descriptions, each scored against `examples/CV-example.md` (Jordan Ainsley), chosen to exercise a distinct failure/success mode in the rubric – not just six similar "good fit" roles. Expected bands are defined here, in writing, **before** any actual scoring run against them – see `eval/results/` for what an actual run produced, and `scripts/verify_eval_results.py` for how the two get compared.
 
 Company facts are given directly in each JD's own text (not left to live search) since these are fictional companies with nothing real to look up – this keeps the eval self-contained and repeatable without depending on search results that could change over time.
 

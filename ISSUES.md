@@ -2,6 +2,12 @@
 
 Known gaps to revisit.
 
+## An installed skill can silently drift behind the repo, with no way for a session to detect it
+
+Confirmed live, for real (see Test 41 in `TESTING.md`): a Cowork session's installed skill snapshot stayed pinned to whatever commit was live when it was installed, several commits behind by the time the session had done substantial real work – including missing an entire corrective design cycle (Test 40's two-score design). The session itself had no way to know this; it just kept running the rules it was loaded with. Corrections given live in chat, mid-session, fix that session's behaviour going forward but never retroactively update the installed skill file – only an explicit reinstall does that (see `README.md` → "Updating the skill later"), and there's nothing that prompts a user to do this.
+
+**Not fixable from within this repo alone** – skills don't self-update, that's a platform behaviour, not something `SKILL.md` can instruct around. The mitigation is procedural, not technical: reinstall from a fresh zip before starting substantial new work, especially after a gap of more than a few days, and – if something feels off or a documented behaviour doesn't match what the session actually does – checking whether the installed skill is current is a reasonable first thing to suspect, not a last resort. Genuinely detecting drift from inside a session would need the skill to somehow know its own version against the repo's current state, which nothing here currently does.
+
 ## Cowork's automatic pin-offer is unreliable without an explicit ask – the explicit-ask pattern is now verified working end-to-end
 
 Confirmed live, three separate times, across three different attempts at strengthening the instruction (prominence, restructuring into a standalone step, task-list framing): a Cowork session can score a JD and build the dashboard file correctly, then simply end its turn without ever raising the Artifacts library at all, even though `SKILL.md` instructs offering to pin it as a required part of that step. This looks like a genuine behavioural tendency – satisfying the literal request over proactively volunteering a separate action – that prompt engineering within `SKILL.md` has not reliably overridden on its own.
