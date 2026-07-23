@@ -2455,14 +2455,21 @@ function renderStats() {
   ).join("");
 }
 
-let currentFilter = "all";
+// Every status starts active (shown) - this is what "seeing everything" means
+// in a toggle-per-status model, so there's no separate "All" pill: toggling
+// every pill back on already gets you there, and having both would leave it
+// ambiguous what clicking "All" does to pills you'd individually turned off.
+let activeFilters = new Set(STATUS_ORDER);
 
 function renderFilters() {
-  const filters = ["all", ...STATUS_ORDER];
-  document.getElementById("filters").innerHTML = filters.map(f =>
-    `<div class="pill ${f === currentFilter ? "active" : ""}" data-filter="${f}">${f === "all" ? "All" : esc(statusLabel(f))}</div>`
+  document.getElementById("filters").innerHTML = STATUS_ORDER.map(f =>
+    `<div class="pill ${activeFilters.has(f) ? "active" : ""}" data-filter="${f}">${esc(statusLabel(f))}</div>`
   ).join("");
-  document.querySelectorAll(".pill").forEach(p => p.onclick = () => { currentFilter = p.dataset.filter; render(); });
+  document.querySelectorAll(".pill").forEach(p => p.onclick = () => {
+    const f = p.dataset.filter;
+    if (activeFilters.has(f)) activeFilters.delete(f); else activeFilters.add(f);
+    render();
+  });
 }
 
 function esc(s) {
@@ -2714,7 +2721,7 @@ function render() {
   renderStats();
   renderFilters();
   const data = (Array.isArray(APPLICATIONS) ? APPLICATIONS : []).filter(Boolean);
-  const filtered = currentFilter === "all" ? data : data.filter(a => a.status === currentFilter);
+  const filtered = data.filter(a => activeFilters.has(a.status));
   const sorted = currentSort === "score" ? sortByScore(filtered)
     : currentSort === "at_application" ? sortByAtApplication(filtered)
     : currentSort === "recent" ? sortByRecent(filtered)
